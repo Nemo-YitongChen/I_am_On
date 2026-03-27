@@ -1,0 +1,23 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import page from "../../content-live/zh/about.json";
+---
+<BaseLayout title={page.title} description={page.description}>
+  <section class="hero">
+    <h1 class="h1">{page.heroTitle}</h1>
+    <p class="p">{page.heroText}</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+      {page.ctas.map((cta) => (
+        <a class="cta" href={cta.href}>{cta.label}</a>
+      ))}
+    </div>
+    <div style="display:grid;gap:14px;">
+      {page.cards.map((card) => (
+        <div class="card">
+          <p style="font-weight:800;margin:0 0 6px;">{card.title}</p>
+          <p class="p" style="margin:0;">{card.text}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
