@@ -18,6 +18,8 @@ const contentPath = "src/content-live/zh/home.json";
     <input id="heroTitle" value={initialData.heroTitle} style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);" />
     <p class="p">主文案</p>
     <textarea id="heroText" rows="5" style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);">{initialData.heroText}</textarea>
+    <p class="p">编辑密码</p>
+    <input id="editorSecret" type="password" placeholder="请输入编辑密码" style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);" />
     <button id="saveBtn" class="cta">保存</button>
     <p id="status" class="p" style="margin-top:10px;">尚未保存。</p>
   </div>
@@ -33,6 +35,7 @@ const contentPath = "src/content-live/zh/home.json";
     const descriptionInput = document.getElementById('description');
     const heroTitleInput = document.getElementById('heroTitle');
     const heroTextInput = document.getElementById('heroText');
+    const editorSecretInput = document.getElementById('editorSecret');
     const previewTitle = document.getElementById('previewTitle');
     const previewText = document.getElementById('previewText');
     const status = document.getElementById('status');
@@ -55,27 +58,53 @@ const contentPath = "src/content-live/zh/home.json";
       previewText.textContent = next.heroText;
     }
 
-    [titleInput, descriptionInput, heroTitleInput, heroTextInput].forEach(function(el) {
+    [titleInput, descriptionInput, heroTitleInput, heroTextInput].forEach(function (el) {
       el.addEventListener('input', syncPreview);
     });
 
-    saveBtn.addEventListener('click', async function() {
-      status.textContent = '正在保存';
-      const payload = {
-        path: contentPath,
-        content: JSON.stringify(readData(), null, 2) + '\n',
-        message: '从编辑器更新中文首页内容'
-      };
-      const response = await fetch('/api/save', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const result = await response.json();
-      if (response.ok) {
-        status.textContent = '已写入 GitHub，Cloudflare Pages 将自动重新部署。';
-      } else {
-        status.textContent = '保存失败：' + (result.error || '未知错误');
+    saveBtn.addEventListener('click', async function () {
+      try {
+        status.textContent = '正在保存...';
+
+        const secret = editorSecretInput.value.trim();
+        if (!secret) {
+          status.textContent = '请输入编辑密码。';
+          return;
+        }
+
+        const payload = {
+          path: contentPath,
+          content: JSON.stringify(readData(), null, 2) + '\n',
+          message: '从编辑器更新中文首页内容'
+        };
+
+        const response = await fetch('/api/save', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-editor-secret': secret
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const raw = await response.text();
+
+        let result = {};
+        try {
+          result = JSON.parse(raw);
+        } catch {
+          throw new Error(`Non-JSON response: ${raw}`);
+        }
+
+        if (response.ok) {
+          status.textContent = `已保存，提交：${result.commit?.sha || 'done'}`;
+        } else {
+          status.textContent = '保存失败：' + (result.error || '未知错误');
+        }
+      } catch (error) {
+        status.textContent =
+          '保存失败：' + (error instanceof Error ? error.message : '未知错误');
+        console.error(error);
       }
     });
   </script>
