@@ -1,6 +1,6 @@
 {
   "title": "Your Name · 个人网站",
-  "description": "一个支持内容驱动与双语扩展的 Astro 模板。",
+  "description": "一个支持内容驱动与多语言扩展的 Astro 模板。",
   "heroTitle": "把你的想法整理成更清晰的个人网站",
   "heroText": "这个模板适合需要个人介绍、作品展示、预约页面和文章空间的人，同时尽量减少改代码的负担。",
   "cards": [
@@ -20,7 +20,7 @@
   "ctas": [
     {
       "label": "编辑此页面",
-      "href": "/editor/zh/home"
+      "href": "/zh/editor/home"
     }
   ]
 }
