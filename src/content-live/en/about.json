@@ -1,0 +1,22 @@
+{
+  "title": "About · Your Name",
+  "description": "A short introduction page for the starter template.",
+  "heroTitle": "About this starter",
+  "heroText": "This page shows how a second page can be driven from editable JSON content instead of hard-coded Astro page copy.",
+  "cards": [
+    {
+      "title": "Why it exists",
+      "text": "The goal is to let non-technical users update real page copy through a browser-based editor, while still publishing through Git and Cloudflare Pages."
+    },
+    {
+      "title": "How to reuse it",
+      "text": "Replace this content with your own story, background, goals, services, or portfolio narrative, and keep the page component structure reusable."
+    }
+  ],
+  "ctas": [
+    {
+      "label": "Edit this page",
+      "href": "/editor/en/about"
+    }
+  ]
+}
