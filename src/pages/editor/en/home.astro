@@ -1,0 +1,82 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import initialData from "../../../content-live/en/home.json";
+const contentPath = "src/content-live/en/home.json";
+---
+<BaseLayout title="Editor English home" description="Edit the English home page content.">
+  <section class="hero">
+    <h1 class="h1">Editor English home</h1>
+    <p class="p">Edit the fields below and save them back to the repository.</p>
+  </section>
+
+  <div class="card" style="margin-bottom:14px;">
+    <p class="p">Title</p>
+    <input id="title" value={initialData.title} style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);" />
+    <p class="p">Description</p>
+    <input id="description" value={initialData.description} style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);" />
+    <p class="p">Hero title</p>
+    <input id="heroTitle" value={initialData.heroTitle} style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);" />
+    <p class="p">Hero text</p>
+    <textarea id="heroText" rows="5" style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);">{initialData.heroText}</textarea>
+    <button id="saveBtn" class="cta">Save</button>
+    <p id="status" class="p" style="margin-top:10px;">Not saved yet.</p>
+  </div>
+
+  <div class="card">
+    <p class="p">Live preview</p>
+    <h2 id="previewTitle" class="h1" style="font-size:30px;">{initialData.heroTitle}</h2>
+    <p id="previewText" class="p">{initialData.heroText}</p>
+  </div>
+
+  <script is:inline define:vars={{ initialData, contentPath }}>
+    const titleInput = document.getElementById('title');
+    const descriptionInput = document.getElementById('description');
+    const heroTitleInput = document.getElementById('heroTitle');
+    const heroTextInput = document.getElementById('heroText');
+    const previewTitle = document.getElementById('previewTitle');
+    const previewText = document.getElementById('previewText');
+    const status = document.getElementById('status');
+    const saveBtn = document.getElementById('saveBtn');
+
+    function readData() {
+      return {
+        title: titleInput.value,
+        description: descriptionInput.value,
+        heroTitle: heroTitleInput.value,
+        heroText: heroTextInput.value,
+        cards: initialData.cards,
+        ctas: initialData.ctas
+      };
+    }
+
+    function syncPreview() {
+      const next = readData();
+      previewTitle.textContent = next.heroTitle;
+      previewText.textContent = next.heroText;
+    }
+
+    [titleInput, descriptionInput, heroTitleInput, heroTextInput].forEach(function(el) {
+      el.addEventListener('input', syncPreview);
+    });
+
+    saveBtn.addEventListener('click', async function() {
+      status.textContent = 'Saving';
+      const payload = {
+        path: contentPath,
+        content: JSON.stringify(readData(), null, 2) + '\n',
+        message: 'Update English home content from editor'
+      };
+      const response = await fetch('/api/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const result = await response.json();
+      if (response.ok) {
+        status.textContent = 'Saved to GitHub. Cloudflare Pages will rebuild automatically.';
+      } else {
+        status.textContent = 'Failed: ' + (result.error || 'Unknown error');
+      }
+    });
+  </script>
+</BaseLayout>
