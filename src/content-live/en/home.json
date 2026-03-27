@@ -1,0 +1,26 @@
+{
+  "title": "Your Name · Personal site",
+  "description": "A bilingual content-driven Astro starter.",
+  "heroTitle": "Turn your ideas into a clearer personal site",
+  "heroText": "This starter is built for people who want a personal site, portfolio, booking page, and writing space without editing lots of code.",
+  "cards": [
+    {
+      "title": "Introduce yourself clearly",
+      "text": "Explain who you are, what you care about, and what kind of conversations or work you want to attract."
+    },
+    {
+      "title": "Show selected work",
+      "text": "Present case studies, achievements, or writing in a structure that is easy to scan and easy to maintain."
+    },
+    {
+      "title": "Let people take action",
+      "text": "Send visitors to contact, booking, consulting, or recruiter-friendly summary pages with clear next steps."
+    }
+  ],
+  "ctas": [
+    {
+      "label": "Edit this page",
+      "href": "/editor/en/home"
+    }
+  ]
+}
