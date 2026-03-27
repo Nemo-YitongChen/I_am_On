@@ -20,6 +20,16 @@ function toBase64Utf8(input) {
   return btoa(binary);
 }
 
+function getRuntimeEnv(context) {
+  const runtimeEnv = context.locals?.runtime?.env ?? {};
+  const processEnv = typeof process !== "undefined" && process?.env ? process.env : {};
+
+  return {
+    ...processEnv,
+    ...runtimeEnv,
+  };
+}
+
 function cleanEnvValue(value) {
   return typeof value === "string" ? value.trim() : "";
 }
@@ -102,7 +112,7 @@ function getGitHubHint(status, detailMessage) {
 }
 
 export async function POST(context) {
-  const env = context.locals.runtime?.env;
+  const env = getRuntimeEnv(context);
   const { token, owner, repo, branch } = parseRepoConfig(env);
 
   if (!token || !owner || !repo) {

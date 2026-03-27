@@ -1,12 +1,17 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "i-am-on",
+  "name": "iamon",
   "compatibility_date": "2026-03-27",
   "main": "./dist/_worker.js/index.js",
   "compatibility_flags": [
     "nodejs_compat",
     "global_fetch_strictly_public"
   ],
+  "vars": {
+    "GITHUB_OWNER": "Nemo-YitongChen",
+    "GITHUB_REPO": "I_am_On",
+    "GITHUB_BRANCH": "main"
+  },
   "assets": {
     "binding": "ASSETS",
     "directory": "./dist"
