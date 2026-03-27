@@ -21,6 +21,7 @@ const copy = isZh
       passwordError: "编辑密码错误，请重试。",
       genericErrorPrefix: "保存失败：",
       savedPrefix: "已保存，提交：",
+      unknownError: "未知错误",
     }
   : {
       pageTitle: "Edit home page",
@@ -40,6 +41,7 @@ const copy = isZh
       passwordError: "Incorrect editor password. Please try again.",
       genericErrorPrefix: "Failed: ",
       savedPrefix: "Saved. Commit: ",
+      unknownError: "Unknown error",
     };
 ---
 <section class="hero">
@@ -96,6 +98,53 @@ const copy = isZh
     previewText.textContent = next.heroText;
   }
 
+  function parseResult(raw) {
+    if (!raw) {
+      return {};
+    }
+
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return { error: raw };
+    }
+  }
+
+  function formatError(result) {
+    if (!result || typeof result !== 'object') {
+      return copy.unknownError;
+    }
+
+    const parts = [];
+
+    if (typeof result.error === 'string' && result.error.trim()) {
+      parts.push(result.error.trim());
+    }
+
+    if (typeof result.detailMessage === 'string' && result.detailMessage.trim()) {
+      parts.push(result.detailMessage.trim());
+    } else if (typeof result.detail === 'string' && result.detail.trim()) {
+      parts.push(result.detail.trim());
+    } else if (
+      result.detail &&
+      typeof result.detail === 'object' &&
+      typeof result.detail.message === 'string' &&
+      result.detail.message.trim()
+    ) {
+      parts.push(result.detail.message.trim());
+    }
+
+    if (typeof result.hint === 'string' && result.hint.trim()) {
+      parts.push(result.hint.trim());
+    }
+
+    if (typeof result.githubStatus === 'number') {
+      parts.push(`GitHub ${result.githubStatus}`);
+    }
+
+    return parts.join(' | ') || copy.unknownError;
+  }
+
   [titleInput, descriptionInput, heroTitleInput, heroTextInput].forEach((el) => {
     el.addEventListener('input', syncPreview);
   });
@@ -126,7 +175,7 @@ const copy = isZh
       });
 
       const raw = await response.text();
-      const result = raw ? JSON.parse(raw) : {};
+      const result = parseResult(raw);
 
       if (response.status === 401) {
         status.textContent = copy.passwordError;
@@ -136,10 +185,11 @@ const copy = isZh
       if (response.ok) {
         status.textContent = `${copy.savedPrefix}${result.commit?.sha || 'done'}`;
       } else {
-        status.textContent = copy.genericErrorPrefix + (result.error || 'Unknown error');
+        status.textContent = copy.genericErrorPrefix + formatError(result);
+        console.error('Save failed', result);
       }
     } catch (error) {
-      status.textContent = copy.genericErrorPrefix + (error instanceof Error ? error.message : 'Unknown error');
+      status.textContent = copy.genericErrorPrefix + (error instanceof Error ? error.message : copy.unknownError);
       console.error(error);
     }
   });
