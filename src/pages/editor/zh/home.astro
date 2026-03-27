@@ -96,14 +96,18 @@ const contentPath = "src/content-live/zh/home.json";
           throw new Error(`Non-JSON response: ${raw}`);
         }
 
+        if (response.status === 401) {
+          status.textContent = '编辑密码错误，请重试。';
+          return;
+        }
+
         if (response.ok) {
           status.textContent = `已保存，提交：${result.commit?.sha || 'done'}`;
         } else {
           status.textContent = '保存失败：' + (result.error || '未知错误');
         }
       } catch (error) {
-        status.textContent =
-          '保存失败：' + (error instanceof Error ? error.message : '未知错误');
+        status.textContent = '保存失败：' + (error instanceof Error ? error.message : '未知错误');
         console.error(error);
       }
     });

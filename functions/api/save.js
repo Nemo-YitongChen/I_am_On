@@ -1,18 +1,4 @@
-interface Env {
-  GITHUB_TOKEN?: string;
-  GITHUB_OWNER?: string;
-  GITHUB_REPO?: string;
-  GITHUB_BRANCH?: string;
-  EDITOR_SECRET?: string;
-}
-
-interface SavePayload {
-  path?: string;
-  content?: string;
-  message?: string;
-}
-
-function json(data: unknown, status = 200) {
+function json(data, status = 200) {
   return new Response(JSON.stringify(data, null, 2), {
     status,
     headers: {
@@ -21,7 +7,7 @@ function json(data: unknown, status = 200) {
   });
 }
 
-function toBase64Utf8(input: string): string {
+function toBase64Utf8(input) {
   const bytes = new TextEncoder().encode(input);
   let binary = "";
   const chunkSize = 0x8000;
@@ -34,11 +20,11 @@ function toBase64Utf8(input: string): string {
   return btoa(binary);
 }
 
-function isAllowedPath(path: string): boolean {
+function isAllowedPath(path) {
   return path.startsWith("src/content-live/") && path.endsWith(".json");
 }
 
-export const onRequestPost: PagesFunction<Env> = async (context) => {
+export async function onRequestPost(context) {
   const { request, env } = context;
 
   if (!env.GITHUB_TOKEN || !env.GITHUB_OWNER || !env.GITHUB_REPO) {
@@ -47,18 +33,18 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         error:
           "Missing GitHub environment variables. Set GITHUB_TOKEN, GITHUB_OWNER, GITHUB_REPO, and optionally GITHUB_BRANCH / EDITOR_SECRET.",
       },
-      500
+      500,
     );
   }
 
   if (env.EDITOR_SECRET) {
     const provided = request.headers.get("x-editor-secret");
     if (provided !== env.EDITOR_SECRET) {
-      return json({ error: "Unauthorized" }, 401);
+      return json({ error: "Incorrect editor password." }, 401);
     }
   }
 
-  let payload: SavePayload;
+  let payload;
   try {
     payload = await request.json();
   } catch {
@@ -78,17 +64,13 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
 
   const branch = env.GITHUB_BRANCH || "main";
-
   const githubHeaders = {
     Authorization: `Bearer ${env.GITHUB_TOKEN}`,
     Accept: "application/vnd.github+json",
     "User-Agent": "i-am-on-editor",
   };
 
-  const readUrl = `https://api.github.com/repos/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/contents/${path}?ref=${encodeURIComponent(
-    branch
-  )}`;
-
+  const readUrl = `https://api.github.com/repos/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/contents/${path}?ref=${encodeURIComponent(branch)}`;
   const currentRes = await fetch(readUrl, {
     method: "GET",
     headers: githubHeaders,
@@ -101,17 +83,16 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         error: "Failed to read current file from GitHub",
         detail,
       },
-      502
+      502,
     );
   }
 
-  const currentFile = (await currentRes.json()) as { sha?: string };
+  const currentFile = await currentRes.json();
   if (!currentFile.sha) {
     return json({ error: "Missing file SHA from GitHub" }, 502);
   }
 
   const updateUrl = `https://api.github.com/repos/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/contents/${path}`;
-
   const updateRes = await fetch(updateUrl, {
     method: "PUT",
     headers: {
@@ -127,14 +108,13 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   });
 
   const updateJson = await updateRes.json();
-
   if (!updateRes.ok) {
     return json(
       {
         error: "Failed to update file on GitHub",
         detail: updateJson,
       },
-      502
+      502,
     );
   }
 
@@ -143,4 +123,4 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     commit: updateJson.commit || null,
     content: updateJson.content || null,
   });
-};
+}

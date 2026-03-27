@@ -19,99 +19,97 @@ const contentPath = "src/content-live/en/home.json";
     <p class="p">Hero text</p>
     <textarea id="heroText" rows="5" style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);">{initialData.heroText}</textarea>
     <p class="p">Editor password</p>
-    <input
-      id="editorSecret"
-      type="password"
-      placeholder="Enter editor secret"
-      style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);"
-    />    
+    <input id="editorSecret" type="password" placeholder="Enter editor secret" style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);" />
     <button id="saveBtn" class="cta">Save</button>
-      <p id="status" class="p" style="margin-top:10px;">Not saved yet.</p>
-    </div>
-  
-    <div class="card">
-      <p class="p">Live preview</p>
-      <h2 id="previewTitle" class="h1" style="font-size:30px;">{initialData.heroTitle}</h2>
-      <p id="previewText" class="p">{initialData.heroText}</p>
-    </div>
+    <p id="status" class="p" style="margin-top:10px;">Not saved yet.</p>
+  </div>
+
+  <div class="card">
+    <p class="p">Live preview</p>
+    <h2 id="previewTitle" class="h1" style="font-size:30px;">{initialData.heroTitle}</h2>
+    <p id="previewText" class="p">{initialData.heroText}</p>
+  </div>
 
   <script is:inline define:vars={{ initialData, contentPath }}>
-  const titleInput = document.getElementById('title');
-  const descriptionInput = document.getElementById('description');
-  const heroTitleInput = document.getElementById('heroTitle');
-  const heroTextInput = document.getElementById('heroText');
-  const editorSecretInput = document.getElementById('editorSecret');
+    const titleInput = document.getElementById('title');
+    const descriptionInput = document.getElementById('description');
+    const heroTitleInput = document.getElementById('heroTitle');
+    const heroTextInput = document.getElementById('heroText');
+    const editorSecretInput = document.getElementById('editorSecret');
+    const previewTitle = document.getElementById('previewTitle');
+    const previewText = document.getElementById('previewText');
+    const status = document.getElementById('status');
+    const saveBtn = document.getElementById('saveBtn');
 
-  const previewTitle = document.getElementById('previewTitle');
-  const previewText = document.getElementById('previewText');
-  const status = document.getElementById('status');
-  const saveBtn = document.getElementById('saveBtn');
-
-  function readData() {
-    return {
-      title: titleInput.value,
-      description: descriptionInput.value,
-      heroTitle: heroTitleInput.value,
-      heroText: heroTextInput.value,
-      cards: initialData.cards,
-      ctas: initialData.ctas
-    };
-  }
-
-  function syncPreview() {
-    const next = readData();
-    previewTitle.textContent = next.heroTitle;
-    previewText.textContent = next.heroText;
-  }
-
-  [titleInput, descriptionInput, heroTitleInput, heroTextInput].forEach(function (el) {
-    el.addEventListener('input', syncPreview);
-  });
-
-  saveBtn.addEventListener('click', async function () {
-    try {
-      status.textContent = 'Saving...';
-
-      const secret = editorSecretInput.value.trim();
-      if (!secret) {
-        status.textContent = 'Please enter the editor password.';
-        return;
-      }
-
-      const payload = {
-        path: contentPath,
-        content: JSON.stringify(readData(), null, 2) + '\n',
-        message: 'Update English home content from editor'
+    function readData() {
+      return {
+        title: titleInput.value,
+        description: descriptionInput.value,
+        heroTitle: heroTitleInput.value,
+        heroText: heroTextInput.value,
+        cards: initialData.cards,
+        ctas: initialData.ctas
       };
-
-      const response = await fetch('/api/save', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-editor-secret': secret
-        },
-        body: JSON.stringify(payload)
-      });
-
-      const raw = await response.text();
-
-      let result = {};
-      try {
-        result = JSON.parse(raw);
-      } catch {
-        throw new Error(`Non-JSON response: ${raw}`);
-      }
-
-      if (response.ok) {
-        status.textContent = `Saved. Commit: ${result.commit?.sha || 'done'}`;
-      } else {
-        status.textContent = 'Failed: ' + (result.error || 'Unknown error');
-      }
-    } catch (error) {
-      status.textContent =
-        'Failed: ' + (error instanceof Error ? error.message : 'Unknown error');
-      console.error(error);
     }
-  });
-</script>
+
+    function syncPreview() {
+      const next = readData();
+      previewTitle.textContent = next.heroTitle;
+      previewText.textContent = next.heroText;
+    }
+
+    [titleInput, descriptionInput, heroTitleInput, heroTextInput].forEach(function (el) {
+      el.addEventListener('input', syncPreview);
+    });
+
+    saveBtn.addEventListener('click', async function () {
+      try {
+        status.textContent = 'Saving...';
+
+        const secret = editorSecretInput.value.trim();
+        if (!secret) {
+          status.textContent = 'Please enter the editor password.';
+          return;
+        }
+
+        const payload = {
+          path: contentPath,
+          content: JSON.stringify(readData(), null, 2) + '\n',
+          message: 'Update English home content from editor'
+        };
+
+        const response = await fetch('/api/save', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-editor-secret': secret
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const raw = await response.text();
+
+        let result = {};
+        try {
+          result = JSON.parse(raw);
+        } catch {
+          throw new Error(`Non-JSON response: ${raw}`);
+        }
+
+        if (response.status === 401) {
+          status.textContent = 'Incorrect editor password. Please try again.';
+          return;
+        }
+
+        if (response.ok) {
+          status.textContent = `Saved. Commit: ${result.commit?.sha || 'done'}`;
+        } else {
+          status.textContent = 'Failed: ' + (result.error || 'Unknown error');
+        }
+      } catch (error) {
+        status.textContent = 'Failed: ' + (error instanceof Error ? error.message : 'Unknown error');
+        console.error(error);
+      }
+    });
+  </script>
 </BaseLayout>
