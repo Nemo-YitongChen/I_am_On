@@ -1,0 +1,21 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import HomePage from "../../components/HomePage.astro";
+import {
+  getDefaultLocale,
+  getHomePage,
+  isSecondaryLocaleEnabled,
+} from "../../lib/site.js";
+
+const locale = Astro.params.locale ?? "";
+const isValidLocale = isSecondaryLocaleEnabled(locale);
+
+if (!isValidLocale) {
+  Astro.response.status = 404;
+}
+
+const page = isValidLocale ? getHomePage(locale) : getHomePage(getDefaultLocale());
+---
+<BaseLayout title={isValidLocale ? page.title : "Not found"} description={isValidLocale ? page.description : "Not found."} locale={isValidLocale ? locale : getDefaultLocale()}>
+  {isValidLocale ? <HomePage page={page} /> : <p class="p">Locale not enabled.</p>}
+</BaseLayout>

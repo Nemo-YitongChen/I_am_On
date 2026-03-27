@@ -1,0 +1,146 @@
+---
+const { page, contentPath, locale = "en" } = Astro.props;
+
+const isZh = locale === "zh";
+const copy = isZh
+  ? {
+      pageTitle: "编辑首页",
+      intro: "在这里修改标题与正文，保存后会写回仓库并触发 Cloudflare Worker 重新部署。",
+      titleLabel: "标题",
+      descriptionLabel: "描述",
+      heroTitleLabel: "主标题",
+      heroTextLabel: "主文案",
+      passwordLabel: "编辑密码",
+      passwordPlaceholder: "请输入编辑密码",
+      saveLabel: "保存",
+      emptyPassword: "请输入编辑密码。",
+      saving: "正在保存...",
+      notSaved: "尚未保存。",
+      previewLabel: "实时预览",
+      saveMessage: "从编辑器更新首页内容",
+      passwordError: "编辑密码错误，请重试。",
+      genericErrorPrefix: "保存失败：",
+      savedPrefix: "已保存，提交：",
+    }
+  : {
+      pageTitle: "Edit home page",
+      intro: "Edit the fields below and save them back to the repository.",
+      titleLabel: "Title",
+      descriptionLabel: "Description",
+      heroTitleLabel: "Hero title",
+      heroTextLabel: "Hero text",
+      passwordLabel: "Editor password",
+      passwordPlaceholder: "Enter editor secret",
+      saveLabel: "Save",
+      emptyPassword: "Please enter the editor password.",
+      saving: "Saving...",
+      notSaved: "Not saved yet.",
+      previewLabel: "Live preview",
+      saveMessage: "Update home content from editor",
+      passwordError: "Incorrect editor password. Please try again.",
+      genericErrorPrefix: "Failed: ",
+      savedPrefix: "Saved. Commit: ",
+    };
+---
+<section class="hero">
+  <h1 class="h1">{copy.pageTitle}</h1>
+  <p class="p">{copy.intro}</p>
+</section>
+
+<div class="card" style="margin-bottom:14px;">
+  <p class="p">{copy.titleLabel}</p>
+  <input id="title" value={page.title} style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);" />
+  <p class="p">{copy.descriptionLabel}</p>
+  <input id="description" value={page.description} style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);" />
+  <p class="p">{copy.heroTitleLabel}</p>
+  <input id="heroTitle" value={page.heroTitle} style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);" />
+  <p class="p">{copy.heroTextLabel}</p>
+  <textarea id="heroText" rows="5" style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);">{page.heroText}</textarea>
+  <p class="p">{copy.passwordLabel}</p>
+  <input id="editorSecret" type="password" placeholder={copy.passwordPlaceholder} style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);" />
+  <button id="saveBtn" class="cta">{copy.saveLabel}</button>
+  <p id="status" class="p" style="margin-top:10px;">{copy.notSaved}</p>
+</div>
+
+<div class="card">
+  <p class="p">{copy.previewLabel}</p>
+  <h2 id="previewTitle" class="h1" style="font-size:30px;">{page.heroTitle}</h2>
+  <p id="previewText" class="p">{page.heroText}</p>
+</div>
+
+<script is:inline define:vars={{ initialData: page, contentPath, copy }}>
+  const titleInput = document.getElementById('title');
+  const descriptionInput = document.getElementById('description');
+  const heroTitleInput = document.getElementById('heroTitle');
+  const heroTextInput = document.getElementById('heroText');
+  const editorSecretInput = document.getElementById('editorSecret');
+  const previewTitle = document.getElementById('previewTitle');
+  const previewText = document.getElementById('previewText');
+  const status = document.getElementById('status');
+  const saveBtn = document.getElementById('saveBtn');
+
+  function readData() {
+    return {
+      title: titleInput.value,
+      description: descriptionInput.value,
+      heroTitle: heroTitleInput.value,
+      heroText: heroTextInput.value,
+      cards: initialData.cards,
+      ctas: initialData.ctas,
+    };
+  }
+
+  function syncPreview() {
+    const next = readData();
+    previewTitle.textContent = next.heroTitle;
+    previewText.textContent = next.heroText;
+  }
+
+  [titleInput, descriptionInput, heroTitleInput, heroTextInput].forEach((el) => {
+    el.addEventListener('input', syncPreview);
+  });
+
+  saveBtn.addEventListener('click', async function () {
+    try {
+      status.textContent = copy.saving;
+
+      const secret = editorSecretInput.value.trim();
+      if (!secret) {
+        status.textContent = copy.emptyPassword;
+        return;
+      }
+
+      const payload = {
+        path: contentPath,
+        content: JSON.stringify(readData(), null, 2) + '\n',
+        message: copy.saveMessage,
+      };
+
+      const response = await fetch('/api/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-editor-secret': secret,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const raw = await response.text();
+      const result = raw ? JSON.parse(raw) : {};
+
+      if (response.status === 401) {
+        status.textContent = copy.passwordError;
+        return;
+      }
+
+      if (response.ok) {
+        status.textContent = `${copy.savedPrefix}${result.commit?.sha || 'done'}`;
+      } else {
+        status.textContent = copy.genericErrorPrefix + (result.error || 'Unknown error');
+      }
+    } catch (error) {
+      status.textContent = copy.genericErrorPrefix + (error instanceof Error ? error.message : 'Unknown error');
+      console.error(error);
+    }
+  });
+</script>

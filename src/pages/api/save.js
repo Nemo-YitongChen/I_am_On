@@ -24,21 +24,21 @@ function isAllowedPath(path) {
   return path.startsWith("src/content-live/") && path.endsWith(".json");
 }
 
-export async function onRequestPost(context) {
-  const { request, env } = context;
+export async function POST(context) {
+  const env = context.locals.runtime?.env;
 
-  if (!env.GITHUB_TOKEN || !env.GITHUB_OWNER || !env.GITHUB_REPO) {
+  if (!env?.GITHUB_TOKEN || !env?.GITHUB_OWNER || !env?.GITHUB_REPO) {
     return json(
       {
         error:
-          "Missing GitHub environment variables. Set GITHUB_TOKEN, GITHUB_OWNER, GITHUB_REPO, and optionally GITHUB_BRANCH / EDITOR_SECRET.",
+          "Missing GitHub environment variables. Configure GITHUB_TOKEN, GITHUB_OWNER, GITHUB_REPO, and optionally GITHUB_BRANCH / EDITOR_SECRET on the Cloudflare Worker.",
       },
       500,
     );
   }
 
   if (env.EDITOR_SECRET) {
-    const provided = request.headers.get("x-editor-secret");
+    const provided = context.request.headers.get("x-editor-secret");
     if (provided !== env.EDITOR_SECRET) {
       return json({ error: "Incorrect editor password." }, 401);
     }
@@ -46,7 +46,7 @@ export async function onRequestPost(context) {
 
   let payload;
   try {
-    payload = await request.json();
+    payload = await context.request.json();
   } catch {
     return json({ error: "Invalid JSON body" }, 400);
   }

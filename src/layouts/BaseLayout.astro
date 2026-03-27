@@ -1,12 +1,65 @@
 ---
-const { title = "Your Name · Personal site", description = "A bilingual content-driven Astro starter." } = Astro.props;
+import {
+  getAvailableLocales,
+  getDefaultLocale,
+  getLocaleMeta,
+} from "../lib/site.js";
+
+const {
+  title = "Your Name · Personal site",
+  description = "A content-driven Astro starter.",
+  locale: localeProp,
+} = Astro.props;
+
 const pathname = Astro.url.pathname ?? "/";
-const isEn = pathname === "/en" || pathname.startsWith("/en/");
-const locale = isEn ? "en" : "zh";
-const prefix = `/${locale}`;
+const defaultLocale = getDefaultLocale();
+const availableLocales = getAvailableLocales();
+
+function detectLocale(pathnameValue) {
+  if (localeProp) return localeProp;
+
+  const segments = pathnameValue.split("/").filter(Boolean);
+  const maybeLocale = segments[0];
+
+  return availableLocales.includes(maybeLocale) && maybeLocale !== defaultLocale
+    ? maybeLocale
+    : defaultLocale;
+}
+
+const locale = detectLocale(pathname);
+const localeMeta = getLocaleMeta(locale);
+
+function stripLocalePrefix(pathnameValue) {
+  const normalized = pathnameValue.startsWith("/") ? pathnameValue : `/${pathnameValue}`;
+  const segments = normalized.split("/").filter(Boolean);
+  const maybeLocale = segments[0];
+
+  if (availableLocales.includes(maybeLocale) && maybeLocale !== defaultLocale) {
+    const remainder = segments.slice(1).join("/");
+    return remainder ? `/${remainder}` : "/";
+  }
+
+  return normalized;
+}
+
+const basePath = stripLocalePrefix(pathname);
+
+function withLocale(targetLocale) {
+  if (targetLocale === defaultLocale) return basePath;
+  return basePath === "/" ? `/${targetLocale}/` : `/${targetLocale}${basePath}`;
+}
+
+const homeUrl = locale === defaultLocale ? "/" : `/${locale}/`;
+const localeLinks = availableLocales.length > 1
+  ? availableLocales.map((targetLocale) => ({
+      code: targetLocale,
+      href: withLocale(targetLocale),
+      label: getLocaleMeta(targetLocale).label,
+    }))
+  : [];
 ---
 <!doctype html>
-<html lang={isEn ? "en" : "zh-CN"}>
+<html lang={localeMeta.htmlLang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -16,9 +69,14 @@ const prefix = `/${locale}`;
   </head>
   <body>
     <header class="header">
-      <a class="brand" href={`${prefix}/`}>Your Name</a>
+      <a class="brand" href={homeUrl}>Your Name</a>
       <nav class="nav">
-        <a href={`${prefix}/`}>{isEn ? "Home" : "首页"}</a>
+        <a href={homeUrl}>{localeMeta.homeLabel}</a>
+        {localeLinks.map((link) => (
+          <a href={link.href} aria-current={link.code === locale ? "page" : undefined}>
+            {link.label}
+          </a>
+        ))}
       </nav>
     </header>
     <main class="container"><slot /></main>

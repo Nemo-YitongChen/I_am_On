@@ -1,6 +1,6 @@
 {
   "title": "Your Name · Personal site",
-  "description": "A bilingual content-driven Astro starter.",
+  "description": "An English-first content-driven Astro starter.",
   "heroTitle": "Turn your ideas into a clearer personal site",
   "heroText": "This starter is built for people who want a personal site, portfolio, booking page, and writing space without editing lots of code.",
   "cards": [
@@ -20,7 +20,7 @@
   "ctas": [
     {
       "label": "Edit this page",
-      "href": "/editor/en/home"
+      "href": "/editor/home"
     }
   ]
 }

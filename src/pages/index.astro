@@ -1,9 +1,11 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import HomePage from "../components/HomePage.astro";
+import { getDefaultLocale, getHomePage } from "../lib/site.js";
+
+const locale = getDefaultLocale();
+const page = getHomePage(locale);
 ---
-<BaseLayout title="Redirecting..." description="Redirecting...">
-  <script is:inline>
-    window.location.replace("/en/");
-  </script>
-  <p>Redirecting to <a href="/en/">/en/</a> ...</p>
+<BaseLayout title={page.title} description={page.description} locale={locale}>
+  <HomePage page={page} />
 </BaseLayout>
