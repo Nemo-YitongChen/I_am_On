@@ -1,8 +1,8 @@
 {
   "title": "Your Name · Personal site",
   "description": "An English-first content-driven Astro starter.",
-  "heroTitle": "Turn your ideas into a clearer personal site",
-  "heroText": "This starter is built for people who want a personal site, portfolio, booking page, and writing space without editing lots of code.",
+  "heroTitle": "Turn your ideas into a clearer personal site Test",
+  "heroText": "This starter is built for people who want a personal site, portfolio, booking page, and writing space without editing lots of code. TESt",
   "cards": [
     {
       "title": "Introduce yourself clearly",
