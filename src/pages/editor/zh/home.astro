@@ -1,0 +1,82 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import initialData from "../../../content-live/zh/home.json";
+const contentPath = "src/content-live/zh/home.json";
+---
+<BaseLayout title="编辑中文首页" description="编辑中文首页内容。">
+  <section class="hero">
+    <h1 class="h1">编辑中文首页</h1>
+    <p class="p">在这里修改标题与正文，保存后会写回仓库并触发 Cloudflare Pages 重新构建。</p>
+  </section>
+
+  <div class="card" style="margin-bottom:14px;">
+    <p class="p">标题</p>
+    <input id="title" value={initialData.title} style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);" />
+    <p class="p">描述</p>
+    <input id="description" value={initialData.description} style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);" />
+    <p class="p">主标题</p>
+    <input id="heroTitle" value={initialData.heroTitle} style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);" />
+    <p class="p">主文案</p>
+    <textarea id="heroText" rows="5" style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);">{initialData.heroText}</textarea>
+    <button id="saveBtn" class="cta">保存</button>
+    <p id="status" class="p" style="margin-top:10px;">尚未保存。</p>
+  </div>
+
+  <div class="card">
+    <p class="p">实时预览</p>
+    <h2 id="previewTitle" class="h1" style="font-size:30px;">{initialData.heroTitle}</h2>
+    <p id="previewText" class="p">{initialData.heroText}</p>
+  </div>
+
+  <script is:inline define:vars={{ initialData, contentPath }}>
+    const titleInput = document.getElementById('title');
+    const descriptionInput = document.getElementById('description');
+    const heroTitleInput = document.getElementById('heroTitle');
+    const heroTextInput = document.getElementById('heroText');
+    const previewTitle = document.getElementById('previewTitle');
+    const previewText = document.getElementById('previewText');
+    const status = document.getElementById('status');
+    const saveBtn = document.getElementById('saveBtn');
+
+    function readData() {
+      return {
+        title: titleInput.value,
+        description: descriptionInput.value,
+        heroTitle: heroTitleInput.value,
+        heroText: heroTextInput.value,
+        cards: initialData.cards,
+        ctas: initialData.ctas
+      };
+    }
+
+    function syncPreview() {
+      const next = readData();
+      previewTitle.textContent = next.heroTitle;
+      previewText.textContent = next.heroText;
+    }
+
+    [titleInput, descriptionInput, heroTitleInput, heroTextInput].forEach(function(el) {
+      el.addEventListener('input', syncPreview);
+    });
+
+    saveBtn.addEventListener('click', async function() {
+      status.textContent = '正在保存';
+      const payload = {
+        path: contentPath,
+        content: JSON.stringify(readData(), null, 2) + '\n',
+        message: '从编辑器更新中文首页内容'
+      };
+      const response = await fetch('/api/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const result = await response.json();
+      if (response.ok) {
+        status.textContent = '已写入 GitHub，Cloudflare Pages 将自动重新部署。';
+      } else {
+        status.textContent = '保存失败：' + (result.error || '未知错误');
+      }
+    });
+  </script>
+</BaseLayout>
