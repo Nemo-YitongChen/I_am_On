@@ -1,0 +1,12 @@
+{
+  "defaultLocale": "en",
+  "locales": ["en"],
+  "multilingual": false,
+  "features": {
+    "editor": true,
+    "booking": false,
+    "recruiters": false,
+    "posts": true,
+    "work": true
+  }
+}
