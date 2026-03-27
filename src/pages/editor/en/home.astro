@@ -36,54 +36,82 @@ const contentPath = "src/content-live/en/home.json";
     </div>
 
   <script is:inline define:vars={{ initialData, contentPath }}>
-    const titleInput = document.getElementById('title');
-    const descriptionInput = document.getElementById('description');
-    const heroTitleInput = document.getElementById('heroTitle');
-    const heroTextInput = document.getElementById('heroText');
-    const previewTitle = document.getElementById('previewTitle');
-    const previewText = document.getElementById('previewText');
-    const status = document.getElementById('status');
-    const saveBtn = document.getElementById('saveBtn');
+  const titleInput = document.getElementById('title');
+  const descriptionInput = document.getElementById('description');
+  const heroTitleInput = document.getElementById('heroTitle');
+  const heroTextInput = document.getElementById('heroText');
+  const editorSecretInput = document.getElementById('editorSecret');
 
-    function readData() {
-      return {
-        title: titleInput.value,
-        description: descriptionInput.value,
-        heroTitle: heroTitleInput.value,
-        heroText: heroTextInput.value,
-        cards: initialData.cards,
-        ctas: initialData.ctas
-      };
-    }
+  const previewTitle = document.getElementById('previewTitle');
+  const previewText = document.getElementById('previewText');
+  const status = document.getElementById('status');
+  const saveBtn = document.getElementById('saveBtn');
 
-    function syncPreview() {
-      const next = readData();
-      previewTitle.textContent = next.heroTitle;
-      previewText.textContent = next.heroText;
-    }
+  function readData() {
+    return {
+      title: titleInput.value,
+      description: descriptionInput.value,
+      heroTitle: heroTitleInput.value,
+      heroText: heroTextInput.value,
+      cards: initialData.cards,
+      ctas: initialData.ctas
+    };
+  }
 
-    [titleInput, descriptionInput, heroTitleInput, heroTextInput].forEach(function(el) {
-      el.addEventListener('input', syncPreview);
-    });
+  function syncPreview() {
+    const next = readData();
+    previewTitle.textContent = next.heroTitle;
+    previewText.textContent = next.heroText;
+  }
 
-    saveBtn.addEventListener('click', async function() {
-      status.textContent = 'Saving';
+  [titleInput, descriptionInput, heroTitleInput, heroTextInput].forEach(function (el) {
+    el.addEventListener('input', syncPreview);
+  });
+
+  saveBtn.addEventListener('click', async function () {
+    try {
+      status.textContent = 'Saving...';
+
+      const secret = editorSecretInput.value.trim();
+      if (!secret) {
+        status.textContent = 'Please enter the editor password.';
+        return;
+      }
+
       const payload = {
         path: contentPath,
         content: JSON.stringify(readData(), null, 2) + '\n',
         message: 'Update English home content from editor'
       };
+
       const response = await fetch('/api/save', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-editor-secret': secret
+        },
         body: JSON.stringify(payload)
       });
-      const result = await response.json();
+
+      const raw = await response.text();
+
+      let result = {};
+      try {
+        result = JSON.parse(raw);
+      } catch {
+        throw new Error(`Non-JSON response: ${raw}`);
+      }
+
       if (response.ok) {
-        status.textContent = 'Saved to GitHub. Cloudflare Pages will rebuild automatically.';
+        status.textContent = `Saved. Commit: ${result.commit?.sha || 'done'}`;
       } else {
         status.textContent = 'Failed: ' + (result.error || 'Unknown error');
       }
-    });
-  </script>
+    } catch (error) {
+      status.textContent =
+        'Failed: ' + (error instanceof Error ? error.message : 'Unknown error');
+      console.error(error);
+    }
+  });
+</script>
 </BaseLayout>
