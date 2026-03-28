@@ -1,0 +1,14 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import BookPage from "../components/BookPage.astro";
+import { getBookingOptions, getProfile } from "../lib/content";
+import { getDefaultLocale, getPage } from "../lib/site.js";
+
+const locale = getDefaultLocale();
+const page = getPage(locale, "book");
+const options = await getBookingOptions(locale);
+const profile = await getProfile();
+---
+<BaseLayout title={page.title} description={page.description} locale={locale}>
+  <BookPage page={page} options={options} locale={locale} profile={profile} />
+</BaseLayout>

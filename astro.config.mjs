@@ -1,4 +1,4 @@
-import { defineConfig } from "astro/config";
+import { defineConfig, passthroughImageService } from "astro/config";
 import cloudflare from "@astrojs/cloudflare";
 import { siteConfig } from "./site.config.mjs";
 
@@ -17,5 +17,8 @@ export default defineConfig({
   site: siteConfig.site,
   adapter: cloudflare(),
   output: "server",
+  image: {
+    service: passthroughImageService(),
+  },
   ...localeConfig,
 });

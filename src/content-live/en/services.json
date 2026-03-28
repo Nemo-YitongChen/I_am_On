@@ -1,0 +1,40 @@
+{
+  "title": "Services | Your Name",
+  "description": "A generic services or skills page for the starter template.",
+  "heroTitle": "Explain what you help with, without sounding vague",
+  "heroText": "Use short, concrete cards here to describe your services, strengths, or support areas. The goal is clarity, not inflated claims.",
+  "cards": [
+    {
+      "title": "Strategy and structure",
+      "text": "Help people make sense of messy information, clarify direction, and decide on the next useful move.",
+      "layout": "half"
+    },
+    {
+      "title": "Research and writing",
+      "text": "Turn complex material into clearer notes, summaries, briefing documents, or public-facing writing.",
+      "layout": "half"
+    },
+    {
+      "title": "Operations and delivery",
+      "text": "Support planning, follow-through, coordination, and the practical side of getting work across the line.",
+      "layout": "half"
+    },
+    {
+      "title": "Communication support",
+      "text": "Use this space for interviewing, facilitation, translation, meeting support, or stakeholder-facing work.",
+      "layout": "half"
+    }
+  ],
+  "ctas": [
+    {
+      "label": "Consult",
+      "href": "/consult/",
+      "variant": "primary"
+    },
+    {
+      "label": "Book a chat",
+      "href": "/book/",
+      "variant": "secondary"
+    }
+  ]
+}

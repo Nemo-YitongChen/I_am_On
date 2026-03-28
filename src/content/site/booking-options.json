@@ -1,0 +1,22 @@
+[
+  {
+    "id": "en-calendly-setup",
+    "lang": "en",
+    "name": "Optional Calendly booking",
+    "duration": "Replace with your own event link",
+    "teaser": "Turn this on when you want a booking link on the page. Replace the placeholder with your own Calendly event URL after you sign up.",
+    "url": "https://calendly.com/signup",
+    "order": 10,
+    "featured": true
+  },
+  {
+    "id": "zh-calendly-setup",
+    "lang": "zh",
+    "name": "可选的 Calendly 预约入口",
+    "duration": "替换成你自己的活动链接",
+    "teaser": "当你准备好展示预约入口时，再启用这一项。把这里的占位链接换成你自己的 Calendly 活动链接即可。",
+    "url": "https://calendly.com/signup",
+    "order": 10,
+    "featured": true
+  }
+]

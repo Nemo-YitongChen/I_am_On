@@ -1,0 +1,29 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import LongformListPage from "../../../components/LongformListPage.astro";
+import { isSecondaryLocaleEnabled } from "../../../lib/site.js";
+import { getSlugFromContentId, getWorkList } from "../../../lib/content";
+
+const locale = Astro.params.locale ?? "";
+const isValidLocale = isSecondaryLocaleEnabled(locale);
+
+if (!isValidLocale) {
+  Astro.response.status = 404;
+}
+
+const entries = isValidLocale ? await getWorkList(locale) : [];
+const items = entries.map((entry) => ({
+  href: `/${locale}/work/${getSlugFromContentId(entry.id)}/`,
+  title: entry.data.title,
+  summary: entry.data.summary,
+  meta: `${entry.data.role} · ${entry.data.year}`,
+  tags: entry.data.tags,
+}));
+
+const copy = locale === "zh"
+  ? { title: "案例", intro: "用这个集合展示代表性工作、项目或职责摘要。", eyebrow: "案例集合" }
+  : { title: "Work", intro: "Use this collection for selected projects, roles, case studies, or representative proof.", eyebrow: "Selected work" };
+---
+<BaseLayout title={`${copy.title} | Your Name`} description={copy.intro} locale={isValidLocale ? locale : "en"}>
+  {isValidLocale ? <LongformListPage title={copy.title} intro={copy.intro} eyebrow={copy.eyebrow} items={items} /> : <p class="p">Locale not enabled.</p>}
+</BaseLayout>

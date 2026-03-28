@@ -1,0 +1,38 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import RecruitersPage from "../components/RecruitersPage.astro";
+import { getProfile } from "../lib/content";
+import { getDefaultLocale, getPage } from "../lib/site.js";
+
+const locale = getDefaultLocale();
+const page = getPage(locale, "recruiters");
+const profile = await getProfile();
+const isZh = locale === "zh";
+
+const quickLinks = [
+  {
+    label: isZh ? "案例" : "Work",
+    title: isZh ? "查看工作案例" : "See selected work",
+    summary: isZh ? "把代表性案例放在这里，帮助别人快速判断你的背景。" : "Use your work page as the fastest route into real examples.",
+    href: locale === "zh" ? "/zh/work/" : "/work/",
+    external: false,
+  },
+  {
+    label: "LinkedIn",
+    title: "LinkedIn profile",
+    summary: isZh ? "把公开职业资料放在这里。" : "Use your public professional profile as a second context layer.",
+    href: profile.linkedin,
+    external: true,
+  },
+  {
+    label: isZh ? "联系" : "Contact",
+    title: isZh ? "直接发邮件" : "Email directly",
+    summary: isZh ? "提供一个比预约更轻量的联系入口。" : "Give people a direct route if they want context first.",
+    href: `mailto:${profile.email}`,
+    external: false,
+  },
+];
+---
+<BaseLayout title={page.title} description={page.description} locale={locale}>
+  <RecruitersPage page={page} locale={locale} quickLinks={quickLinks} />
+</BaseLayout>

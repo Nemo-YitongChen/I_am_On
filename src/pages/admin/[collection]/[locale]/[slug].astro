@@ -1,0 +1,67 @@
+---
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import AdminGate from "../../../../components/AdminGate.astro";
+import MarkdownEditor from "../../../../components/MarkdownEditor.astro";
+import { getContentFilePath, getContentPublicPath, getEnabledLocales, getPostsList, getSlugFromContentId, getWorkList } from "../../../../lib/content";
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const paths = [];
+
+  for (const locale of getEnabledLocales()) {
+    const posts = await getPostsList(locale);
+    const work = await getWorkList(locale);
+
+    for (const entry of posts) {
+      const slug = getSlugFromContentId(entry.id);
+      paths.push({
+        params: { collection: "posts", locale, slug },
+        props: {
+          collection: "posts",
+          locale,
+          slug,
+          entry,
+          contentPath: getContentFilePath("posts", locale, slug),
+          pagePath: getContentPublicPath("posts", locale, slug),
+        },
+      });
+    }
+
+    for (const entry of work) {
+      const slug = getSlugFromContentId(entry.id);
+      paths.push({
+        params: { collection: "work", locale, slug },
+        props: {
+          collection: "work",
+          locale,
+          slug,
+          entry,
+          contentPath: getContentFilePath("work", locale, slug),
+          pagePath: getContentPublicPath("work", locale, slug),
+        },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { collection, locale, slug, entry, contentPath, pagePath } = Astro.props;
+---
+<BaseLayout title={`Admin · ${entry.data.title}`} description={`Edit ${entry.data.title}.`} locale={locale}>
+  <AdminGate
+    title={`Admin · ${entry.data.title}`}
+    intro="Unlock admin access on this browser, then update the frontmatter and Markdown body below."
+  >
+    <MarkdownEditor
+      entryType={collection}
+      locale={locale}
+      slug={slug}
+      contentPath={contentPath}
+      pagePath={pagePath}
+      data={entry.data}
+      body={entry.body}
+    />
+  </AdminGate>
+</BaseLayout>

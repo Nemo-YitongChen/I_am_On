@@ -2,8 +2,12 @@
 import {
   getAvailableLocales,
   getDefaultLocale,
+  getLocalePrefix,
   getLocaleMeta,
+  getPublicPath,
 } from "../lib/site.js";
+import { getProfile } from "../lib/content";
+import { siteConfig } from "../../site.config.mjs";
 
 const {
   title = "Your Name · Personal site",
@@ -11,9 +15,11 @@ const {
   locale: localeProp,
 } = Astro.props;
 
+const profile = await getProfile();
 const pathname = Astro.url.pathname ?? "/";
 const defaultLocale = getDefaultLocale();
 const availableLocales = getAvailableLocales();
+const site = Astro.site ?? new URL(siteConfig.site);
 
 function detectLocale(pathnameValue) {
   if (localeProp) return localeProp;
@@ -28,6 +34,8 @@ function detectLocale(pathnameValue) {
 
 const locale = detectLocale(pathname);
 const localeMeta = getLocaleMeta(locale);
+const isEditor = pathname === "/editor" || pathname.startsWith("/editor/") || pathname.includes("/editor/");
+const isAdmin = pathname === "/admin" || pathname.startsWith("/admin/");
 
 function stripLocalePrefix(pathnameValue) {
   const normalized = pathnameValue.startsWith("/") ? pathnameValue : `/${pathnameValue}`;
@@ -50,13 +58,54 @@ function withLocale(targetLocale) {
 }
 
 const homeUrl = locale === defaultLocale ? "/" : `/${locale}/`;
-const localeLinks = availableLocales.length > 1
+const localeLinks = !isAdmin && availableLocales.length > 1
   ? availableLocales.map((targetLocale) => ({
       code: targetLocale,
       href: withLocale(targetLocale),
       label: getLocaleMeta(targetLocale).label,
     }))
   : [];
+const canonical = new URL(basePath === "/" ? homeUrl : withLocale(locale), site).toString();
+const alternateLinks = availableLocales.map((targetLocale) => ({
+  hreflang: getLocaleMeta(targetLocale).htmlLang,
+  href: new URL(withLocale(targetLocale), site).toString(),
+}));
+const shouldNoIndex = isEditor || isAdmin;
+
+const nav = locale === "zh"
+  ? {
+      about: "关于",
+      work: "案例",
+      consult: "咨询",
+      recruiters: "招聘摘要",
+      posts: "文章",
+      services: "服务",
+      book: "预约",
+      privacy: "隐私",
+    }
+  : {
+      about: "About",
+      work: "Work",
+      consult: "Consult",
+      recruiters: "For Recruiters",
+      posts: "Writing",
+      services: "Services",
+      book: "Book",
+      privacy: "Privacy",
+    };
+
+const urls = {
+  home: getPublicPath(locale, "home"),
+  about: getPublicPath(locale, "about"),
+  services: getPublicPath(locale, "services"),
+  consult: getPublicPath(locale, "consult"),
+  recruiters: getPublicPath(locale, "recruiters"),
+  book: getPublicPath(locale, "book"),
+  posts: `${getLocalePrefix(locale)}/posts/`,
+  work: `${getLocalePrefix(locale)}/work/`,
+  privacy: getPublicPath(locale, "privacy"),
+  admin: "/admin/",
+};
 ---
 <!doctype html>
 <html lang={localeMeta.htmlLang}>
@@ -65,20 +114,59 @@ const localeLinks = availableLocales.length > 1
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {alternateLinks.map((link) => <link rel="alternate" hreflang={link.hreflang} href={link.href} />)}
+    {alternateLinks[0] && <link rel="alternate" hreflang="x-default" href={alternateLinks[0].href} />}
+    {shouldNoIndex && <meta name="robots" content="noindex, nofollow" />}
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content={profile.brand} />
+    <meta property="og:locale" content={locale === "zh" ? "zh_CN" : "en_US"} />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="stylesheet" href="/styles/global.css" />
   </head>
   <body>
     <header class="header">
-      <a class="brand" href={homeUrl}>Your Name</a>
-      <nav class="nav">
-        <a href={homeUrl}>{localeMeta.homeLabel}</a>
-        {localeLinks.map((link) => (
-          <a href={link.href} aria-current={link.code === locale ? "page" : undefined}>
-            {link.label}
-          </a>
-        ))}
-      </nav>
+      <a class="brand" href={homeUrl}>{profile.brand}</a>
+      <div class="header-controls">
+        <nav class="nav nav-primary">
+          <a href={urls.about}>{nav.about}</a>
+          <a href={urls.work}>{nav.work}</a>
+          <a href={urls.consult}>{nav.consult}</a>
+          <a href={urls.recruiters}>{nav.recruiters}</a>
+        </nav>
+        <div class="nav nav-actions">
+          <a class="cta" href={urls.book}>{nav.book}</a>
+          {localeLinks.map((link) => (
+            <a href={link.href} aria-current={link.code === locale ? "page" : undefined}>
+              {link.label}
+            </a>
+          ))}
+        </div>
+      </div>
     </header>
+
     <main class="container"><slot /></main>
+
+    <footer class="footer">
+      <div class="footer-meta">
+        <strong>{profile.ownerName}</strong>
+        {profile.location && <span>{profile.location}</span>}
+        <a href={`mailto:${profile.email}`}>{profile.email}</a>
+        {profile.phone && <a href={`tel:${profile.phone.replace(/\s+/g, "")}`}>{profile.phone}</a>}
+      </div>
+      <div class="footer-links">
+        <a href={urls.work}>{nav.work}</a>
+        <a href={urls.posts}>{nav.posts}</a>
+        <a href={urls.services}>{nav.services}</a>
+        <a href={urls.recruiters}>{nav.recruiters}</a>
+        <a href={urls.book}>{nav.book}</a>
+        <a href={urls.privacy}>{nav.privacy}</a>
+        <a href={profile.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
+        {profile.github && <a href={profile.github} target="_blank" rel="noreferrer">GitHub</a>}
+      </div>
+    </footer>
   </body>
 </html>

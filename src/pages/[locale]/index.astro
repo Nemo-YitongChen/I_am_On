@@ -1,11 +1,8 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import HomePage from "../../components/HomePage.astro";
-import {
-  getDefaultLocale,
-  getHomePage,
-  isSecondaryLocaleEnabled,
-} from "../../lib/site.js";
+import { getPage, isSecondaryLocaleEnabled } from "../../lib/site.js";
+import { getPostsList, getSlugFromContentId, getWorkList } from "../../lib/content";
 
 const locale = Astro.params.locale ?? "";
 const isValidLocale = isSecondaryLocaleEnabled(locale);
@@ -14,8 +11,44 @@ if (!isValidLocale) {
   Astro.response.status = 404;
 }
 
-const page = isValidLocale ? getHomePage(locale) : getHomePage(getDefaultLocale());
+const page = isValidLocale ? getPage(locale, "home") : null;
+const latestPostEntry = isValidLocale ? (await getPostsList(locale))[0] : null;
+const workEntries = isValidLocale ? await getWorkList(locale) : [];
+const featuredWorkEntry = workEntries.find((entry) => entry.data.featured) ?? workEntries[0];
+
+const proofCards = isValidLocale
+  ? [
+      featuredWorkEntry
+        ? {
+            href: `/${locale}/work/${getSlugFromContentId(featuredWorkEntry.id)}/`,
+            label: locale === "zh" ? "代表性案例" : "Selected work",
+            title: featuredWorkEntry.data.title,
+            summary: featuredWorkEntry.data.summary,
+            meta: `${featuredWorkEntry.data.role} · ${featuredWorkEntry.data.year}`,
+          }
+        : null,
+      {
+        href: `/${locale}/recruiters/`,
+        label: locale === "zh" ? "招聘摘要" : "For recruiters",
+        title: locale === "zh" ? "岗位适配与联系方式" : "Role fit and contact",
+        summary:
+          locale === "zh"
+            ? "把招聘方常看信息收在同一页里。"
+            : "Put recruiter-facing context in one place instead of scattering it across the site.",
+        meta: locale === "zh" ? "招聘入口" : "Hiring snapshot",
+      },
+      latestPostEntry
+        ? {
+            href: `/${locale}/posts/${getSlugFromContentId(latestPostEntry.id)}/`,
+            label: locale === "zh" ? "文章" : "Writing",
+            title: latestPostEntry.data.title,
+            summary: latestPostEntry.data.summary,
+            meta: latestPostEntry.data.publishedAt.toISOString().slice(0, 10),
+          }
+        : null,
+    ].filter(Boolean)
+  : [];
 ---
-<BaseLayout title={isValidLocale ? page.title : "Not found"} description={isValidLocale ? page.description : "Not found."} locale={isValidLocale ? locale : getDefaultLocale()}>
-  {isValidLocale ? <HomePage page={page} /> : <p class="p">Locale not enabled.</p>}
+<BaseLayout title={isValidLocale && page ? page.title : "Not found"} description={isValidLocale && page ? page.description : "Not found."} locale={locale}>
+  {isValidLocale && page ? <HomePage page={page} locale={locale} proofCards={proofCards} /> : <p class="p">Locale not enabled.</p>}
 </BaseLayout>

@@ -1,0 +1,11 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import StructuredPage from "../components/StructuredPage.astro";
+import { getDefaultLocale, getPage } from "../lib/site.js";
+
+const locale = getDefaultLocale();
+const page = getPage(locale, "about");
+---
+<BaseLayout title={page.title} description={page.description} locale={locale}>
+  <StructuredPage page={page} locale={locale} />
+</BaseLayout>

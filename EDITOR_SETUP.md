@@ -2,60 +2,89 @@
 
 ## What this file is for
 
-This file explains how the browser-based editor works in this repository, and what needs to be configured before the save flow can update content and publish through Cloudflare Pages.
+This file explains how the browser editor and long-form admin work in this repository, and what must be configured before save actions can update GitHub and trigger Cloudflare deployment.
 
-## Current editor routes
+## Public routes
 
-- `/editor/en/home`
-- `/editor/zh/home`
+Default English routes:
 
-## Current public routes
+- `/`
+- `/about/`
+- `/services/`
+- `/consult/`
+- `/recruiters/`
+- `/book/`
+- `/posts/`
+- `/work/`
 
-- `/en/`
-- `/zh/`
+If you enable a secondary locale such as Chinese, the same pages appear under `/<locale>/...`.
 
-## How the flow works
+## Editor routes
 
-1. A user opens the editor route.
-2. The editor loads JSON content from `src/content-live/...`.
-3. The user edits fields in the browser.
+Page block editor:
+
+- `/editor/home/`
+- `/editor/about/`
+- `/editor/services/`
+- `/editor/consult/`
+- `/editor/recruiters/`
+- `/editor/book/`
+
+Long-form admin:
+
+- `/admin/`
+
+## How the save flow works
+
+1. A user opens an editor or admin route.
+2. The page loads JSON or Markdown content from the repository.
+3. The user enters the editor password in the browser.
 4. Clicking **Save** sends a POST request to `/api/save`.
-5. `functions/api/save.js` writes the updated file back to GitHub.
-6. Cloudflare Pages Git integration rebuilds and redeploys the site after the commit lands on the configured branch.
+5. The save API reads the current file from GitHub, gets its `sha`, updates the file, and creates a commit.
+6. Cloudflare rebuilds and republishes the site from GitHub.
 
-Cloudflare Pages Functions run from the `/functions` directory, and Git-integrated Pages projects automatically deploy after changes are pushed to the connected repository branch.
+## Paths allowed by the save API
 
-## Required Cloudflare Pages environment variables
+The save API allows only these write targets:
 
-Set these in **Workers & Pages -> your project -> Settings -> Variables and Secrets**:
+- `src/content-live/**/*.json`
+- `src/content/site/profile.json`
+- `src/content/site/booking-options.json`
+- `src/content/posts/**/*.md`
+- `src/content/work/**/*.md`
 
-- `GITHUB_TOKEN`
+It does not allow arbitrary writes outside those paths.
+
+## Required Cloudflare runtime variables and secrets
+
+Set these in **Workers & Pages -> your project -> Settings -> Variables and Secrets**.
+
+Vars:
+
+- `GITHUB_OWNER`
 - `GITHUB_REPO`
 - `GITHUB_BRANCH`
 
-### Expected values
+Secrets:
 
-- `GITHUB_TOKEN`: a GitHub token with permission to update repository contents
-- `GITHUB_REPO`: for example `Nemo-YitongChen/I_am_On`
-- `GITHUB_BRANCH`: usually `main`
+- `GITHUB_TOKEN`
+- `EDITOR_SECRET`
 
-## Required repository / project conditions
+## Booking page and Calendly
 
-- Cloudflare Pages project must be connected to the GitHub repository through Git integration.
-- The repository branch used by the save API must match the production or preview deployment branch you want to update.
-- The token used in `GITHUB_TOKEN` must be allowed to modify repository contents.
+The booking page is intentionally flexible:
 
-## Current limitations
+- page copy lives in `src/content-live/<locale>/book.json`
+- booking link data lives in `src/content/site/booking-options.json`
+- `showCalendly` inside `book.json` controls whether the booking option appears
 
-- The editor currently supports only home page editing.
-- The editor is not yet protected by authentication.
-- The allowed save paths are limited to `src/content-live/`.
-- `src/site.config.json` now exists as the place to define default locale and whether multilingual mode is enabled, but the runtime wiring still needs to be completed in the next implementation step.
+The starter placeholder URL points to `https://calendly.com/signup`, not to any personal event link.
 
-## Recommended next implementation step
+## Recommended setup order
 
-1. Wire `src/site.config.json` into Astro config / routing decisions.
-2. Add editor routes for About.
-3. Add access protection to `/editor`.
-4. Expand public pages beyond the home page.
-5. Add preview / draft behavior if required.
+1. Confirm the site deploys normally from GitHub.
+2. Add `GITHUB_TOKEN` and `EDITOR_SECRET`.
+3. Test `/editor/home/`.
+4. Test `/editor/about/` and `/editor/book/`.
+5. Test `/admin/` for posts and work.
+6. Replace placeholder identity, URLs, and booking links before publishing a real site.

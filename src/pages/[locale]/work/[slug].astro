@@ -1,0 +1,49 @@
+---
+import { getEntry, render } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import LongformEntryPage from "../../../components/LongformEntryPage.astro";
+import { getSecondaryLocales, isSecondaryLocaleEnabled } from "../../../lib/site.js";
+import { getSlugFromContentId, getWorkList } from "../../../lib/content";
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const locale of getSecondaryLocales()) {
+    const entries = await getWorkList(locale);
+    paths.push(
+      ...entries.map((entry) => ({
+        params: { locale, slug: getSlugFromContentId(entry.id) },
+        props: { id: entry.id, locale },
+      })),
+    );
+  }
+  return paths;
+}
+
+const { id, locale } = Astro.props;
+const isValidLocale = isSecondaryLocaleEnabled(locale);
+const entry = await getEntry("work", id);
+
+if (!entry) {
+  throw new Error(`Missing work entry: ${id}`);
+}
+
+const { Content } = await render(entry);
+const eyebrow = locale === "zh" ? "案例" : "Work";
+const meta = `${entry.data.role} · ${entry.data.year}`;
+---
+<BaseLayout title={entry.data.title} description={entry.data.description} locale={isValidLocale ? locale : "en"}>
+  {isValidLocale ? (
+    <LongformEntryPage
+      eyebrow={eyebrow}
+      title={entry.data.title}
+      description={entry.data.description}
+      meta={meta}
+      tags={entry.data.tags}
+      Content={Content}
+    />
+  ) : (
+    <p class="p">Locale not enabled.</p>
+  )}
+</BaseLayout>

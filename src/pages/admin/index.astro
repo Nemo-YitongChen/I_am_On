@@ -1,0 +1,61 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import AdminGate from "../../components/AdminGate.astro";
+import { getLocaleMeta } from "../../lib/site.js";
+import { getEnabledLocales, getPostsList, getSlugFromContentId, getWorkList } from "../../lib/content";
+
+const locales = getEnabledLocales();
+
+const sections = await Promise.all(
+  locales.map(async (locale) => ({
+    locale,
+    localeLabel: getLocaleMeta(locale).label,
+    posts: (await getPostsList(locale)).map((entry) => ({
+      title: entry.data.title,
+      href: `/admin/posts/${locale}/${getSlugFromContentId(entry.id)}/`,
+      publicHref: `/${locale === "en" ? "" : `${locale}/`}posts/${getSlugFromContentId(entry.id)}/`.replace("//", "/"),
+    })),
+    work: (await getWorkList(locale)).map((entry) => ({
+      title: entry.data.title,
+      href: `/admin/work/${locale}/${getSlugFromContentId(entry.id)}/`,
+      publicHref: `/${locale === "en" ? "" : `${locale}/`}work/${getSlugFromContentId(entry.id)}/`.replace("//", "/"),
+    })),
+  })),
+);
+---
+<BaseLayout title="Admin | I_am_On" description="Protected long-form content admin." locale="en">
+  <AdminGate
+    title="Admin"
+    intro="Unlock this area to edit posts and work entries through the browser without exposing the tools on the public site."
+  >
+    <div class="grid" style="margin-top:14px;">
+      {sections.map((section) => (
+        <>
+          <section class="card half">
+            <p class="kicker">Posts · {section.localeLabel}</p>
+            <p class="small" style="margin-bottom:12px;">Edit existing posts in this locale.</p>
+            {section.posts.map((item) => (
+              <p class="small" style="margin:0 0 10px;">
+                <a href={item.href} style="text-decoration:underline;">{item.title}</a>
+                {" · "}
+                <a href={item.publicHref} target="_blank" rel="noreferrer">live</a>
+              </p>
+            ))}
+          </section>
+
+          <section class="card half">
+            <p class="kicker">Work · {section.localeLabel}</p>
+            <p class="small" style="margin-bottom:12px;">Edit existing work entries in this locale.</p>
+            {section.work.map((item) => (
+              <p class="small" style="margin:0 0 10px;">
+                <a href={item.href} style="text-decoration:underline;">{item.title}</a>
+                {" · "}
+                <a href={item.publicHref} target="_blank" rel="noreferrer">live</a>
+              </p>
+            ))}
+          </section>
+        </>
+      ))}
+    </div>
+  </AdminGate>
+</BaseLayout>

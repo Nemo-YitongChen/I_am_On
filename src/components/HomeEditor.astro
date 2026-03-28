@@ -1,76 +1,571 @@
 ---
-const { page, contentPath, locale = "en" } = Astro.props;
+const {
+  page,
+  contentPath,
+  locale = "en",
+  editorTitle,
+  intro,
+  saveMessage,
+  pagePath,
+  currentPageKey = "home",
+  editorLinks = [],
+  localeName,
+} = Astro.props;
 
 const isZh = locale === "zh";
+
 const copy = isZh
   ? {
-      pageTitle: "编辑首页",
-      intro: "在这里修改标题与正文，保存后会写回仓库并触发 Cloudflare Worker 重新部署。",
+      pageTitle: editorTitle ?? "编辑页面",
+      intro: intro ?? "修改内容后会写回 GitHub，并触发 Cloudflare 自动重新部署。",
+      localeLabel: "当前语言",
+      localeValue: localeName ?? "中文",
+      editorNavLabel: "页面导航",
+      editorNavIntro: "可以在这里切换到其他页面的编辑器，也可以返回对应的正常页面。",
+      viewLiveLabel: "查看正常页面",
+      currentEditorLabel: "当前页面",
+      seoHeading: "SEO / 标题",
+      seoIntro: "管理页面标题与描述。",
+      heroHeading: "Hero",
+      heroIntro: "首屏的标题与主文案会直接影响第一印象。",
+      cardsHeading: "Cards",
+      cardsIntro: "这些卡片适合放分类信息、摘要或辅助说明。",
+      ctasHeading: "CTA",
+      ctasIntro: "按钮建议保持主次分明，避免所有按钮都一样重。",
+      publishingHeading: "Publishing",
+      publishingIntro: "保存会写回仓库，然后等待 Cloudflare 把页面发布出去。",
       titleLabel: "标题",
       descriptionLabel: "描述",
       heroTitleLabel: "主标题",
       heroTextLabel: "主文案",
+      cardsLabel: "卡片内容",
+      cardTitleLabel: "卡片标题",
+      cardTextLabel: "卡片文案",
+      cardLayoutLabel: "卡片宽度",
+      ctasLabel: "按钮",
+      ctaLabelLabel: "按钮文字",
+      ctaHrefLabel: "按钮链接",
+      ctaVariantLabel: "按钮样式",
       passwordLabel: "编辑密码",
       passwordPlaceholder: "请输入编辑密码",
       saveLabel: "保存",
       emptyPassword: "请输入编辑密码。",
-      saving: "正在保存...",
-      notSaved: "尚未保存。",
-      previewLabel: "实时预览",
-      saveMessage: "从编辑器更新首页内容",
+      saving: "Saving…",
+      notSaved: "Draft",
+      previewLabel: "Preview",
+      previewIntro: "右侧会根据左侧输入实时更新。",
+      saveMessage: saveMessage ?? "从编辑器更新页面内容",
       passwordError: "编辑密码错误，请重试。",
       genericErrorPrefix: "保存失败：",
-      savedPrefix: "已保存，提交：",
+      commitCreated: "Commit created",
+      deploying: "Deploying…",
+      live: "Live",
+      stillDeploying: "Still deploying",
+      commitPrefix: "提交：",
+      deployPendingHint: "还没有检测到最新页面，Cloudflare 可能仍在发布中。",
       unknownError: "未知错误",
+      statusReady: "准备保存",
+      layoutLabels: { full: "整行", half: "半宽", third: "三分之一" },
+      variantLabels: { primary: "主按钮", secondary: "描边按钮" },
+      deviceLabels: { desktop: "Desktop", tablet: "Tablet", mobile: "Mobile" },
+      pathLabel: "内容文件",
+      livePathLabel: "线上页面",
     }
   : {
-      pageTitle: "Edit home page",
-      intro: "Edit the fields below and save them back to the repository.",
+      pageTitle: editorTitle ?? "Edit page",
+      intro: intro ?? "This editor writes back to GitHub and lets Cloudflare publish the page after deployment.",
+      localeLabel: "Current language",
+      localeValue: localeName ?? "English",
+      editorNavLabel: "Page navigation",
+      editorNavIntro: "Switch to another page editor here, or jump back to the live page.",
+      viewLiveLabel: "View live page",
+      currentEditorLabel: "Current page",
+      seoHeading: "SEO / Title",
+      seoIntro: "Manage the page title and description here.",
+      heroHeading: "Hero",
+      heroIntro: "The hero is the most visible part of the page, so keep it clear and calm.",
+      cardsHeading: "Cards",
+      cardsIntro: "Use cards for grouped topics, evidence points, or short supporting sections.",
+      ctasHeading: "CTA",
+      ctasIntro: "Keep button hierarchy obvious so not everything feels equally important.",
+      publishingHeading: "Publishing",
+      publishingIntro: "Saving writes back to the repository, then waits for Cloudflare to publish the update.",
       titleLabel: "Title",
       descriptionLabel: "Description",
       heroTitleLabel: "Hero title",
       heroTextLabel: "Hero text",
+      cardsLabel: "Cards",
+      cardTitleLabel: "Card title",
+      cardTextLabel: "Card text",
+      cardLayoutLabel: "Card width",
+      ctasLabel: "Buttons",
+      ctaLabelLabel: "Button label",
+      ctaHrefLabel: "Button link",
+      ctaVariantLabel: "Button style",
       passwordLabel: "Editor password",
       passwordPlaceholder: "Enter editor secret",
       saveLabel: "Save",
       emptyPassword: "Please enter the editor password.",
-      saving: "Saving...",
-      notSaved: "Not saved yet.",
-      previewLabel: "Live preview",
-      saveMessage: "Update home content from editor",
+      saving: "Saving…",
+      notSaved: "Draft",
+      previewLabel: "Preview",
+      previewIntro: "The preview updates as you edit the form.",
+      saveMessage: saveMessage ?? "Update page content from editor",
       passwordError: "Incorrect editor password. Please try again.",
       genericErrorPrefix: "Failed: ",
-      savedPrefix: "Saved. Commit: ",
+      commitCreated: "Commit created",
+      deploying: "Deploying…",
+      live: "Live",
+      stillDeploying: "Still deploying",
+      commitPrefix: "Commit: ",
+      deployPendingHint: "The latest page is not live yet. Cloudflare may still be publishing it.",
       unknownError: "Unknown error",
+      statusReady: "Ready to save",
+      layoutLabels: { full: "Full width", half: "Half width", third: "Third width" },
+      variantLabels: { primary: "Primary", secondary: "Secondary" },
+      deviceLabels: { desktop: "Desktop", tablet: "Tablet", mobile: "Mobile" },
+      pathLabel: "Content file",
+      livePathLabel: "Live page",
     };
 ---
-<section class="hero">
-  <h1 class="h1">{copy.pageTitle}</h1>
-  <p class="p">{copy.intro}</p>
-</section>
+<div class="editor-toolbar card">
+  <div class="editor-toolbar-main">
+    <div class="editor-toolbar-title">
+      <p class="eyebrow" style="margin-bottom:8px;">{copy.pageTitle}</p>
+      <h1 class="editor-heading">{copy.pageTitle}</h1>
+      <p class="small">{copy.localeLabel}: {copy.localeValue}</p>
+    </div>
 
-<div class="card" style="margin-bottom:14px;">
-  <p class="p">{copy.titleLabel}</p>
-  <input id="title" value={page.title} style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);" />
-  <p class="p">{copy.descriptionLabel}</p>
-  <input id="description" value={page.description} style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);" />
-  <p class="p">{copy.heroTitleLabel}</p>
-  <input id="heroTitle" value={page.heroTitle} style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);" />
-  <p class="p">{copy.heroTextLabel}</p>
-  <textarea id="heroText" rows="5" style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);">{page.heroText}</textarea>
-  <p class="p">{copy.passwordLabel}</p>
-  <input id="editorSecret" type="password" placeholder={copy.passwordPlaceholder} style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);" />
-  <button id="saveBtn" class="cta">{copy.saveLabel}</button>
-  <p id="status" class="p" style="margin-top:10px;">{copy.notSaved}</p>
+    <div class="editor-toolbar-status" data-editor-status data-state="draft" aria-live="polite">
+      <span class="editor-status-dot" aria-hidden="true"></span>
+      <div>
+        <p id="statusStage" class="editor-status-stage">{copy.notSaved}</p>
+        <p id="statusMeta" class="small">{copy.statusReady}</p>
+      </div>
+    </div>
+
+    <div class="editor-toolbar-actions">
+      {pagePath && <a class="ghost-btn" href={pagePath}>{copy.viewLiveLabel}</a>}
+      <button id="saveBtn" class="cta" type="button">{copy.saveLabel}</button>
+    </div>
+  </div>
+
+  <div class="editor-toolbar-sub">
+    <div>
+      <p class="small" style="margin-bottom:10px;">{copy.editorNavLabel}</p>
+      <div class="editor-link-row">
+        {editorLinks.map((link) => (
+          <a
+            class={link.key === currentPageKey ? "cta" : "ghost-btn"}
+            href={link.href}
+            aria-current={link.key === currentPageKey ? "page" : undefined}
+          >
+            {link.key === currentPageKey ? `${copy.currentEditorLabel}: ${link.label}` : link.label}
+          </a>
+        ))}
+      </div>
+    </div>
+    <p class="small">{copy.editorNavIntro}</p>
+  </div>
 </div>
 
-<div class="card">
-  <p class="p">{copy.previewLabel}</p>
-  <h2 id="previewTitle" class="h1" style="font-size:30px;">{page.heroTitle}</h2>
-  <p id="previewText" class="p">{page.heroText}</p>
+<div class="editor-shell">
+  <div class="editor-form-column">
+    <section class="card editor-group">
+      <p class="eyebrow">{copy.seoHeading}</p>
+      <p class="small editor-group-intro">{copy.seoIntro}</p>
+      <label class="editor-field">
+        <span class="editor-label">{copy.titleLabel}</span>
+        <input id="title" value={page.title} />
+      </label>
+      <label class="editor-field">
+        <span class="editor-label">{copy.descriptionLabel}</span>
+        <textarea id="description" rows="3">{page.description}</textarea>
+      </label>
+    </section>
+
+    <section class="card editor-group">
+      <p class="eyebrow">{copy.heroHeading}</p>
+      <p class="small editor-group-intro">{copy.heroIntro}</p>
+      <label class="editor-field">
+        <span class="editor-label">{copy.heroTitleLabel}</span>
+        <input id="heroTitle" data-focus-target="heroTitle" value={page.heroTitle} />
+      </label>
+      <label class="editor-field">
+        <span class="editor-label">{copy.heroTextLabel}</span>
+        <textarea id="heroText" data-focus-target="heroText" rows="6">{page.heroText}</textarea>
+      </label>
+    </section>
+
+    {page.cards?.length > 0 && (
+      <section class="card editor-group">
+        <p class="eyebrow">{copy.cardsHeading}</p>
+        <p class="small editor-group-intro">{copy.cardsIntro}</p>
+        <div class="editor-subgrid">
+          {page.cards.map((card, index) => (
+            <div class="card editor-nested-card" data-card-item={index}>
+              <p class="small editor-nested-title">{copy.cardTitleLabel} {index + 1}</p>
+              <label class="editor-field">
+                <span class="editor-label">{copy.cardTitleLabel}</span>
+                <input data-card-title value={card.title} />
+              </label>
+              <label class="editor-field">
+                <span class="editor-label">{copy.cardTextLabel}</span>
+                <textarea data-card-text rows="4">{card.text}</textarea>
+              </label>
+              <label class="editor-field">
+                <span class="editor-label">{copy.cardLayoutLabel}</span>
+                <select data-card-layout>
+                  <option value="full" selected={(card.layout ?? "full") === "full"}>{copy.layoutLabels.full}</option>
+                  <option value="half" selected={card.layout === "half"}>{copy.layoutLabels.half}</option>
+                  <option value="third" selected={card.layout === "third"}>{copy.layoutLabels.third}</option>
+                </select>
+              </label>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {page.ctas?.length > 0 && (
+      <section class="card editor-group">
+        <p class="eyebrow">{copy.ctasHeading}</p>
+        <p class="small editor-group-intro">{copy.ctasIntro}</p>
+        <div class="editor-subgrid">
+          {page.ctas.map((cta, index) => (
+            <div class="card editor-nested-card" data-cta-item={index}>
+              <p class="small editor-nested-title">{copy.ctaLabelLabel} {index + 1}</p>
+              <label class="editor-field">
+                <span class="editor-label">{copy.ctaLabelLabel}</span>
+                <input data-cta-label value={cta.label} />
+              </label>
+              <label class="editor-field">
+                <span class="editor-label">{copy.ctaHrefLabel}</span>
+                <input data-cta-href value={cta.href} />
+              </label>
+              <label class="editor-field">
+                <span class="editor-label">{copy.ctaVariantLabel}</span>
+                <select data-cta-variant>
+                  <option value="primary" selected={cta.variant === "primary"}>{copy.variantLabels.primary}</option>
+                  <option value="secondary" selected={(cta.variant ?? "secondary") === "secondary"}>{copy.variantLabels.secondary}</option>
+                </select>
+              </label>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <section class="card editor-group">
+      <p class="eyebrow">{copy.publishingHeading}</p>
+      <p class="small editor-group-intro">{copy.publishingIntro}</p>
+      <label class="editor-field">
+        <span class="editor-label">{copy.passwordLabel}</span>
+        <input id="editorSecret" type="password" placeholder={copy.passwordPlaceholder} />
+      </label>
+      <div class="editor-publishing-meta">
+        <p class="small"><strong>{copy.pathLabel}</strong> {contentPath}</p>
+        {pagePath && <p class="small"><strong>{copy.livePathLabel}</strong> {pagePath}</p>}
+      </div>
+      <p id="statusDetail" class="small editor-status-detail">{copy.statusReady}</p>
+    </section>
+  </div>
+
+  <aside class="editor-preview-column">
+    <section class="card editor-preview-panel">
+      <div class="editor-preview-header">
+        <div>
+          <p class="eyebrow">{copy.previewLabel}</p>
+          <p class="small">{copy.previewIntro}</p>
+        </div>
+        <div class="editor-device-switcher">
+          <button class="editor-device-btn is-active" type="button" data-preview-device-button="desktop" aria-pressed="true">{copy.deviceLabels.desktop}</button>
+          <button class="editor-device-btn" type="button" data-preview-device-button="tablet" aria-pressed="false">{copy.deviceLabels.tablet}</button>
+          <button class="editor-device-btn" type="button" data-preview-device-button="mobile" aria-pressed="false">{copy.deviceLabels.mobile}</button>
+        </div>
+      </div>
+
+      <div class="editor-preview-stage" data-preview-stage data-device="desktop">
+        <div class="editor-preview-frame">
+          <section class="hero-block">
+            <h2 id="previewTitle" class="hero-title editor-preview-title" data-preview-key="heroTitle">{page.heroTitle}</h2>
+            <p id="previewText" class="hero-copy" data-preview-key="heroText">{page.heroText}</p>
+          </section>
+
+          <div id="previewCtas" class="cta-row"></div>
+          <div id="previewCards" class="grid"></div>
+        </div>
+      </div>
+    </section>
+  </aside>
 </div>
 
-<script is:inline define:vars={{ initialData: page, contentPath, copy }}>
+<style>
+  .editor-toolbar {
+    position: sticky;
+    top: 92px;
+    z-index: 12;
+    margin-bottom: 20px;
+    padding: 20px;
+    background: linear-gradient(180deg, rgba(21, 25, 37, 0.96), rgba(17, 19, 26, 0.96));
+  }
+
+  .editor-toolbar-main,
+  .editor-toolbar-sub {
+    display: grid;
+    gap: 16px;
+  }
+
+  .editor-toolbar-main {
+    align-items: center;
+    grid-template-columns: minmax(0, 1.1fr) auto auto;
+  }
+
+  .editor-heading {
+    margin: 0;
+    font-size: 1.5rem;
+    line-height: 1.15;
+  }
+
+  .editor-toolbar-status {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 48px;
+    padding: 12px 16px;
+    border-radius: 18px;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .editor-status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 999px;
+    background: #8e96a8;
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.04);
+    flex-shrink: 0;
+  }
+
+  .editor-toolbar-status[data-state="saving"] .editor-status-dot,
+  .editor-toolbar-status[data-state="deploying"] .editor-status-dot {
+    background: #f7c55a;
+  }
+
+  .editor-toolbar-status[data-state="commit"] .editor-status-dot {
+    background: #8ec5ff;
+  }
+
+  .editor-toolbar-status[data-state="live"] .editor-status-dot {
+    background: #6ad28b;
+  }
+
+  .editor-toolbar-status[data-state="error"] .editor-status-dot {
+    background: #ff7d8b;
+  }
+
+  .editor-status-stage {
+    margin: 0 0 4px;
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  .editor-toolbar-actions,
+  .editor-link-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .editor-toolbar-sub {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+
+  .editor-shell {
+    max-width: 1440px;
+    display: grid;
+    gap: 24px;
+    grid-template-columns: minmax(360px, 460px) 1fr;
+    align-items: start;
+  }
+
+  .editor-form-column,
+  .editor-preview-column {
+    display: grid;
+    gap: 20px;
+  }
+
+  .editor-preview-column {
+    position: sticky;
+    top: 220px;
+  }
+
+  .editor-group {
+    padding: 20px;
+  }
+
+  .editor-group-intro {
+    margin-bottom: 16px;
+  }
+
+  .editor-subgrid {
+    display: grid;
+    gap: 14px;
+  }
+
+  .editor-nested-card {
+    padding: 18px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .editor-nested-title {
+    margin-bottom: 12px;
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  .editor-field {
+    display: grid;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+
+  .editor-label {
+    color: var(--text);
+    font-size: 0.94rem;
+    font-weight: 600;
+  }
+
+  .editor-field input,
+  .editor-field textarea,
+  .editor-field select {
+    width: 100%;
+    min-height: 44px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    background: #0f1219;
+    color: var(--text);
+  }
+
+  .editor-field textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  .editor-field input:focus,
+  .editor-field textarea:focus,
+  .editor-field select:focus {
+    outline: 2px solid rgba(124, 92, 255, 0.25);
+    border-color: rgba(124, 92, 255, 0.45);
+  }
+
+  .editor-publishing-meta {
+    display: grid;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .editor-status-detail {
+    margin-top: 14px;
+  }
+
+  .editor-preview-panel {
+    padding: 20px;
+  }
+
+  .editor-preview-header {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .editor-device-switcher {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .editor-device-btn {
+    min-height: 40px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--text-soft);
+    cursor: pointer;
+  }
+
+  .editor-device-btn.is-active {
+    border-color: rgba(124, 92, 255, 0.45);
+    background: rgba(124, 92, 255, 0.12);
+    color: var(--text);
+  }
+
+  .editor-preview-stage {
+    padding: 18px;
+    border-radius: 20px;
+    background: rgba(5, 6, 10, 0.42);
+    border: 1px solid var(--line);
+  }
+
+  .editor-preview-frame {
+    margin: 0 auto;
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    background:
+      radial-gradient(circle at top left, rgba(124, 92, 255, 0.12), transparent 35%),
+      linear-gradient(180deg, #0b0c10 0%, #0f1118 100%);
+    padding: 24px;
+    transition: max-width 0.18s ease;
+  }
+
+  .editor-preview-stage[data-device="desktop"] .editor-preview-frame {
+    max-width: 100%;
+  }
+
+  .editor-preview-stage[data-device="tablet"] .editor-preview-frame {
+    max-width: 860px;
+  }
+
+  .editor-preview-stage[data-device="mobile"] .editor-preview-frame {
+    max-width: 420px;
+  }
+
+  .editor-preview-title {
+    font-size: clamp(2.2rem, 4.2vw, 3.4rem);
+  }
+
+  .editor-preview-focus {
+    box-shadow: 0 0 0 2px rgba(124, 92, 255, 0.46), 0 0 0 8px rgba(124, 92, 255, 0.08);
+    border-radius: 18px;
+  }
+
+  @media (max-width: 1024px) {
+    .editor-toolbar {
+      top: 84px;
+    }
+
+    .editor-toolbar-main {
+      grid-template-columns: 1fr;
+    }
+
+    .editor-preview-column {
+      position: static;
+    }
+
+    .editor-shell {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script is:inline define:vars={{ initialData: page, contentPath, copy, pagePath }}>
   const titleInput = document.getElementById('title');
   const descriptionInput = document.getElementById('description');
   const heroTitleInput = document.getElementById('heroTitle');
@@ -78,24 +573,155 @@ const copy = isZh
   const editorSecretInput = document.getElementById('editorSecret');
   const previewTitle = document.getElementById('previewTitle');
   const previewText = document.getElementById('previewText');
-  const status = document.getElementById('status');
+  const previewCards = document.getElementById('previewCards');
+  const previewCtas = document.getElementById('previewCtas');
+  const statusStage = document.getElementById('statusStage');
+  const statusMeta = document.getElementById('statusMeta');
+  const statusDetail = document.getElementById('statusDetail');
   const saveBtn = document.getElementById('saveBtn');
+  const toolbarStatus = document.querySelector('[data-editor-status]');
+  const previewStage = document.querySelector('[data-preview-stage]');
+  const previewButtons = Array.from(document.querySelectorAll('[data-preview-device-button]'));
+
+  function setStatus(stage, detail = '', tone = 'draft') {
+    statusStage.textContent = stage;
+    statusMeta.textContent = detail || copy.statusReady;
+    statusDetail.textContent = detail || copy.statusReady;
+    toolbarStatus.dataset.state = tone;
+  }
+
+  function setSavingState(isSaving) {
+    saveBtn.disabled = isSaving;
+    saveBtn.style.opacity = isSaving ? '0.72' : '1';
+    saveBtn.style.cursor = isSaving ? 'wait' : 'pointer';
+  }
 
   function readData() {
+    const cards = Array.from(document.querySelectorAll('[data-card-item]')).map((cardEl) => {
+      const layout = cardEl.querySelector('[data-card-layout]').value;
+      const next = {
+        title: cardEl.querySelector('[data-card-title]').value,
+        text: cardEl.querySelector('[data-card-text]').value,
+      };
+
+      if (layout !== 'full') {
+        next.layout = layout;
+      }
+
+      return next;
+    });
+
+    const ctas = Array.from(document.querySelectorAll('[data-cta-item]')).map((ctaEl) => ({
+      label: ctaEl.querySelector('[data-cta-label]').value,
+      href: ctaEl.querySelector('[data-cta-href]').value,
+      variant: ctaEl.querySelector('[data-cta-variant]').value,
+    }));
+
     return {
+      ...initialData,
       title: titleInput.value,
       description: descriptionInput.value,
       heroTitle: heroTitleInput.value,
       heroText: heroTextInput.value,
-      cards: initialData.cards,
-      ctas: initialData.ctas,
+      cards,
+      ctas,
     };
+  }
+
+  function escapeHtml(value) {
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function renderPreviewCtas(ctas) {
+    if (!previewCtas) {
+      return;
+    }
+
+    if (!ctas || ctas.length === 0) {
+      previewCtas.innerHTML = '';
+      return;
+    }
+
+    previewCtas.innerHTML = ctas
+      .map((cta, index) => {
+        const className = cta.variant === 'primary' ? 'cta' : 'ghost-btn';
+        return `<a class="${className}" href="${escapeHtml(cta.href)}" data-preview-key="cta-${index}">${escapeHtml(cta.label)}</a>`;
+      })
+      .join('');
+  }
+
+  function renderPreviewCards(cards) {
+    if (!previewCards) {
+      return;
+    }
+
+    if (!cards || cards.length === 0) {
+      previewCards.innerHTML = '';
+      return;
+    }
+
+    previewCards.innerHTML = cards
+      .map((card, index) => {
+        const layout = card.layout || 'half';
+        return `
+          <article class="card ${escapeHtml(layout)}" data-preview-key="card-${index}">
+            <p class="kicker">${escapeHtml(card.title)}</p>
+            <p class="card-copy">${escapeHtml(card.text)}</p>
+          </article>
+        `;
+      })
+      .join('');
   }
 
   function syncPreview() {
     const next = readData();
     previewTitle.textContent = next.heroTitle;
     previewText.textContent = next.heroText;
+    renderPreviewCtas(next.ctas);
+    renderPreviewCards(next.cards);
+  }
+
+  function clearPreviewFocus() {
+    document.querySelectorAll('.editor-preview-focus').forEach((el) => {
+      el.classList.remove('editor-preview-focus');
+    });
+  }
+
+  function highlightPreview(targetKey) {
+    clearPreviewFocus();
+    if (!targetKey) {
+      return;
+    }
+
+    const target = document.querySelector(`[data-preview-key="${targetKey}"]`);
+    if (target) {
+      target.classList.add('editor-preview-focus');
+    }
+  }
+
+  function bindFocusMapping() {
+    heroTitleInput?.addEventListener('focus', () => highlightPreview('heroTitle'));
+    heroTextInput?.addEventListener('focus', () => highlightPreview('heroText'));
+
+    document.querySelectorAll('[data-card-item]').forEach((cardEl, index) => {
+      cardEl.querySelectorAll('input, textarea, select').forEach((field) => {
+        field.addEventListener('focus', () => highlightPreview(`card-${index}`));
+      });
+    });
+
+    document.querySelectorAll('[data-cta-item]').forEach((ctaEl, index) => {
+      ctaEl.querySelectorAll('input, select').forEach((field) => {
+        field.addEventListener('focus', () => highlightPreview(`cta-${index}`));
+      });
+    });
+
+    titleInput?.addEventListener('focus', clearPreviewFocus);
+    descriptionInput?.addEventListener('focus', clearPreviewFocus);
   }
 
   function parseResult(raw) {
@@ -121,9 +747,7 @@ const copy = isZh
       parts.push(result.error.trim());
     }
 
-    if (typeof result.detailMessage === 'string' && result.detailMessage.trim()) {
-      parts.push(result.detailMessage.trim());
-    } else if (typeof result.detail === 'string' && result.detail.trim()) {
+    if (typeof result.detail === 'string' && result.detail.trim()) {
       parts.push(result.detail.trim());
     } else if (
       result.detail &&
@@ -134,34 +758,104 @@ const copy = isZh
       parts.push(result.detail.message.trim());
     }
 
-    if (typeof result.hint === 'string' && result.hint.trim()) {
-      parts.push(result.hint.trim());
-    }
-
-    if (typeof result.githubStatus === 'number') {
-      parts.push(`GitHub ${result.githubStatus}`);
-    }
-
     return parts.join(' | ') || copy.unknownError;
   }
 
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  function getVerificationMarkers(next) {
+    return [
+      next.title,
+      next.description,
+      next.heroTitle,
+      next.heroText?.slice(0, 60),
+      ...(next.cards ?? []).flatMap((card) => [card.title, card.text?.slice(0, 40)]),
+      ...(next.ctas ?? []).flatMap((cta) => [cta.label, cta.href]),
+    ].filter(Boolean).slice(0, 8);
+  }
+
+  async function waitForLive(next) {
+    if (!pagePath) {
+      return false;
+    }
+
+    const markers = getVerificationMarkers(next);
+    if (markers.length === 0) {
+      return false;
+    }
+
+    for (let attempt = 0; attempt < 18; attempt += 1) {
+      await sleep(attempt === 0 ? 1500 : 4000);
+
+      try {
+        const probeUrl = `${pagePath}${pagePath.includes('?') ? '&' : '?'}v=${Date.now()}`;
+        const response = await fetch(probeUrl, {
+          cache: 'no-store',
+          headers: { 'cache-control': 'no-cache' },
+        });
+
+        if (!response.ok) {
+          continue;
+        }
+
+        const html = await response.text();
+        if (markers.every((marker) => html.includes(marker))) {
+          return true;
+        }
+      } catch (error) {
+        console.warn('Live check failed', error);
+      }
+    }
+
+    return false;
+  }
+
+  function getTimestamp() {
+    return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function applyPreviewDevice(device) {
+    previewStage.dataset.device = device;
+    previewButtons.forEach((button) => {
+      const isActive = button.dataset.previewDeviceButton === device;
+      button.classList.toggle('is-active', isActive);
+      button.setAttribute('aria-pressed', String(isActive));
+    });
+  }
+
   [titleInput, descriptionInput, heroTitleInput, heroTextInput].forEach((el) => {
+    el?.addEventListener('input', syncPreview);
+  });
+
+  document.querySelectorAll('[data-card-item] textarea, [data-card-item] input, [data-card-item] select, [data-cta-item] input, [data-cta-item] select').forEach((el) => {
     el.addEventListener('input', syncPreview);
+  });
+
+  previewButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      applyPreviewDevice(button.dataset.previewDeviceButton || 'desktop');
+    });
   });
 
   saveBtn.addEventListener('click', async function () {
     try {
-      status.textContent = copy.saving;
+      const nextData = readData();
+
+      setSavingState(true);
+      setStatus(copy.saving, copy.statusReady, 'saving');
 
       const secret = editorSecretInput.value.trim();
       if (!secret) {
-        status.textContent = copy.emptyPassword;
+        setStatus(copy.emptyPassword, copy.statusReady, 'error');
+        setSavingState(false);
         return;
       }
 
       const payload = {
         path: contentPath,
-        content: JSON.stringify(readData(), null, 2) + '\n',
+        content: JSON.stringify(nextData, null, 2) + '\n',
         message: copy.saveMessage,
       };
 
@@ -178,19 +872,38 @@ const copy = isZh
       const result = parseResult(raw);
 
       if (response.status === 401) {
-        status.textContent = copy.passwordError;
+        setStatus(copy.passwordError, copy.statusReady, 'error');
+        setSavingState(false);
         return;
       }
 
       if (response.ok) {
-        status.textContent = `${copy.savedPrefix}${result.commit?.sha || 'done'}`;
+        const commitSha = result.commit?.sha || 'done';
+        const shortSha = commitSha.slice(0, 7);
+        const stamp = `${copy.commitPrefix} ${shortSha} · ${getTimestamp()}`;
+        setStatus(copy.commitCreated, stamp, 'commit');
+        await sleep(700);
+        setStatus(copy.deploying, stamp, 'deploying');
+        const isLive = await waitForLive(nextData);
+        if (isLive) {
+          setStatus(copy.live, stamp, 'live');
+        } else {
+          setStatus(copy.stillDeploying, `${stamp} · ${copy.deployPendingHint}`, 'deploying');
+        }
       } else {
-        status.textContent = copy.genericErrorPrefix + formatError(result);
+        setStatus(copy.genericErrorPrefix + formatError(result), copy.statusReady, 'error');
         console.error('Save failed', result);
       }
     } catch (error) {
-      status.textContent = copy.genericErrorPrefix + (error instanceof Error ? error.message : copy.unknownError);
+      setStatus(copy.genericErrorPrefix + (error instanceof Error ? error.message : copy.unknownError), copy.statusReady, 'error');
       console.error(error);
+    } finally {
+      setSavingState(false);
     }
   });
+
+  syncPreview();
+  bindFocusMapping();
+  applyPreviewDevice('desktop');
+  setStatus(copy.notSaved, copy.statusReady, 'draft');
 </script>

@@ -1,0 +1,40 @@
+{
+  "title": "Consult | Your Name",
+  "description": "A generic consulting or collaboration page for the starter template.",
+  "heroTitle": "Create a page for collaboration, advising, or exploratory calls",
+  "heroText": "This page works well when you want to explain who the conversation is for, what good fit looks like, and how you prefer to work.",
+  "cards": [
+    {
+      "title": "Who this is for",
+      "text": "Use this card to describe the kinds of people, teams, or problems that tend to match your strengths.",
+      "layout": "half"
+    },
+    {
+      "title": "What people can bring",
+      "text": "Explain whether the page is for planning, sense-making, role discussions, portfolio reviews, or open-ended conversations.",
+      "layout": "half"
+    },
+    {
+      "title": "What happens next",
+      "text": "Set expectations clearly: a short call, written follow-up, project scoping, or a simple decision about fit.",
+      "layout": "half"
+    },
+    {
+      "title": "What a good fit looks like",
+      "text": "Use this area to be specific about boundaries so the page feels professional and reassuring.",
+      "layout": "half"
+    }
+  ],
+  "ctas": [
+    {
+      "label": "Book a chat",
+      "href": "/book/",
+      "variant": "primary"
+    },
+    {
+      "label": "See services",
+      "href": "/services/",
+      "variant": "secondary"
+    }
+  ]
+}

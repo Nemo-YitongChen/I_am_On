@@ -55,7 +55,31 @@ function parseRepoConfig(env) {
 }
 
 function isAllowedPath(path) {
-  return path.startsWith("src/content-live/") && path.endsWith(".json");
+  if (path.includes("..")) {
+    return false;
+  }
+
+  if (path.startsWith("src/content-live/") && path.endsWith(".json")) {
+    return true;
+  }
+
+  if (path === "src/content/site/booking-options.json") {
+    return true;
+  }
+
+  if (path === "src/content/site/profile.json") {
+    return true;
+  }
+
+  if (path.startsWith("src/content/posts/") && path.endsWith(".md")) {
+    return true;
+  }
+
+  if (path.startsWith("src/content/work/") && path.endsWith(".md")) {
+    return true;
+  }
+
+  return false;
 }
 
 function encodeContentPath(path) {

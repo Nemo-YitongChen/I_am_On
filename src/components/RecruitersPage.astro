@@ -1,0 +1,78 @@
+---
+const { page, locale = "en", quickLinks = [] } = Astro.props;
+
+const isZh = locale === "zh";
+const copy = isZh
+  ? {
+      eyebrow: "工作经历摘要",
+      quickEyebrow: "快速入口",
+      quickTitle: "最常用的信息",
+      quickIntro: "如果你想快速了解岗位匹配度，先看这三类信息通常最有效。",
+      detailEyebrow: "职位匹配",
+      detailTitle: "更完整的工作摘要",
+      detailIntro: "下面这些内容更适合快速判断我的背景、工作方式和适配方向。",
+    }
+  : {
+      eyebrow: "For Recruiters",
+      quickEyebrow: "Quick links",
+      quickTitle: "The essentials",
+      quickIntro: "If you are recruiting, these are usually the fastest paths to the right context.",
+      detailEyebrow: "Role fit",
+      detailTitle: "A clearer hiring snapshot",
+      detailIntro: "The cards below summarise the parts of my background that tend to matter most in hiring conversations.",
+    };
+---
+<section class="hero-block">
+  <p class="eyebrow">{copy.eyebrow}</p>
+  <h1 class="hero-title">{page.heroTitle}</h1>
+  <p class="hero-copy">{page.heroText}</p>
+
+  {page.ctas?.length > 0 && (
+    <div class="cta-row">
+      {page.ctas.map((cta) => (
+        <a class={cta.variant === "primary" ? "cta" : "ghost-btn"} href={cta.href} target={cta.href.startsWith("http") ? "_blank" : undefined} rel={cta.href.startsWith("http") ? "noreferrer" : undefined}>
+          {cta.label}
+        </a>
+      ))}
+    </div>
+  )}
+</section>
+
+{quickLinks.length > 0 && (
+  <section class="section">
+    <div class="section-head">
+      <p class="eyebrow">{copy.quickEyebrow}</p>
+      <h2 class="section-title">{copy.quickTitle}</h2>
+      <p class="section-copy">{copy.quickIntro}</p>
+    </div>
+
+    <div class="grid" style="margin-top:0;">
+      {quickLinks.map((item) => (
+        <a class={`card ${item.layout ?? "third"}`.trim()} href={item.href} target={item.external ? "_blank" : undefined} rel={item.external ? "noreferrer" : undefined}>
+          <p class="eyebrow" style="margin-bottom:10px;">{item.label}</p>
+          <p class="card-title">{item.title}</p>
+          <p class="card-copy">{item.summary}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+)}
+
+{page.cards?.length > 0 && (
+  <section class="section">
+    <div class="section-head">
+      <p class="eyebrow">{copy.detailEyebrow}</p>
+      <h2 class="section-title">{copy.detailTitle}</h2>
+      <p class="section-copy">{copy.detailIntro}</p>
+    </div>
+
+    <div class="grid" style="margin-top:0;">
+      {page.cards.map((card) => (
+        <article class={`card ${card.layout ?? "half"}`.trim()}>
+          <p class="kicker">{card.title}</p>
+          <p class="card-copy">{card.text}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+)}

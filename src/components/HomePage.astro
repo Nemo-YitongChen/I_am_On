@@ -1,24 +1,112 @@
 ---
-const { page } = Astro.props;
+const {
+  page,
+  locale = "en",
+  proofCards = [],
+} = Astro.props;
+
+const isZh = locale === "zh";
+const copy = isZh
+  ? {
+      heroEyebrow: "个人网站",
+      heroPanelEyebrow: "你会在这里看到",
+      heroPanelTitle: "更快了解我如何工作",
+      heroPanelPoints: [
+        "先看代表性的经历与案例。",
+        "再看我适合哪些岗位与协作场景。",
+        "最后决定要不要联系我或预约交流。",
+      ],
+      proofEyebrow: "重点证明",
+      proofHeading: "先看证据，再看主张",
+      proofIntro: "这几个入口最适合快速判断我的工作背景、表达方式和可信度。",
+      topicsEyebrow: "工作主题",
+      topicsHeading: "我持续在做的几类事情",
+      topicsIntro: "这些主题贯穿了我的工作、项目和长期兴趣，也是我最希望继续深化的方向。",
+      openLabel: "查看",
+    }
+  : {
+      heroEyebrow: "Personal website",
+      heroPanelEyebrow: "What you will find here",
+      heroPanelTitle: "A faster way to understand how I work",
+      heroPanelPoints: [
+        "Start with selected proof, not broad claims.",
+        "Then see the roles and contexts that fit me best.",
+        "If it looks right, book a chat or use the recruiter page.",
+      ],
+      proofEyebrow: "Selected proof",
+      proofHeading: "See the work before the claims",
+      proofIntro: "These are the fastest routes into my background, working style, and the kind of contribution I tend to make.",
+      topicsEyebrow: "Focus areas",
+      topicsHeading: "What I work across",
+      topicsIntro: "These themes show up repeatedly across my roles, projects, and the conversations I am most useful in.",
+      openLabel: "Open",
+    };
 ---
-<section class="hero">
-  <h1 class="h1">{page.heroTitle}</h1>
-  <p class="p">{page.heroText}</p>
+<section class="hero-block hero-shell">
+  <div>
+    <p class="eyebrow">{copy.heroEyebrow}</p>
+    <h1 class="hero-title">{page.heroTitle}</h1>
+    <p class="hero-copy">{page.heroText}</p>
+
+    {page.ctas?.length > 0 && (
+      <div class="cta-row">
+        {page.ctas.map((cta) => (
+          <a class={cta.variant === "primary" ? "cta" : "ghost-btn"} href={cta.href}>
+            {cta.label}
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
+
+  <aside class="card hero-panel surface-soft">
+    <p class="eyebrow">{copy.heroPanelEyebrow}</p>
+    <p class="card-title">{copy.heroPanelTitle}</p>
+    <div class="stack-sm" style="margin-top:16px;">
+      {copy.heroPanelPoints.map((point) => (
+        <p class="small">{point}</p>
+      ))}
+    </div>
+  </aside>
 </section>
 
-<div class="card" style="margin-bottom:14px;">
-  <div style="display:flex;gap:10px;flex-wrap:wrap;">
-    {page.ctas.map((cta) => (
-      <a class="cta" href={cta.href}>{cta.label}</a>
-    ))}
-  </div>
-</div>
-
-<div style="display:grid;gap:14px;">
-  {page.cards.map((card) => (
-    <div class="card">
-      <p style="font-weight:800;margin:0 0 6px;">{card.title}</p>
-      <p class="p" style="margin:0;">{card.text}</p>
+{proofCards.length > 0 && (
+  <section class="section">
+    <div class="section-head">
+      <p class="eyebrow">{copy.proofEyebrow}</p>
+      <h2 class="section-title">{copy.proofHeading}</h2>
+      <p class="section-copy">{copy.proofIntro}</p>
     </div>
-  ))}
-</div>
+
+    <div class="grid" style="margin-top:0;">
+      {proofCards.map((card) => (
+        <a class={`card ${card.layout ?? "third"}`.trim()} href={card.href}>
+          <p class="eyebrow" style="margin-bottom:10px;">{card.label}</p>
+          {card.meta && <p class="small" style="margin-bottom:10px;">{card.meta}</p>}
+          <p class="card-title">{card.title}</p>
+          <p class="card-copy">{card.summary}</p>
+          <p class="small" style="margin-top:16px;">{copy.openLabel}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+)}
+
+{page.cards?.length > 0 && (
+  <section class="section">
+    <div class="section-head">
+      <p class="eyebrow">{copy.topicsEyebrow}</p>
+      <h2 class="section-title">{copy.topicsHeading}</h2>
+      <p class="section-copy">{copy.topicsIntro}</p>
+    </div>
+
+    <div class="grid" style="margin-top:0;">
+      {page.cards.map((card) => (
+        <article class={`card ${card.layout ?? "third"}`.trim()}>
+          <p class="kicker">{card.title}</p>
+          <p class="card-copy">{card.text}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+)}

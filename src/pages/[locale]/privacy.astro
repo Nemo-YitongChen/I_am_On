@@ -1,0 +1,47 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { isSecondaryLocaleEnabled } from "../../lib/site.js";
+
+const locale = Astro.params.locale ?? "";
+const isValidLocale = isSecondaryLocaleEnabled(locale);
+const isZh = locale === "zh";
+
+if (!isValidLocale) {
+  Astro.response.status = 404;
+}
+
+const copy = isZh
+  ? {
+      title: "隐私 | Your Name",
+      description: "这个模板的基础隐私说明页面。",
+      heading: "基础隐私说明",
+      body: [
+        "这个模板默认不包含追踪脚本，也不会自动收集站点访问者的个人信息。",
+        "如果你接入表单、分析工具或第三方预约服务，请在这里补上真实的隐私说明。",
+      ],
+    }
+  : {
+      title: "Privacy | Your Name",
+      description: "A simple privacy page for the starter template.",
+      heading: "Basic privacy note",
+      body: [
+        "This starter does not include analytics or automatic visitor tracking by default.",
+        "If you add forms, analytics, or third-party booking tools, update this page with your real privacy policy.",
+      ],
+    };
+---
+<BaseLayout title={copy.title} description={copy.description} locale={isValidLocale ? locale : "en"}>
+  {isValidLocale ? (
+    <section class="hero-block">
+      <p class="eyebrow">{isZh ? "隐私" : "Privacy"}</p>
+      <h1 class="hero-title">{copy.heading}</h1>
+      <div class="stack-sm" style="margin-top:18px;">
+        {copy.body.map((paragraph) => (
+          <p class="hero-copy">{paragraph}</p>
+        ))}
+      </div>
+    </section>
+  ) : (
+    <p class="p">Locale not enabled.</p>
+  )}
+</BaseLayout>

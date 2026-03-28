@@ -1,0 +1,63 @@
+{
+  "title": "Book | Your Name",
+  "description": "A booking and contact page for the starter template.",
+  "heroTitle": "Offer a clear next step",
+  "heroText": "This page can support direct contact, one booking link, or both. Turn Calendly on when you are ready, or keep it hidden and use email first.",
+  "showCalendly": false,
+  "cards": [
+    {
+      "title": "Use this for",
+      "text": "Intro calls, exploratory conversations, quick fit checks, or the first step into a larger collaboration.",
+      "layout": "half"
+    },
+    {
+      "title": "When email is better",
+      "text": "Use direct contact first if the topic needs background, context, or a short note before deciding whether to book time.",
+      "layout": "half"
+    },
+    {
+      "title": "Languages and logistics",
+      "text": "This area works well for language preferences, time zones, response time, or any practical expectation-setting.",
+      "layout": "half"
+    },
+    {
+      "title": "Why keep this page simple",
+      "text": "A clear page with one next step usually converts better than several unclear options.",
+      "layout": "half"
+    }
+  ],
+  "ctas": [
+    {
+      "label": "Email first",
+      "href": "mailto:hello@example.com",
+      "variant": "primary"
+    },
+    {
+      "label": "Create a Calendly account",
+      "href": "https://calendly.com/signup",
+      "variant": "secondary"
+    }
+  ],
+  "faq": [
+    {
+      "question": "Do I need Calendly to use this template?",
+      "answer": "No. You can keep booking hidden and use direct contact only. Turn Calendly on later when you are ready."
+    },
+    {
+      "question": "Can this page be bilingual?",
+      "answer": "Yes. Keep the same structure in each locale and adjust the wording to match the audience."
+    },
+    {
+      "question": "Should I offer more than one booking option?",
+      "answer": "Usually one clear option is enough for a first version. Add more only when you know they help."
+    },
+    {
+      "question": "Can I replace the link with another booking tool?",
+      "answer": "Yes. The booking option is just a URL field, so you can swap Calendly for another service."
+    },
+    {
+      "question": "What if I only want email contact?",
+      "answer": "Set showCalendly to false and keep the direct contact details plus one clear email CTA."
+    }
+  ]
+}

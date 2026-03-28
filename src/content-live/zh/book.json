@@ -1,0 +1,63 @@
+{
+  "title": "预约 | Your Name",
+  "description": "模板中的预约与联系页面示例。",
+  "heroTitle": "给访问者一个清楚的下一步",
+  "heroText": "这个页面既可以只放直接联系，也可以加上一个预约链接。等你准备好再打开 Calendly；如果还没准备好，先只用邮箱也完全可以。",
+  "showCalendly": false,
+  "cards": [
+    {
+      "title": "适合用来做什么",
+      "text": "适合放初次交流、探索性沟通、快速判断是否匹配，或进入更大合作前的第一步。",
+      "layout": "half"
+    },
+    {
+      "title": "什么时候更适合先发邮件",
+      "text": "如果事情需要先交代背景、范围或上下文，再决定是否预约，直接联系通常更合适。",
+      "layout": "half"
+    },
+    {
+      "title": "语言与实际安排",
+      "text": "这里很适合说明语言选择、时区、回复时间，或任何需要先写清楚的实际信息。",
+      "layout": "half"
+    },
+    {
+      "title": "为什么这个页面要保持简单",
+      "text": "一个清楚的下一步，通常比多个模糊选项更容易让人继续行动。",
+      "layout": "half"
+    }
+  ],
+  "ctas": [
+    {
+      "label": "先发邮件",
+      "href": "mailto:hello@example.com",
+      "variant": "primary"
+    },
+    {
+      "label": "注册 Calendly",
+      "href": "https://calendly.com/signup",
+      "variant": "secondary"
+    }
+  ],
+  "faq": [
+    {
+      "question": "一定要用 Calendly 吗？",
+      "answer": "不需要。你可以先把预约入口隐藏，只保留直接联系；等准备好以后再开启。"
+    },
+    {
+      "question": "这个页面可以做成双语吗？",
+      "answer": "可以。保持结构一致，再根据不同语言习惯调整表达即可。"
+    },
+    {
+      "question": "一开始需要放多个预约选项吗？",
+      "answer": "通常不需要。第一版保留一个清楚的入口就够了，只有在确实有帮助时再增加。"
+    },
+    {
+      "question": "可以换成别的预约工具吗？",
+      "answer": "可以。预约入口本质上只是一个 URL 字段，你可以替换成任何其他工具。"
+    },
+    {
+      "question": "如果我只想用邮箱联系怎么办？",
+      "answer": "把 showCalendly 设为 false，就能只保留直接联系信息和一个清楚的邮箱按钮。"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "title": "For Recruiters | Your Name",
+  "description": "A recruiter-facing summary page for the starter template.",
+  "heroTitle": "A fast professional snapshot for hiring conversations",
+  "heroText": "Use this page to summarise role fit, context, and working style without making a recruiter search across the whole site.",
+  "cards": [
+    {
+      "title": "Cross-functional profile",
+      "text": "Use this card to explain the mix of responsibilities, functions, or environments you work across.",
+      "layout": "half"
+    },
+    {
+      "title": "Best-fit role families",
+      "text": "List the role types that match you best so the page helps people place you quickly.",
+      "layout": "half"
+    },
+    {
+      "title": "Technical or analytical base",
+      "text": "Summarise the systems, methods, or technical foundations that support your broader work.",
+      "layout": "half"
+    },
+    {
+      "title": "Communication and delivery strengths",
+      "text": "Highlight the people-facing and execution-focused traits that matter in real hiring conversations.",
+      "layout": "half"
+    }
+  ],
+  "ctas": [
+    {
+      "label": "See work",
+      "href": "/work/",
+      "variant": "primary"
+    },
+    {
+      "label": "LinkedIn",
+      "href": "https://www.linkedin.com/in/your-name",
+      "variant": "secondary"
+    },
+    {
+      "label": "Email me",
+      "href": "mailto:hello@example.com",
+      "variant": "secondary"
+    }
+  ]
+}

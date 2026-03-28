@@ -1,0 +1,28 @@
+---
+const { title, intro, items = [], eyebrow = "Collection" } = Astro.props;
+---
+<section class="hero-block">
+  <p class="eyebrow">{eyebrow}</p>
+  <h1 class="hero-title">{title}</h1>
+  <p class="hero-copy">{intro}</p>
+</section>
+
+<div class="grid" style="margin-top:0;">
+  {items.length === 0 ? (
+    <div class="card">
+      <p class="kicker">No entries yet</p>
+      <p class="card-copy">This collection is ready, but it does not have any published items yet.</p>
+    </div>
+  ) : (
+    items.map((item) => (
+      <a class="card half" href={item.href}>
+        {item.meta && <p class="small" style="margin-bottom:10px;">{item.meta}</p>}
+        <p class="card-title">{item.title}</p>
+        <p class="card-copy">{item.summary}</p>
+        {item.tags?.length > 0 && (
+          <p class="small" style="margin-top:14px;">{item.tags.join(" · ")}</p>
+        )}
+      </a>
+    ))
+  )}
+</div>

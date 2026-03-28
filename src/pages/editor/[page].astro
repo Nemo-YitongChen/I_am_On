@@ -1,0 +1,37 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import HomeEditor from "../../components/HomeEditor.astro";
+import { getDefaultLocale, getEditablePages, getLocaleMeta, getPage, getPageContentPath, getPageLabel, getPublicPath, editablePageKeys } from "../../lib/site.js";
+
+export const prerender = true;
+
+export function getStaticPaths() {
+  return editablePageKeys.map((page) => ({ params: { page } }));
+}
+
+const locale = getDefaultLocale();
+const pageKey = Astro.params.page ?? "home";
+const page = getPage(locale, pageKey);
+
+if (!page) {
+  Astro.response.status = 404;
+}
+---
+<BaseLayout title={`Editor · ${getPageLabel(locale, pageKey)}`} description={`Edit the ${getPageLabel(locale, pageKey)} page content.`} locale={locale}>
+  {page ? (
+    <HomeEditor
+      page={page}
+      locale={locale}
+      localeName={getLocaleMeta(locale).label}
+      currentPageKey={pageKey}
+      editorLinks={getEditablePages(locale)}
+      contentPath={getPageContentPath(locale, pageKey)}
+      pagePath={getPublicPath(locale, pageKey)}
+      editorTitle={locale === "zh" ? `编辑 ${getPageLabel(locale, pageKey)}` : `Edit ${getPageLabel(locale, pageKey)}`}
+      intro={locale === "zh" ? "修改后会写回 GitHub，并在 Cloudflare 重新部署后生效。" : "Edits are written back to GitHub and go live after Cloudflare redeploys the site."}
+      saveMessage={locale === "zh" ? `从编辑器更新 ${getPageLabel(locale, pageKey)} 页面` : `Update ${getPageLabel(locale, pageKey)} page from editor`}
+    />
+  ) : (
+    <p class="p">Page not found.</p>
+  )}
+</BaseLayout>

@@ -1,0 +1,16 @@
+{
+  "profile": {
+    "id": "profile",
+    "brand": "Your Name",
+    "ownerName": "Your Name",
+    "location": "City, Country",
+    "tagline": {
+      "en": "A calm, clear personal site for work, writing, and booking.",
+      "zh": "一个用于展示工作、文章与预约入口的清晰个人网站模板。"
+    },
+    "email": "hello@example.com",
+    "website": "https://example.com",
+    "linkedin": "https://www.linkedin.com/in/your-name",
+    "github": "https://github.com/your-name"
+  }
+}

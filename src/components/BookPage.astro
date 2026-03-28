@@ -1,0 +1,151 @@
+---
+const { page, options, locale = "en", profile } = Astro.props;
+
+const copy = locale === "zh"
+  ? {
+      bookingEyebrow: "预约",
+      directEyebrow: "直接联系",
+      directHeading: "联系方式",
+      directIntro: "如果你更希望先直接联系我，这里是最清楚的入口。",
+      optionsHeading: "从这里开始",
+      optionsIntro: "如果聊一聊会比来回发消息更有效，这里有一个更完整的预约入口。",
+      durationLabel: "形式",
+      faqEyebrow: "FAQ",
+      faqHeading: "预约前你可能想知道",
+      faqIntro: "先把边界和期待说清楚，会让沟通更轻松。",
+      bookLabel: "预约一次交流",
+      opensCalendly: "将打开 Calendly",
+      contactLabels: { email: "邮箱", phone: "电话", linkedin: "LinkedIn" },
+    }
+  : {
+      bookingEyebrow: "Book",
+      directEyebrow: "Direct contact",
+      directHeading: "Contact details",
+      directIntro: "If you would rather reach out first, these are the clearest ways to do it.",
+      optionsHeading: "Start here",
+      optionsIntro: "If talking is more useful than trading messages, this is the single booking option I use.",
+      durationLabel: "Format",
+      faqEyebrow: "FAQ",
+      faqHeading: "What people often want to know first",
+      faqIntro: "Clear expectations make the conversation easier for both sides.",
+      bookLabel: "Book a chat",
+      opensCalendly: "Opens Calendly",
+      contactLabels: { email: "Email", phone: "Phone", linkedin: "LinkedIn" },
+    };
+
+const showCalendly = page.showCalendly !== false;
+const visibleOptions = showCalendly ? options : [];
+const contactDetails = [
+  {
+    label: copy.contactLabels.email,
+    value: profile?.email,
+    href: profile?.email ? `mailto:${profile.email}` : undefined,
+  },
+  {
+    label: copy.contactLabels.phone,
+    value: profile?.phone,
+    href: profile?.phone ? `tel:${profile.phone.replace(/\s+/g, "")}` : undefined,
+  },
+  {
+    label: copy.contactLabels.linkedin,
+    value: profile?.linkedin?.replace(/^https?:\/\/(www\.)?/, ""),
+    href: profile?.linkedin,
+  },
+].filter((item) => item.value && item.href);
+---
+<section class="hero-block">
+  <p class="eyebrow">{copy.bookingEyebrow}</p>
+  <h1 class="hero-title">{page.heroTitle}</h1>
+  <p class="hero-copy">{page.heroText}</p>
+
+  {page.ctas?.length > 0 && (
+    <div class="cta-row">
+      {page.ctas.map((cta) => (
+        <a class={cta.variant === "primary" ? "cta" : "ghost-btn"} href={cta.href} target={cta.href.startsWith("http") ? "_blank" : undefined} rel={cta.href.startsWith("http") ? "noreferrer" : undefined}>
+          {cta.label}
+        </a>
+      ))}
+    </div>
+  )}
+</section>
+
+{contactDetails.length > 0 && (
+  <section class="section">
+    <div class="section-head">
+      <p class="eyebrow">{copy.directEyebrow}</p>
+      <h2 class="section-title">{copy.directHeading}</h2>
+      <p class="section-copy">{copy.directIntro}</p>
+    </div>
+
+    <div class="grid" style="margin-top:0;">
+      {contactDetails.map((item) => (
+        <a class="card third" href={item.href} target={item.href.startsWith("http") ? "_blank" : undefined} rel={item.href.startsWith("http") ? "noreferrer" : undefined}>
+          <p class="eyebrow" style="margin-bottom:10px;">{item.label}</p>
+          <p class="card-title">{item.value}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+)}
+
+{page.cards?.length > 0 && (
+  <section class="section">
+    <div class="section-head">
+      <p class="eyebrow">{locale === "zh" ? "联系方式" : "Contact options"}</p>
+      <h2 class="section-title">{locale === "zh" ? "先确认是否适合联系我" : "A clearer sense of fit"}</h2>
+    </div>
+
+    <div class="grid" style="margin-top:0;">
+      {page.cards.map((card) => (
+        <article class={`card ${card.layout ?? "half"}`.trim()}>
+          <p class="kicker">{card.title}</p>
+          <p class="card-copy">{card.text}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+)}
+
+{visibleOptions.length > 0 && (
+  <section class="section">
+    <div class="section-head">
+      <p class="eyebrow">{copy.bookingEyebrow}</p>
+      <h2 class="section-title">{copy.optionsHeading}</h2>
+      <p class="section-copy">{copy.optionsIntro}</p>
+    </div>
+
+    <div class="grid" style="margin-top:0;">
+      {visibleOptions.map((option) => (
+        <section class="card">
+          <p class="eyebrow" style="margin-bottom:10px;">{copy.durationLabel}</p>
+          <p class="card-title">{option.name}</p>
+          <p class="small" style="margin-top:10px;">{option.duration}</p>
+          <p class="card-copy">{option.teaser}</p>
+          <div class="cta-row">
+            <a class="cta" href={option.url} target="_blank" rel="noreferrer">{copy.bookLabel}</a>
+          </div>
+          <p class="small" style="margin-top:12px;">{copy.opensCalendly}</p>
+        </section>
+      ))}
+    </div>
+  </section>
+)}
+
+{page.faq?.length > 0 && (
+  <section class="section">
+    <div class="section-head">
+      <p class="eyebrow">{copy.faqEyebrow}</p>
+      <h2 class="section-title">{copy.faqHeading}</h2>
+      <p class="section-copy">{copy.faqIntro}</p>
+    </div>
+
+    <div class="faq-list">
+      {page.faq.map((item) => (
+        <article class="card faq-item">
+          <p class="faq-question">{item.question}</p>
+          <p class="card-copy">{item.answer}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+)}

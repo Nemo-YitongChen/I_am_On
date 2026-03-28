@@ -1,0 +1,409 @@
+---
+const {
+  entryType,
+  locale = "en",
+  slug,
+  contentPath,
+  pagePath,
+  data,
+  body,
+} = Astro.props;
+
+const isPost = entryType === "posts";
+const copy = locale === "zh"
+  ? {
+      heading: isPost ? "编辑文章" : "编辑案例",
+      intro: isPost
+        ? "修改 frontmatter 和 Markdown 正文后，内容会写回仓库。"
+        : "修改结构化字段和 Markdown 正文后，内容会写回仓库。",
+      titleLabel: "标题",
+      descriptionLabel: "描述",
+      summaryLabel: "摘要",
+      publishedAtLabel: "发布日期",
+      roleLabel: "角色",
+      yearLabel: "年份",
+      orderLabel: "排序",
+      tagsLabel: "标签（用逗号分隔）",
+      featuredLabel: "设为重点展示",
+      bodyLabel: "Markdown 正文",
+      liveLinkLabel: "查看当前公开页",
+      saveLabel: "保存",
+      lockedHint: "请先在上方解锁 admin，再进行保存。",
+      saving: "正在保存...",
+      commitCreated: "Commit 已创建",
+      deploying: "正在部署...",
+      live: "已上线",
+      stillDeploying: "仍在部署中",
+      commitPrefix: "提交：",
+      deployPendingHint: "还没有检测到最新页面，Cloudflare 可能仍在发布中。",
+      genericErrorPrefix: "保存失败：",
+      unknownError: "未知错误",
+      passwordError: "编辑密码错误，请重试。",
+      notSaved: "尚未保存。",
+      statusReady: "已解锁，可以保存。",
+      statusLocked: "请先解锁 admin。",
+    }
+  : {
+      heading: isPost ? "Edit post" : "Edit work entry",
+      intro: isPost
+        ? "Update the frontmatter and Markdown body, then write the file back to GitHub."
+        : "Update the structured fields and Markdown body, then write the file back to GitHub.",
+      titleLabel: "Title",
+      descriptionLabel: "Description",
+      summaryLabel: "Summary",
+      publishedAtLabel: "Published date",
+      roleLabel: "Role",
+      yearLabel: "Year",
+      orderLabel: "Order",
+      tagsLabel: "Tags (comma separated)",
+      featuredLabel: "Feature this entry",
+      bodyLabel: "Markdown body",
+      liveLinkLabel: "Open current public page",
+      saveLabel: "Save",
+      lockedHint: "Unlock admin above before saving.",
+      saving: "Saving...",
+      commitCreated: "Commit created",
+      deploying: "Deploying...",
+      live: "Live",
+      stillDeploying: "Still deploying",
+      commitPrefix: "Commit: ",
+      deployPendingHint: "The latest page is not live yet. Cloudflare may still be publishing it.",
+      genericErrorPrefix: "Failed: ",
+      unknownError: "Unknown error",
+      passwordError: "Incorrect editor password. Please try again.",
+      notSaved: "Not saved yet.",
+      statusReady: "Unlocked and ready to save.",
+      statusLocked: "Unlock admin above before saving.",
+    };
+
+const publishedAt = isPost
+  ? data.publishedAt instanceof Date
+    ? data.publishedAt.toISOString().slice(0, 10)
+    : String(data.publishedAt ?? "")
+  : "";
+---
+<div class="card" style="margin-top:14px;">
+  <p class="kicker">{copy.heading}</p>
+  <p class="p">{copy.intro}</p>
+
+  <p class="p">{copy.titleLabel}</p>
+  <input id="title" value={data.title} style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);" />
+
+  <p class="p">{copy.descriptionLabel}</p>
+  <input id="description" value={data.description} style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);" />
+
+  <p class="p">{copy.summaryLabel}</p>
+  <textarea id="summary" rows="3" style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);">{data.summary}</textarea>
+
+  {isPost ? (
+    <>
+      <p class="p">{copy.publishedAtLabel}</p>
+      <input id="publishedAt" type="date" value={publishedAt} style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);" />
+    </>
+  ) : (
+    <>
+      <p class="p">{copy.roleLabel}</p>
+      <input id="role" value={data.role} style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);" />
+      <p class="p">{copy.yearLabel}</p>
+      <input id="year" value={data.year} style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);" />
+    </>
+  )}
+
+  <p class="p">{copy.orderLabel}</p>
+  <input id="order" type="number" value={data.order} style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);" />
+
+  <p class="p">{copy.tagsLabel}</p>
+  <input id="tags" value={data.tags.join(", ")} style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);" />
+
+  {!isPost && (
+    <label class="p" style="display:flex;gap:8px;align-items:center;">
+      <input id="featured" type="checkbox" checked={Boolean(data.featured)} />
+      <span>{copy.featuredLabel}</span>
+    </label>
+  )}
+
+  <p class="p" style="margin-top:16px;">{copy.bodyLabel}</p>
+  <textarea id="body" rows="18" style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);font-family:ui-monospace, SFMono-Regular, Menlo, monospace;">{body}</textarea>
+
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+    <button id="saveBtn" class="cta">{copy.saveLabel}</button>
+    <a href={pagePath} target="_blank" rel="noreferrer" style="color:var(--muted);text-decoration:underline;">
+      {copy.liveLinkLabel}
+    </a>
+  </div>
+  <p id="statusStage" class="p" style="margin-top:12px;">{copy.statusLocked}</p>
+  <p id="statusDetail" class="p" style="margin-top:-8px;margin-bottom:0;font-size:14px;display:none;"></p>
+</div>
+
+<script
+  is:inline
+  define:vars={{
+    entryType,
+    locale,
+    slug,
+    contentPath,
+    pagePath,
+    copy,
+  }}
+>
+  const STORAGE_KEY = 'i-am-on-editor-secret';
+  const titleInput = document.getElementById('title');
+  const descriptionInput = document.getElementById('description');
+  const summaryInput = document.getElementById('summary');
+  const publishedAtInput = document.getElementById('publishedAt');
+  const roleInput = document.getElementById('role');
+  const yearInput = document.getElementById('year');
+  const orderInput = document.getElementById('order');
+  const tagsInput = document.getElementById('tags');
+  const featuredInput = document.getElementById('featured');
+  const bodyInput = document.getElementById('body');
+  const saveBtn = document.getElementById('saveBtn');
+  const statusStage = document.getElementById('statusStage');
+  const statusDetail = document.getElementById('statusDetail');
+  const isPost = entryType === 'posts';
+  const entryLabel = isPost ? 'post' : 'work';
+
+  function setStatus(stage, detail = '') {
+    statusStage.textContent = stage;
+    statusDetail.textContent = detail;
+    statusDetail.style.display = detail ? 'block' : 'none';
+  }
+
+  function setSavingState(isSaving) {
+    saveBtn.disabled = isSaving || !window.localStorage.getItem(STORAGE_KEY);
+    saveBtn.style.opacity = saveBtn.disabled ? '0.7' : '1';
+    saveBtn.style.cursor = saveBtn.disabled ? 'not-allowed' : (isSaving ? 'wait' : 'pointer');
+  }
+
+  function parseTags(value) {
+    return value
+      .split(',')
+      .map((tag) => tag.trim())
+      .filter(Boolean);
+  }
+
+  function normaliseNumber(value, fallback = 100) {
+    const next = Number.parseInt(value, 10);
+    return Number.isFinite(next) ? next : fallback;
+  }
+
+  function quote(value) {
+    return JSON.stringify(String(value ?? ''));
+  }
+
+  function buildFrontmatter(data) {
+    const lines = ['---'];
+
+    for (const [key, value] of Object.entries(data)) {
+      if (Array.isArray(value)) {
+        if (value.length === 0) {
+          lines.push(`${key}: []`);
+          continue;
+        }
+
+        lines.push(`${key}:`);
+        value.forEach((item) => {
+          lines.push(`  - ${quote(item)}`);
+        });
+        continue;
+      }
+
+      if (typeof value === 'boolean' || typeof value === 'number') {
+        lines.push(`${key}: ${value}`);
+        continue;
+      }
+
+      lines.push(`${key}: ${quote(value)}`);
+    }
+
+    lines.push('---', '');
+    return lines.join('\n');
+  }
+
+  function readData() {
+    const common = {
+      title: titleInput.value,
+      description: descriptionInput.value,
+      summary: summaryInput.value,
+      order: normaliseNumber(orderInput.value),
+      tags: parseTags(tagsInput.value),
+    };
+
+    if (isPost) {
+      return {
+        ...common,
+        publishedAt: publishedAtInput.value || new Date().toISOString().slice(0, 10),
+      };
+    }
+
+    return {
+      ...common,
+      role: roleInput.value,
+      year: yearInput.value,
+      featured: Boolean(featuredInput?.checked),
+    };
+  }
+
+  function buildMarkdown(nextData) {
+    const body = bodyInput.value.replace(/\r\n/g, '\n').trimEnd();
+    return `${buildFrontmatter(nextData)}${body}\n`;
+  }
+
+  function parseResult(raw) {
+    if (!raw) {
+      return {};
+    }
+
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return { error: raw };
+    }
+  }
+
+  function formatError(result) {
+    if (!result || typeof result !== 'object') {
+      return copy.unknownError;
+    }
+
+    const parts = [];
+
+    if (typeof result.error === 'string' && result.error.trim()) {
+      parts.push(result.error.trim());
+    }
+
+    if (typeof result.detail === 'string' && result.detail.trim()) {
+      parts.push(result.detail.trim());
+    } else if (
+      result.detail &&
+      typeof result.detail === 'object' &&
+      typeof result.detail.message === 'string' &&
+      result.detail.message.trim()
+    ) {
+      parts.push(result.detail.message.trim());
+    }
+
+    return parts.join(' | ') || copy.unknownError;
+  }
+
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  function getVerificationMarkers(nextData) {
+    return [
+      nextData.title,
+      nextData.summary,
+      bodyInput.value.trim().slice(0, 80),
+      ...(nextData.tags ?? []),
+    ].filter(Boolean).slice(0, 8);
+  }
+
+  async function waitForLive(nextData) {
+    const markers = getVerificationMarkers(nextData);
+    if (!pagePath || markers.length === 0) {
+      return false;
+    }
+
+    for (let attempt = 0; attempt < 18; attempt += 1) {
+      await sleep(attempt === 0 ? 1500 : 4000);
+
+      try {
+        const response = await fetch(`${pagePath}?v=${Date.now()}`, {
+          cache: 'no-store',
+          headers: { 'cache-control': 'no-cache' },
+        });
+
+        if (!response.ok) {
+          continue;
+        }
+
+        const html = await response.text();
+        if (markers.every((marker) => html.includes(marker))) {
+          return true;
+        }
+      } catch (error) {
+        console.warn('Live check failed', error);
+      }
+    }
+
+    return false;
+  }
+
+  function syncAccessState() {
+    if (window.localStorage.getItem(STORAGE_KEY)) {
+      setStatus(copy.statusReady);
+    } else {
+      setStatus(copy.statusLocked);
+    }
+
+    setSavingState(false);
+  }
+
+  window.addEventListener('i-am-on:editor-secret', () => {
+    syncAccessState();
+  });
+
+  saveBtn.addEventListener('click', async () => {
+    const secret = window.localStorage.getItem(STORAGE_KEY);
+    if (!secret) {
+      setStatus(copy.lockedHint);
+      setSavingState(false);
+      return;
+    }
+
+    try {
+      const nextData = readData();
+      setSavingState(true);
+      setStatus(copy.saving);
+
+      const response = await fetch('/api/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-editor-secret': secret,
+        },
+        body: JSON.stringify({
+          path: contentPath,
+          content: buildMarkdown(nextData),
+          message: `Update ${locale} ${entryLabel} ${slug} from admin`,
+        }),
+      });
+
+      const raw = await response.text();
+      const result = parseResult(raw);
+
+      if (response.status === 401) {
+        setStatus(copy.passwordError);
+        setSavingState(false);
+        return;
+      }
+
+      if (!response.ok) {
+        setStatus(copy.genericErrorPrefix + formatError(result));
+        console.error('Save failed', result);
+        setSavingState(false);
+        return;
+      }
+
+      const commitSha = result.commit?.sha || 'done';
+      setStatus(copy.commitCreated, `${copy.commitPrefix} ${commitSha}`);
+      await sleep(700);
+      setStatus(copy.deploying, `${copy.commitPrefix} ${commitSha}`);
+
+      const isLive = await waitForLive(nextData);
+      if (isLive) {
+        setStatus(copy.live, `${copy.commitPrefix} ${commitSha}`);
+      } else {
+        setStatus(copy.stillDeploying, `${copy.commitPrefix} ${commitSha} · ${copy.deployPendingHint}`);
+      }
+    } catch (error) {
+      setStatus(copy.genericErrorPrefix + (error instanceof Error ? error.message : copy.unknownError));
+      console.error(error);
+    } finally {
+      setSavingState(false);
+    }
+  });
+
+  syncAccessState();
+</script>

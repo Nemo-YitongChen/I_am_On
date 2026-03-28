@@ -1,0 +1,24 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import LongformListPage from "../../components/LongformListPage.astro";
+import { getDefaultLocale } from "../../lib/site.js";
+import { getPostsList, getSlugFromContentId } from "../../lib/content";
+
+const locale = getDefaultLocale();
+const isZh = locale === "zh";
+const entries = await getPostsList(locale);
+const items = entries.map((entry) => ({
+  href: `/posts/${getSlugFromContentId(entry.id)}/`,
+  title: entry.data.title,
+  summary: entry.data.summary,
+  meta: entry.data.publishedAt.toISOString().slice(0, 10),
+  tags: entry.data.tags,
+}));
+
+const copy = isZh
+  ? { title: "文章", intro: "用这个集合展示你的写作、观点或说明性内容。", eyebrow: "文章集合" }
+  : { title: "Writing", intro: "Use this collection for essays, notes, and writing that helps people understand how you think.", eyebrow: "Writing" };
+---
+<BaseLayout title={`${copy.title} | Your Name`} description={copy.intro} locale={locale}>
+  <LongformListPage title={copy.title} intro={copy.intro} eyebrow={copy.eyebrow} items={items} />
+</BaseLayout>

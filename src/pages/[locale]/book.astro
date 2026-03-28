@@ -1,0 +1,20 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import BookPage from "../../components/BookPage.astro";
+import { getBookingOptions, getProfile } from "../../lib/content";
+import { getPage, isSecondaryLocaleEnabled } from "../../lib/site.js";
+
+const locale = Astro.params.locale ?? "";
+const isValidLocale = isSecondaryLocaleEnabled(locale);
+
+if (!isValidLocale) {
+  Astro.response.status = 404;
+}
+
+const page = isValidLocale ? getPage(locale, "book") : null;
+const options = isValidLocale ? await getBookingOptions(locale) : [];
+const profile = await getProfile();
+---
+<BaseLayout title={page?.title ?? "Not found"} description={page?.description ?? "Not found."} locale={isValidLocale ? locale : "en"}>
+  {isValidLocale && page ? <BookPage page={page} options={options} locale={locale} profile={profile} /> : <p class="p">Locale not enabled.</p>}
+</BaseLayout>

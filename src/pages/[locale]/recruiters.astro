@@ -1,0 +1,44 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import RecruitersPage from "../../components/RecruitersPage.astro";
+import { getProfile } from "../../lib/content";
+import { getPage, isSecondaryLocaleEnabled } from "../../lib/site.js";
+
+const locale = Astro.params.locale ?? "";
+const isValidLocale = isSecondaryLocaleEnabled(locale);
+
+if (!isValidLocale) {
+  Astro.response.status = 404;
+}
+
+const page = isValidLocale ? getPage(locale, "recruiters") : null;
+const profile = await getProfile();
+const isZh = locale === "zh";
+
+const quickLinks = [
+  {
+    label: isZh ? "案例" : "Work",
+    title: isZh ? "查看工作案例" : "See selected work",
+    summary: isZh ? "把代表性案例放在这里，帮助别人快速判断你的背景。" : "Use your work page as the fastest route into real examples.",
+    href: `/${locale}/work/`,
+    external: false,
+  },
+  {
+    label: "LinkedIn",
+    title: "LinkedIn profile",
+    summary: isZh ? "把公开职业资料放在这里。" : "Use your public professional profile as a second context layer.",
+    href: profile.linkedin,
+    external: true,
+  },
+  {
+    label: isZh ? "联系" : "Contact",
+    title: isZh ? "直接发邮件" : "Email directly",
+    summary: isZh ? "提供一个比预约更轻量的联系入口。" : "Give people a direct route if they want context first.",
+    href: `mailto:${profile.email}`,
+    external: false,
+  },
+];
+---
+<BaseLayout title={page?.title ?? "Not found"} description={page?.description ?? "Not found."} locale={isValidLocale ? locale : "en"}>
+  {isValidLocale && page ? <RecruitersPage page={page} locale={locale} quickLinks={quickLinks} /> : <p class="p">Locale not enabled.</p>}
+</BaseLayout>

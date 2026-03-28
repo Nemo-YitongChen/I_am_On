@@ -1,28 +1,36 @@
 # I_am_On
 
-An English-first, content-driven Astro starter for a personal site, selected work, writing, and lightweight booking flows.
+An English-first, content-driven Astro starter for a personal website with:
 
-## What this template gives you
+- a clear homepage
+- reusable About / Services / Consult / Recruiters / Book pages
+- selected work and writing collections
+- a protected browser editor for page content
+- a protected `/admin` area for Markdown posts and work entries
+- optional multilingual support
+- optional Calendly display on the booking page
 
-- default English home page without a locale prefix
-- optional extra locales such as `zh` or `ja`
-- page-section content stored in JSON for browser editing
-- optional long-form content in Markdown for posts and case studies
-- a protected in-browser editor that writes changes back to GitHub
-- Cloudflare Worker deployment with Git-triggered rebuilds
+## What makes this different
+
+This template is based on a real project flow that was iterated in production first, then generalized back into a reusable starter.
+
+That means it already includes:
+
+- stronger typography and spacing
+- recruiter-facing information architecture
+- a lighter-weight content editing experience
+- a practical work / writing structure
+- a more professional booking page pattern
 
 ## Content model
 
 Use one primary pattern for each kind of content:
 
 - page blocks: `src/content-live/<locale>/*.json`
-- posts: `src/content/posts/**/*.md`
-- work / case studies: `src/content/work/**/*.md`
-
-The starter home page already reads from:
-
-- `src/content-live/en/home.json`
-- `src/content-live/zh/home.json` when Chinese is enabled
+- posts: `src/content/posts/<locale>/*.md`
+- work: `src/content/work/<locale>/*.md`
+- site profile: `src/content/site/profile.json`
+- booking options: `src/content/site/booking-options.json`
 
 ## Default language and adding more locales
 
@@ -36,17 +44,65 @@ By default the template ships with:
 That means:
 
 - English home page is `/`
-- English editor is `/editor/home`
-- no other locale routes are enabled yet
+- English editor routes are `/editor/...`
+- no secondary locale routes are enabled yet
 
-To add Chinese later:
+Chinese starter content is already included, but it is not active until you enable it.
+
+To turn on Chinese:
 
 1. Update `site.config.mjs` so `locales` becomes `["en", "zh"]`.
-2. Keep `defaultLocale` as `en` if you still want English on `/`.
-3. Add `src/content-live/zh/home.json`.
-4. Visit `/zh/` and `/zh/editor/home`.
+2. Keep `defaultLocale` as `en` if you want English on `/`.
+3. Deploy again.
+4. Your Chinese routes will appear under `/zh/...`.
 
-To add another locale such as Japanese, repeat the same pattern with its JSON content file and locale metadata.
+## Main routes included
+
+Public pages:
+
+- `/`
+- `/about/`
+- `/services/`
+- `/consult/`
+- `/recruiters/`
+- `/book/`
+- `/posts/`
+- `/work/`
+- `/privacy/`
+
+Secondary locale pages follow the same pattern under `/<locale>/...`.
+
+Protected editing routes:
+
+- `/editor/home/`
+- `/editor/about/`
+- `/editor/services/`
+- `/editor/consult/`
+- `/editor/recruiters/`
+- `/editor/book/`
+- `/admin/`
+
+## Optional Calendly on the booking page
+
+The booking page supports an optional Calendly section.
+
+How it works:
+
+- page-level copy lives in `src/content-live/<locale>/book.json`
+- booking link options live in `src/content/site/booking-options.json`
+- the boolean `showCalendly` inside `book.json` controls whether the Calendly option is shown
+
+By default:
+
+- `showCalendly` is `false`
+- the placeholder Calendly URL points to `https://calendly.com/signup`
+
+That means the template does **not** ship with anyone's personal chat link.
+
+To enable it for a real site:
+
+1. set `showCalendly` to `true`
+2. replace the placeholder `url` in `booking-options.json` with your real event link
 
 ## Local development
 
@@ -58,20 +114,21 @@ npm run dev
 Useful files to edit first:
 
 - `site.config.mjs`
+- `src/content/site/profile.json`
 - `src/content-live/en/home.json`
+- `src/content-live/en/book.json`
 - `src/layouts/BaseLayout.astro`
-- `src/components/HomePage.astro`
 
 ## Deploy to Cloudflare
 
-This repo is configured for the Cloudflare Astro adapter in Worker mode.
+This repo is configured for Astro + Cloudflare Worker mode.
 
 Typical setup:
 
 1. Fork or copy this repository.
 2. In Cloudflare, create a new Worker build from your GitHub repository.
-3. Let Cloudflare install dependencies and run the repo build/deploy commands.
-4. Keep `wrangler.jsonc` in sync with your Worker name and deployment settings.
+3. Keep the default build and deploy commands from this repo.
+4. Let Cloudflare deploy from the branch you want to publish.
 
 Important project files:
 
@@ -81,7 +138,7 @@ Important project files:
 
 ## Variables and secrets
 
-Non-sensitive repo settings are already stored in `wrangler.jsonc`:
+Non-sensitive runtime vars already live in `wrangler.jsonc`:
 
 - `GITHUB_OWNER`
 - `GITHUB_REPO`
@@ -94,45 +151,59 @@ Set the sensitive values in Cloudflare under your Worker project's runtime Varia
 
 Use runtime secrets, not build-only variables, for editor write-back.
 
-## Enable the editor
+## Browser editor
 
-The starter editor writes JSON content back to GitHub through `/api/save`.
+The page editor writes JSON content back to GitHub through `/api/save`.
 
-Current editor routes:
+Current page editor routes:
 
-- English: `/editor/home`
-- Secondary locale: `/<locale>/editor/home`
+- `/editor/home/`
+- `/editor/about/`
+- `/editor/services/`
+- `/editor/consult/`
+- `/editor/recruiters/`
+- `/editor/book/`
 
 How it works:
 
-1. Open the editor page.
+1. Open an editor page.
 2. Enter the editor password.
 3. Click save.
 4. The app sends `x-editor-secret` to `/api/save`.
-5. The API updates the matching JSON file in GitHub.
+5. The API updates the matching JSON or Markdown file in GitHub.
 6. Cloudflare deploys the new commit.
 
-## Use it as a personal or booking site
+## Admin for posts and work
 
-A common first pass is:
+`/admin/` is designed for longer-form content.
 
-1. Replace the default copy in `src/content-live/en/home.json`.
-2. Update branding and navigation in `src/layouts/BaseLayout.astro`.
-3. Change CTA links to your booking, contact, or recruiter page.
-4. Add `src/content/work/` or `src/content/posts/` only when you are ready for longer content.
+It lets you:
 
-## Current scope
+- unlock a protected editing area in the browser
+- edit existing posts
+- edit existing work entries
+- save Markdown back to GitHub
 
-This starter is optimized for:
+The starter intentionally supports editing existing entries first. It does not try to be a full CMS.
 
-- homepage editing in the browser
-- lightweight bilingual setup
-- simple Git-backed publishing
+## How to personalize this template
 
-Good next extensions after the home page:
+Start in this order:
 
-- about
-- services
-- consult / booking pages
-- recruiter summary pages
-- an `/admin` surface for longer-form content later
+1. Replace the placeholder identity in `src/content/site/profile.json`.
+2. Rewrite `src/content-live/en/home.json`.
+3. Update `about`, `services`, `consult`, `recruiters`, and `book` content files.
+4. Replace the sample `posts` and `work` entries with your own.
+5. Turn on Chinese or another locale only when the translated content is ready.
+6. If you want booking, replace the placeholder Calendly setup link with your own event URL.
+
+## Notes on writing quality
+
+This template is designed to encourage:
+
+- clearer English copy
+- shorter, more readable paragraphs
+- better section hierarchy
+- smoother Chinese phrasing when a second locale is enabled
+
+When shipping real content, review English for natural professional tone and Chinese for fluency and accuracy before each deploy.

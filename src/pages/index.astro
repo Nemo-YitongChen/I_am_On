@@ -1,11 +1,46 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import HomePage from "../components/HomePage.astro";
-import { getDefaultLocale, getHomePage } from "../lib/site.js";
+import { getDefaultLocale, getPage } from "../lib/site.js";
+import { getPostsList, getSlugFromContentId, getWorkList } from "../lib/content";
 
 const locale = getDefaultLocale();
-const page = getHomePage(locale);
+const page = getPage(locale, "home");
+const latestPostEntry = (await getPostsList(locale))[0];
+const workEntries = await getWorkList(locale);
+const featuredWorkEntry = workEntries.find((entry) => entry.data.featured) ?? workEntries[0];
+
+const proofCards = [
+  featuredWorkEntry
+    ? {
+        href: `/${locale === "en" ? "" : `${locale}/`}work/${getSlugFromContentId(featuredWorkEntry.id)}/`.replace("//", "/"),
+        label: locale === "zh" ? "代表性案例" : "Selected work",
+        title: featuredWorkEntry.data.title,
+        summary: featuredWorkEntry.data.summary,
+        meta: `${featuredWorkEntry.data.role} · ${featuredWorkEntry.data.year}`,
+      }
+    : null,
+  {
+    href: locale === "zh" ? "/zh/recruiters/" : "/recruiters/",
+    label: locale === "zh" ? "招聘摘要" : "For recruiters",
+    title: locale === "zh" ? "岗位适配与联系方式" : "Role fit and contact",
+    summary:
+      locale === "zh"
+        ? "把招聘方常看信息收在同一页里。"
+        : "Put recruiter-facing context in one place instead of scattering it across the site.",
+    meta: locale === "zh" ? "招聘入口" : "Hiring snapshot",
+  },
+  latestPostEntry
+    ? {
+        href: `/${locale === "en" ? "" : `${locale}/`}posts/${getSlugFromContentId(latestPostEntry.id)}/`.replace("//", "/"),
+        label: locale === "zh" ? "文章" : "Writing",
+        title: latestPostEntry.data.title,
+        summary: latestPostEntry.data.summary,
+        meta: latestPostEntry.data.publishedAt.toISOString().slice(0, 10),
+      }
+    : null,
+].filter(Boolean);
 ---
 <BaseLayout title={page.title} description={page.description} locale={locale}>
-  <HomePage page={page} />
+  <HomePage page={page} locale={locale} proofCards={proofCards} />
 </BaseLayout>

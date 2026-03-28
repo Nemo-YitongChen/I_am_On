@@ -1,0 +1,95 @@
+---
+const {
+  title = "Admin",
+  intro = "Unlock the admin area to edit long-form content.",
+  storageKey = "i-am-on-editor-secret",
+} = Astro.props;
+---
+<section class="hero">
+  <h1 class="h1">{title}</h1>
+  <p class="p">{intro}</p>
+</section>
+
+<div class="card" data-admin-gate>
+  <p class="p">Editor password</p>
+  <input
+    data-admin-secret
+    type="password"
+    placeholder="Enter editor secret"
+    style="width:100%;margin:6px 0 12px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0c10;color:var(--text);"
+  />
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <button data-admin-unlock class="cta" type="button">Unlock</button>
+    <button
+      data-admin-clear
+      type="button"
+      style="padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--text);cursor:pointer;"
+    >
+      Clear access
+    </button>
+  </div>
+  <p data-admin-status class="p" style="margin-top:12px;margin-bottom:0;">
+    Enter the editor password to access admin tools on this browser.
+  </p>
+</div>
+
+<div data-admin-protected hidden style="display:none;">
+  <slot />
+</div>
+
+<script is:inline define:vars={{ storageKey }}>
+  const gate = document.querySelector('[data-admin-gate]');
+  const input = gate?.querySelector('[data-admin-secret]');
+  const unlockButton = gate?.querySelector('[data-admin-unlock]');
+  const clearButton = gate?.querySelector('[data-admin-clear]');
+  const status = gate?.querySelector('[data-admin-status]');
+  const protectedPanel = document.querySelector('[data-admin-protected]');
+
+  function notify(secret, unlocked) {
+    window.dispatchEvent(new CustomEvent('i-am-on:editor-secret', {
+      detail: { secret, unlocked },
+    }));
+  }
+
+  function applySecret(secret) {
+    const unlocked = Boolean(secret);
+
+    if (input) {
+      input.value = secret || '';
+    }
+
+    if (protectedPanel) {
+      protectedPanel.hidden = !unlocked;
+      protectedPanel.style.display = unlocked ? 'block' : 'none';
+    }
+
+    if (status) {
+      status.textContent = unlocked
+        ? 'Unlocked for this browser. Saving will use the stored editor password.'
+        : 'Enter the editor password to access admin tools on this browser.';
+    }
+
+    notify(secret || '', unlocked);
+  }
+
+  unlockButton?.addEventListener('click', () => {
+    const secret = input?.value?.trim() || '';
+    if (!secret) {
+      if (status) {
+        status.textContent = 'Enter the editor password before unlocking admin.';
+      }
+      applySecret('');
+      return;
+    }
+
+    window.localStorage.setItem(storageKey, secret);
+    applySecret(secret);
+  });
+
+  clearButton?.addEventListener('click', () => {
+    window.localStorage.removeItem(storageKey);
+    applySecret('');
+  });
+
+  applySecret(window.localStorage.getItem(storageKey) || '');
+</script>

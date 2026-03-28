@@ -1,0 +1,17 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import StructuredPage from "../../components/StructuredPage.astro";
+import { getPage, isSecondaryLocaleEnabled } from "../../lib/site.js";
+
+const locale = Astro.params.locale ?? "";
+const isValidLocale = isSecondaryLocaleEnabled(locale);
+
+if (!isValidLocale) {
+  Astro.response.status = 404;
+}
+
+const page = isValidLocale ? getPage(locale, "services") : null;
+---
+<BaseLayout title={page?.title ?? "Not found"} description={page?.description ?? "Not found."} locale={isValidLocale ? locale : "en"}>
+  {isValidLocale && page ? <StructuredPage page={page} locale={locale} /> : <p class="p">Locale not enabled.</p>}
+</BaseLayout>

@@ -1,0 +1,24 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import LongformListPage from "../../components/LongformListPage.astro";
+import { getDefaultLocale } from "../../lib/site.js";
+import { getSlugFromContentId, getWorkList } from "../../lib/content";
+
+const locale = getDefaultLocale();
+const isZh = locale === "zh";
+const entries = await getWorkList(locale);
+const items = entries.map((entry) => ({
+  href: `/work/${getSlugFromContentId(entry.id)}/`,
+  title: entry.data.title,
+  summary: entry.data.summary,
+  meta: `${entry.data.role} · ${entry.data.year}`,
+  tags: entry.data.tags,
+}));
+
+const copy = isZh
+  ? { title: "案例", intro: "用这个集合展示代表性工作、项目或职责摘要。", eyebrow: "案例集合" }
+  : { title: "Work", intro: "Use this collection for selected projects, roles, case studies, or representative proof.", eyebrow: "Selected work" };
+---
+<BaseLayout title={`${copy.title} | Your Name`} description={copy.intro} locale={locale}>
+  <LongformListPage title={copy.title} intro={copy.intro} eyebrow={copy.eyebrow} items={items} />
+</BaseLayout>

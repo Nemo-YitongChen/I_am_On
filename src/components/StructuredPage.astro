@@ -1,0 +1,48 @@
+---
+const { page, locale = "en", eyebrow, sectionTitle, sectionIntro } = Astro.props;
+
+const isZh = locale === "zh";
+const copy = {
+  eyebrow: eyebrow ?? (isZh ? "页面概览" : "Overview"),
+  sectionTitle: sectionTitle ?? (isZh ? "重点信息" : "Highlights"),
+  sectionIntro:
+    sectionIntro ??
+    (isZh
+      ? "用更短、更清楚的方式把这个页面最重要的信息放在前面。"
+      : "A faster overview of the most important details on this page."),
+};
+---
+<section class="hero-block">
+  <p class="eyebrow">{copy.eyebrow}</p>
+  <h1 class="hero-title">{page.heroTitle}</h1>
+  <p class="hero-copy">{page.heroText}</p>
+
+  {page.ctas?.length > 0 && (
+    <div class="cta-row">
+      {page.ctas.map((cta) => (
+        <a class={cta.variant === "primary" ? "cta" : "ghost-btn"} href={cta.href}>
+          {cta.label}
+        </a>
+      ))}
+    </div>
+  )}
+</section>
+
+{page.cards?.length > 0 && (
+  <section class="section">
+    <div class="section-head">
+      <p class="eyebrow">{isZh ? "快速浏览" : "At a glance"}</p>
+      <h2 class="section-title">{copy.sectionTitle}</h2>
+      <p class="section-copy">{copy.sectionIntro}</p>
+    </div>
+
+    <div class="grid" style="margin-top:0;">
+      {page.cards.map((card) => (
+        <article class={`card ${card.layout ?? "half"}`.trim()}>
+          <p class="kicker">{card.title}</p>
+          <p class="card-copy">{card.text}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+)}

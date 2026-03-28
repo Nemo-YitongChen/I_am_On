@@ -1,22 +1,32 @@
 {
-  "title": "About · Your Name",
-  "description": "A short introduction page for the starter template.",
-  "heroTitle": "About this starter",
-  "heroText": "This page shows how a second page can be driven from editable JSON content instead of hard-coded Astro page copy.",
+  "title": "About | Your Name",
+  "description": "A generic About page for the starter template.",
+  "heroTitle": "Tell a clearer story about who you are",
+  "heroText": "Use this page for background, values, goals, and the kind of work you want more of. It should help people understand you without asking them to read a long autobiography.",
   "cards": [
     {
-      "title": "Why it exists",
-      "text": "The goal is to let non-technical users update real page copy through a browser-based editor, while still publishing through Git and Cloudflare Pages."
+      "title": "Background",
+      "text": "Summarise the experiences, training, or transitions that shaped the way you work."
     },
     {
-      "title": "How to reuse it",
-      "text": "Replace this content with your own story, background, goals, services, or portfolio narrative, and keep the page component structure reusable."
+      "title": "Working style",
+      "text": "Explain how you think, communicate, and collaborate, especially if that affects the kind of roles or clients that fit you best."
+    },
+    {
+      "title": "Direction",
+      "text": "Describe what you want more of next, whether that means roles, projects, consulting, writing, or a clearer public profile."
     }
   ],
   "ctas": [
     {
-      "label": "Edit this page",
-      "href": "/editor/en/about"
+      "label": "See my work",
+      "href": "/work/",
+      "variant": "primary"
+    },
+    {
+      "label": "Book a chat",
+      "href": "/book/",
+      "variant": "secondary"
     }
   ]
 }

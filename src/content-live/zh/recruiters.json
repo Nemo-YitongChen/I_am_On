@@ -1,0 +1,45 @@
+{
+  "title": "招聘摘要 | Your Name",
+  "description": "模板中的招聘方摘要页面示例，用来快速概括岗位适配、工作方式和联系方式。",
+  "heroTitle": "用一页更快说明你的岗位适配度与工作方式",
+  "heroText": "这个页面适合把岗位方向、背景摘要与联系方式集中起来，避免招聘方需要在整个站点里来回查找。",
+  "cards": [
+    {
+      "title": "跨职能画像",
+      "text": "用这里说明你通常横跨哪些职责、功能或工作环境。",
+      "layout": "half"
+    },
+    {
+      "title": "更适合的岗位方向",
+      "text": "列出最适合你的岗位类型，让别人能更快判断匹配度。",
+      "layout": "half"
+    },
+    {
+      "title": "技术或分析底座",
+      "text": "概括支撑你整体工作的系统能力、方法论或技术基础。",
+      "layout": "half"
+    },
+    {
+      "title": "沟通与交付优势",
+      "text": "强调那些在真实招聘场景里更重要的人际沟通与执行能力。",
+      "layout": "half"
+    }
+  ],
+  "ctas": [
+    {
+      "label": "查看案例",
+      "href": "/zh/work/",
+      "variant": "primary"
+    },
+    {
+      "label": "LinkedIn",
+      "href": "https://www.linkedin.com/in/your-name",
+      "variant": "secondary"
+    },
+    {
+      "label": "发邮件给我",
+      "href": "mailto:hello@example.com",
+      "variant": "secondary"
+    }
+  ]
+}

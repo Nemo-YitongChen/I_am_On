@@ -1,0 +1,14 @@
+---
+const { title, description, meta, tags = [], Content, eyebrow = "Entry" } = Astro.props;
+---
+<section class="hero-block">
+  <p class="eyebrow">{eyebrow}</p>
+  <h1 class="hero-title">{title}</h1>
+  <p class="hero-copy">{description}</p>
+  {meta && <p class="small" style="margin-bottom:10px;">{meta}</p>}
+  {tags.length > 0 && <p class="small">{tags.join(" · ")}</p>}
+</section>
+
+<article class="card prose" style="line-height:1.8;">
+  <Content />
+</article>
