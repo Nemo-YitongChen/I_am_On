@@ -51,6 +51,8 @@ const {
     }));
   }
 
+  const storage = window.sessionStorage;
+
   function applySecret(secret) {
     const unlocked = Boolean(secret);
 
@@ -65,8 +67,8 @@ const {
 
     if (status) {
       status.textContent = unlocked
-        ? 'Unlocked for this browser. Saving will use the stored editor password.'
-        : 'Enter the editor password to access admin tools on this browser.';
+        ? 'Unlocked for this tab. Saving will use the current session password.'
+        : 'Enter the editor password to access admin tools for this tab.';
     }
 
     notify(secret || '', unlocked);
@@ -82,14 +84,14 @@ const {
       return;
     }
 
-    window.localStorage.setItem(storageKey, secret);
+    storage.setItem(storageKey, secret);
     applySecret(secret);
   });
 
   clearButton?.addEventListener('click', () => {
-    window.localStorage.removeItem(storageKey);
+    storage.removeItem(storageKey);
     applySecret('');
   });
 
-  applySecret(window.localStorage.getItem(storageKey) || '');
+  applySecret(storage.getItem(storageKey) || '');
 </script>

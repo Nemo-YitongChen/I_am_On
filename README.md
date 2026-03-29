@@ -1,62 +1,28 @@
 # I_am_On
 
-An English-first, content-driven Astro starter for a personal website with:
+An English-first, content-driven Astro starter for a personal site that can also support:
 
-- a clear homepage
-- reusable About / Services / Consult / Recruiters / Book pages
-- selected work and writing collections
-- a protected browser editor for page content
-- a protected `/admin` area for Markdown posts and work entries
-- optional multilingual support
-- optional Calendly display on the booking page
+- recruiter-facing pages
+- selected work and writing
+- protected browser editing
+- protected long-form admin editing
+- optional multilingual routes
+- optional booking with or without Calendly
 
-## What makes this different
+This repo is the reusable template.
 
-This template is based on a real project flow that was iterated in production first, then generalized back into a reusable starter.
+Use it for structure, not for real identity.
 
-That means it already includes:
+## Five-minute quickstart
 
-- stronger typography and spacing
-- recruiter-facing information architecture
-- a lighter-weight content editing experience
-- a practical work / writing structure
-- a more professional booking page pattern
+1. Install dependencies.
+2. Update `site.config.mjs`.
+3. Replace the placeholder identity in `src/content/site/profile.json`.
+4. Rewrite `src/content-live/en/home.json`.
+5. Run `npm run validate`.
+6. Deploy to Cloudflare Workers.
 
-## Content model
-
-Use one primary pattern for each kind of content:
-
-- page blocks: `src/content-live/<locale>/*.json`
-- posts: `src/content/posts/<locale>/*.md`
-- work: `src/content/work/<locale>/*.md`
-- site profile: `src/content/site/profile.json`
-- booking options: `src/content/site/booking-options.json`
-
-## Default language and adding more locales
-
-Language settings live in `site.config.mjs`.
-
-By default the template ships with:
-
-- `defaultLocale: "en"`
-- `locales: ["en"]`
-
-That means:
-
-- English home page is `/`
-- English editor routes are `/editor/...`
-- no secondary locale routes are enabled yet
-
-Chinese starter content is already included, but it is not active until you enable it.
-
-To turn on Chinese:
-
-1. Update `site.config.mjs` so `locales` becomes `["en", "zh"]`.
-2. Keep `defaultLocale` as `en` if you want English on `/`.
-3. Deploy again.
-4. Your Chinese routes will appear under `/zh/...`.
-
-## Main routes included
+## What this template includes
 
 Public pages:
 
@@ -69,10 +35,9 @@ Public pages:
 - `/posts/`
 - `/work/`
 - `/privacy/`
+- `/404`
 
-Secondary locale pages follow the same pattern under `/<locale>/...`.
-
-Protected editing routes:
+Protected editing:
 
 - `/editor/home/`
 - `/editor/about/`
@@ -82,27 +47,30 @@ Protected editing routes:
 - `/editor/book/`
 - `/admin/`
 
-## Optional Calendly on the booking page
+## Content model
 
-The booking page supports an optional Calendly section.
+- page blocks: `src/content-live/<locale>/*.json`
+- posts: `src/content/posts/<locale>/*.md`
+- work: `src/content/work/<locale>/*.md`
+- profile: `src/content/site/profile.json`
+- booking options: `src/content/site/booking-options.json`
 
-How it works:
+## Template modes already supported
 
-- page-level copy lives in `src/content-live/<locale>/book.json`
-- booking link options live in `src/content/site/booking-options.json`
-- the boolean `showCalendly` inside `book.json` controls whether the Calendly option is shown
+You can already run this starter in a few practical modes without changing the code structure:
 
-By default:
+- single-language site
+- bilingual site
+- booking page with Calendly
+- booking page without Calendly
+- public site with editor/admin enabled
+- public site where you simply do not configure save secrets yet
 
-- `showCalendly` is `false`
-- the placeholder Calendly URL points to `https://calendly.com/signup`
+Main toggles:
 
-That means the template does **not** ship with anyone's personal chat link.
-
-To enable it for a real site:
-
-1. set `showCalendly` to `true`
-2. replace the placeholder `url` in `booking-options.json` with your real event link
+- locales: `site.config.mjs`
+- booking visibility: `showCalendly` in `src/content-live/<locale>/book.json`
+- real booking link: `src/content/site/booking-options.json`
 
 ## Local development
 
@@ -111,99 +79,63 @@ npm install
 npm run dev
 ```
 
-Useful files to edit first:
+Validation commands:
 
-- `site.config.mjs`
-- `src/content/site/profile.json`
-- `src/content-live/en/home.json`
-- `src/content-live/en/book.json`
-- `src/layouts/BaseLayout.astro`
+- `npm run build`
+- `npm run smoke`
+- `npm run validate`
 
-## Deploy to Cloudflare
+## Cloudflare Worker deployment
 
 This repo is configured for Astro + Cloudflare Worker mode.
 
-Typical setup:
+Important files:
 
-1. Fork or copy this repository.
-2. In Cloudflare, create a new Worker build from your GitHub repository.
-3. Keep the default build and deploy commands from this repo.
-4. Let Cloudflare deploy from the branch you want to publish.
-
-Important project files:
-
-- `wrangler.jsonc`
 - `astro.config.mjs`
-- `package.json`
+- `wrangler.jsonc`
+- `site.config.mjs`
+- `src/pages/api/save.js`
 
-## Variables and secrets
+Before enabling browser save, configure runtime secrets and vars in Cloudflare:
 
-Non-sensitive runtime vars already live in `wrangler.jsonc`:
-
+- `GITHUB_TOKEN`
 - `GITHUB_OWNER`
 - `GITHUB_REPO`
 - `GITHUB_BRANCH`
-
-Set the sensitive values in Cloudflare under your Worker project's runtime Variables and Secrets:
-
-- `GITHUB_TOKEN`
 - `EDITOR_SECRET`
 
-Use runtime secrets, not build-only variables, for editor write-back.
+The template no longer hardcodes a personal GitHub owner or repository into the Worker config.
 
-## Browser editor
+## Custom domain
 
-The page editor writes JSON content back to GitHub through `/api/save`.
+After the Worker is deployed and working:
 
-Current page editor routes:
+1. add your custom domain in Cloudflare
+2. update `siteConfig.site` in `site.config.mjs`
+3. deploy again so canonical URLs and sitemap output match the real domain
 
-- `/editor/home/`
-- `/editor/about/`
-- `/editor/services/`
-- `/editor/consult/`
-- `/editor/recruiters/`
-- `/editor/book/`
+## Browser editor and admin
 
-How it works:
+The editor writes content back through `/api/save`.
 
-1. Open an editor page.
-2. Enter the editor password.
-3. Click save.
-4. The app sends `x-editor-secret` to `/api/save`.
-5. The API updates the matching JSON or Markdown file in GitHub.
-6. Cloudflare deploys the new commit.
+Security is intentionally lightweight:
 
-## Admin for posts and work
+- password header: `x-editor-secret`
+- file allowlist in the save API
+- admin unlock stored for the current tab session
 
-`/admin/` is designed for longer-form content.
+This is meant for low-friction ownership, not for multi-user CMS security.
 
-It lets you:
+## Documentation index
 
-- unlock a protected editing area in the browser
-- edit existing posts
-- edit existing work entries
-- save Markdown back to GitHub
+- `docs/QUICKSTART.md`
+- `docs/OPERATIONS.md`
+- `docs/TEMPLATE_BOUNDARY_CHECKLIST.md`
+- `docs/PAGES_WORKERS_SYNC_CHECKLIST.md`
 
-The starter intentionally supports editing existing entries first. It does not try to be a full CMS.
+## Writing quality standard
 
-## How to personalize this template
+Before each push:
 
-Start in this order:
-
-1. Replace the placeholder identity in `src/content/site/profile.json`.
-2. Rewrite `src/content-live/en/home.json`.
-3. Update `about`, `services`, `consult`, `recruiters`, and `book` content files.
-4. Replace the sample `posts` and `work` entries with your own.
-5. Turn on Chinese or another locale only when the translated content is ready.
-6. If you want booking, replace the placeholder Calendly setup link with your own event URL.
-
-## Notes on writing quality
-
-This template is designed to encourage:
-
-- clearer English copy
-- shorter, more readable paragraphs
-- better section hierarchy
-- smoother Chinese phrasing when a second locale is enabled
-
-When shipping real content, review English for natural professional tone and Chinese for fluency and accuracy before each deploy.
+- English should sound natural, clear, and reusable
+- Chinese should be fluent, neutral, and not read like a literal translation

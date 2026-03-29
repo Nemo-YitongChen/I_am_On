@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "smoke": "node scripts/smoke-check.mjs",
+    "validate": "npm run build && npm run smoke",
     "preview": "astro preview",
     "astro": "astro",
     "deploy": "wrangler deploy"

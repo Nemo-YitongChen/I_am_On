@@ -8,8 +8,6 @@
     "global_fetch_strictly_public"
   ],
   "vars": {
-    "GITHUB_OWNER": "Nemo-YitongChen",
-    "GITHUB_REPO": "I_am_On",
     "GITHUB_BRANCH": "main"
   },
   "assets": {
