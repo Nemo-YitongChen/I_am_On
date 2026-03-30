@@ -2,7 +2,9 @@
 const {
   page,
   locale = "en",
+  pathwayCards = [],
   proofCards = [],
+  writingCards = [],
 } = Astro.props;
 
 const isZh = locale === "zh";
@@ -16,9 +18,15 @@ const copy = isZh
         "再看我适合哪些岗位与协作场景。",
         "最后决定要不要联系我或预约交流。",
       ],
+      pathEyebrow: "从这里开始",
+      pathHeading: "先选最适合你的入口",
+      pathIntro: "如果访问者带着明确目标进入网站，这几条入口通常会比从首页慢慢找更高效。",
       proofEyebrow: "重点证明",
       proofHeading: "先看证据，再看主张",
       proofIntro: "这几个入口最适合快速判断我的工作背景、表达方式和可信度。",
+      writingEyebrow: "最新文章",
+      writingHeading: "用文章补充工作方式",
+      writingIntro: "这部分适合放更完整的文章、说明和思考，让别人理解你如何判断、表达和组织复杂信息。",
       topicsEyebrow: "工作主题",
       topicsHeading: "我持续在做的几类事情",
       topicsIntro: "这些主题贯穿了我的工作、项目和长期兴趣，也是我最希望继续深化的方向。",
@@ -33,9 +41,15 @@ const copy = isZh
         "Then see the roles and contexts that fit me best.",
         "If it looks right, book a chat or use the recruiter page.",
       ],
+      pathEyebrow: "Start here",
+      pathHeading: "Choose the shortest route into the site",
+      pathIntro: "If a visitor arrives with a specific goal, these entry points usually work better than making them browse from the top.",
       proofEyebrow: "Selected proof",
       proofHeading: "See the work before the claims",
       proofIntro: "These are the fastest routes into my background, working style, and the kind of contribution I tend to make.",
+      writingEyebrow: "Recent writing",
+      writingHeading: "Use the writing to understand the thinking",
+      writingIntro: "This is where longer posts, notes, and explanations help people understand how you work, explain, and make decisions.",
       topicsEyebrow: "Focus areas",
       topicsHeading: "What I work across",
       topicsIntro: "These themes show up repeatedly across my roles, projects, and the conversations I am most useful in.",
@@ -70,6 +84,28 @@ const copy = isZh
   </aside>
 </section>
 
+{pathwayCards.length > 0 && (
+  <section class="section">
+    <div class="section-head">
+      <p class="eyebrow">{copy.pathEyebrow}</p>
+      <h2 class="section-title">{copy.pathHeading}</h2>
+      <p class="section-copy">{copy.pathIntro}</p>
+    </div>
+
+    <div class="grid" style="margin-top:0;">
+      {pathwayCards.map((card) => (
+        <a class={`card ${card.layout ?? "half"}`.trim()} href={card.href}>
+          <p class="eyebrow" style="margin-bottom:10px;">{card.label}</p>
+          {card.meta && <p class="small" style="margin-bottom:10px;">{card.meta}</p>}
+          <p class="card-title">{card.title}</p>
+          <p class="card-copy">{card.summary}</p>
+          <p class="small" style="margin-top:16px;">{copy.openLabel}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+)}
+
 {proofCards.length > 0 && (
   <section class="section">
     <div class="section-head">
@@ -81,6 +117,28 @@ const copy = isZh
     <div class="grid" style="margin-top:0;">
       {proofCards.map((card) => (
         <a class={`card ${card.layout ?? "third"}`.trim()} href={card.href}>
+          <p class="eyebrow" style="margin-bottom:10px;">{card.label}</p>
+          {card.meta && <p class="small" style="margin-bottom:10px;">{card.meta}</p>}
+          <p class="card-title">{card.title}</p>
+          <p class="card-copy">{card.summary}</p>
+          <p class="small" style="margin-top:16px;">{copy.openLabel}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+)}
+
+{writingCards.length > 0 && (
+  <section class="section">
+    <div class="section-head">
+      <p class="eyebrow">{copy.writingEyebrow}</p>
+      <h2 class="section-title">{copy.writingHeading}</h2>
+      <p class="section-copy">{copy.writingIntro}</p>
+    </div>
+
+    <div class="grid" style="margin-top:0;">
+      {writingCards.map((card) => (
+        <a class={`card ${card.layout ?? "half"}`.trim()} href={card.href}>
           <p class="eyebrow" style="margin-bottom:10px;">{card.label}</p>
           {card.meta && <p class="small" style="margin-bottom:10px;">{card.meta}</p>}
           <p class="card-title">{card.title}</p>

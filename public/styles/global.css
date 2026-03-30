@@ -290,6 +290,10 @@ select{
   backdrop-filter:blur(18px);
 }
 
+.card.feature{
+  grid-column:span 12;
+}
+
 .surface-soft{
   background:
     linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)),

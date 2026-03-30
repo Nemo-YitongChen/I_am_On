@@ -1,5 +1,5 @@
 ---
-const { title, description, meta, tags = [], Content, eyebrow = "Entry" } = Astro.props;
+const { title, description, meta, tags = [], Content, eyebrow = "Entry", leadTitle = "", leadText = "" } = Astro.props;
 ---
 <section class="hero-block">
   <p class="eyebrow">{eyebrow}</p>
@@ -8,6 +8,13 @@ const { title, description, meta, tags = [], Content, eyebrow = "Entry" } = Astr
   {meta && <p class="small" style="margin-bottom:10px;">{meta}</p>}
   {tags.length > 0 && <p class="small">{tags.join(" · ")}</p>}
 </section>
+
+{leadText && (
+  <section class="card callout">
+    {leadTitle && <p class="eyebrow">{leadTitle}</p>}
+    <p class="card-copy" style="margin-top:0;">{leadText}</p>
+  </section>
+)}
 
 <article class="card prose" style="line-height:1.8;">
   <Content />

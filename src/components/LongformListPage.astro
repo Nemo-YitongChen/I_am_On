@@ -15,7 +15,8 @@ const { title, intro, items = [], eyebrow = "Collection" } = Astro.props;
     </div>
   ) : (
     items.map((item) => (
-      <a class="card half" href={item.href}>
+      <a class={`card ${item.layout ?? "half"}`.trim()} href={item.href}>
+        {item.proof && <p class="eyebrow" style="margin-bottom:10px;">{item.proof}</p>}
         {item.meta && <p class="small" style="margin-bottom:10px;">{item.meta}</p>}
         <p class="card-title">{item.title}</p>
         <p class="card-copy">{item.summary}</p>

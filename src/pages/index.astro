@@ -1,46 +1,70 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import HomePage from "../components/HomePage.astro";
-import { getDefaultLocale, getPage } from "../lib/site.js";
+import { getDefaultLocale, getLocalePrefix, getPage } from "../lib/site.js";
 import { getPostsList, getSlugFromContentId, getWorkList } from "../lib/content";
 
 const locale = getDefaultLocale();
 const page = getPage(locale, "home");
-const latestPostEntry = (await getPostsList(locale))[0];
+const prefix = getLocalePrefix(locale);
+const postEntries = await getPostsList(locale);
 const workEntries = await getWorkList(locale);
-const featuredWorkEntry = workEntries.find((entry) => entry.data.featured) ?? workEntries[0];
+const topWorkEntries = workEntries.slice(0, 2);
+const topPostEntries = postEntries.slice(0, 2);
 
-const proofCards = [
-  featuredWorkEntry
-    ? {
-        href: `/${locale === "en" ? "" : `${locale}/`}work/${getSlugFromContentId(featuredWorkEntry.id)}/`.replace("//", "/"),
-        label: locale === "zh" ? "代表性案例" : "Selected work",
-        title: featuredWorkEntry.data.title,
-        summary: featuredWorkEntry.data.summary,
-        meta: `${featuredWorkEntry.data.role} · ${featuredWorkEntry.data.year}`,
-      }
-    : null,
+const pathwayCards = [
   {
-    href: locale === "zh" ? "/zh/recruiters/" : "/recruiters/",
-    label: locale === "zh" ? "招聘摘要" : "For recruiters",
-    title: locale === "zh" ? "岗位适配与联系方式" : "Role fit and contact",
-    summary:
-      locale === "zh"
-        ? "把招聘方常看信息收在同一页里。"
-        : "Put recruiter-facing context in one place instead of scattering it across the site.",
-    meta: locale === "zh" ? "招聘入口" : "Hiring snapshot",
+    href: `${prefix}/work/`,
+    label: locale === "zh" ? "案例" : "Work",
+    title: locale === "zh" ? "先看代表性工作与案例" : "Start with selected work",
+    summary: locale === "zh" ? "用更具体的项目、职责与结果，帮助别人快速判断你的背景和贡献方式。" : "Use concrete roles, projects, and proof to help visitors understand your contribution quickly.",
+    meta: locale === "zh" ? "最佳起点" : "Best starting point",
+    layout: "half",
   },
-  latestPostEntry
-    ? {
-        href: `/${locale === "en" ? "" : `${locale}/`}posts/${getSlugFromContentId(latestPostEntry.id)}/`.replace("//", "/"),
-        label: locale === "zh" ? "文章" : "Writing",
-        title: latestPostEntry.data.title,
-        summary: latestPostEntry.data.summary,
-        meta: latestPostEntry.data.publishedAt.toISOString().slice(0, 10),
-      }
-    : null,
-].filter(Boolean);
+  {
+    href: `${prefix}/posts/`,
+    label: locale === "zh" ? "文章" : "Writing",
+    title: locale === "zh" ? "从文章看你的思路与表达" : "Use writing to explain how you think",
+    summary: locale === "zh" ? "适合放更完整的说明、笔记和长文，让网站不只是一个简介页。" : "Use longer notes and writing when you need the site to show more than a short profile.",
+    meta: locale === "zh" ? "长文与说明" : "Notes and essays",
+    layout: "half",
+  },
+  {
+    href: `${prefix}/recruiters/`,
+    label: locale === "zh" ? "招聘摘要" : "Recruiters",
+    title: locale === "zh" ? "岗位适配与联系信息放在一起" : "Keep fit and contact in one place",
+    summary: locale === "zh" ? "把招聘或合作常看的信息集中整理，减少来回查找。" : "Collect role fit, contact, and context in one recruiter-facing page.",
+    meta: locale === "zh" ? "招聘入口" : "Hiring snapshot",
+    layout: "half",
+  },
+  {
+    href: `${prefix}/book/`,
+    label: locale === "zh" ? "预约" : "Book",
+    title: locale === "zh" ? "给访问者一个清楚的下一步" : "Offer one clear next step",
+    summary: locale === "zh" ? "可以用预约、直接联系，或两者并存，但不要把下一步做复杂。" : "Use booking, direct contact, or both, but keep the next step simple.",
+    meta: locale === "zh" ? "直接联系" : "Direct contact",
+    layout: "half",
+  },
+];
+
+const proofCards = topWorkEntries.map((entry, index) => ({
+  href: `${prefix}/work/${getSlugFromContentId(entry.id)}/`,
+  label: locale === "zh" ? "代表性案例" : "Selected work",
+  title: entry.data.title,
+  summary: entry.data.summary,
+  meta: `${entry.data.role} · ${entry.data.year}`,
+  layout: index === 0 ? "feature" : "half",
+}));
+
+const writingCards = topPostEntries.map((entry) => ({
+  href: `${prefix}/posts/${getSlugFromContentId(entry.id)}/`,
+  label: locale === "zh" ? "文章" : "Writing",
+  title: entry.data.title,
+  summary: entry.data.summary,
+  meta: entry.data.publishedAt.toISOString().slice(0, 10),
+  layout: "half",
+}));
 ---
 <BaseLayout title={page.title} description={page.description} locale={locale}>
-  <HomePage page={page} locale={locale} proofCards={proofCards} />
+  <HomePage page={page} locale={locale} pathwayCards={pathwayCards} proofCards={proofCards} writingCards={writingCards} />
 </BaseLayout>

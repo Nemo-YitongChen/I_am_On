@@ -1,6 +1,7 @@
 ---
 import { getEntry, render } from "astro:content";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+import LinkCardsSection from "../../../components/LinkCardsSection.astro";
 import LongformEntryPage from "../../../components/LongformEntryPage.astro";
 import { getSecondaryLocales, isSecondaryLocaleEnabled } from "../../../lib/site.js";
 import { getPostsList, getSlugFromContentId } from "../../../lib/content";
@@ -32,17 +33,54 @@ if (!entry) {
 const { Content } = await render(entry);
 const eyebrow = locale === "zh" ? "文章" : "Writing";
 const meta = entry.data.publishedAt.toISOString().slice(0, 10);
+const nextStepCards = [
+  {
+    href: `/${locale}/work/`,
+    label: locale === "zh" ? "案例" : "Work",
+    title: locale === "zh" ? "把文章放回到真实证明里看" : "Connect the writing to proof",
+    summary: locale === "zh" ? "案例页会把这些想法对应到具体项目、职责与结果上。" : "The work page shows how the ideas relate to actual roles, projects, and outcomes.",
+    meta: locale === "zh" ? "证明与案例" : "Proof and examples",
+    layout: "third",
+  },
+  {
+    href: `/${locale}/recruiters/`,
+    label: locale === "zh" ? "招聘摘要" : "Recruiters",
+    title: locale === "zh" ? "看更简洁的岗位匹配概览" : "See the concise hiring snapshot",
+    summary: locale === "zh" ? "如果你想更快看背景、角色方向和联系入口，这一页更直接。" : "Use this for the shortest route into fit summary, profile links, and contact details.",
+    meta: locale === "zh" ? "招聘入口" : "Role fit",
+    layout: "third",
+  },
+  {
+    href: `/${locale}/book/`,
+    label: locale === "zh" ? "预约" : "Book",
+    title: locale === "zh" ? "把理解转成下一步交流" : "Turn the context into a conversation",
+    summary: locale === "zh" ? "如果这篇文章已经足够帮助别人形成判断，这里就是最清楚的下一步。" : "If the post already gives enough context, this is the cleanest next step.",
+    meta: locale === "zh" ? "直接联系" : "Direct contact",
+    layout: "third",
+  },
+];
 ---
 <BaseLayout title={entry.data.title} description={entry.data.description} locale={isValidLocale ? locale : "en"}>
   {isValidLocale ? (
-    <LongformEntryPage
-      eyebrow={eyebrow}
-      title={entry.data.title}
-      description={entry.data.description}
-      meta={meta}
-      tags={entry.data.tags}
-      Content={Content}
-    />
+    <>
+      <LongformEntryPage
+        eyebrow={eyebrow}
+        leadTitle={locale === "zh" ? "核心观点" : "Key idea"}
+        leadText={entry.data.summary}
+        title={entry.data.title}
+        description={entry.data.description}
+        meta={meta}
+        tags={entry.data.tags}
+        Content={Content}
+      />
+      <LinkCardsSection
+        eyebrow={locale === "zh" ? "下一步" : "Next step"}
+        title={locale === "zh" ? "把这篇文章和证明、岗位匹配一起看" : "Use this note with proof and fit"}
+        intro={locale === "zh" ? "单篇文章能说明你的思路，但结合案例页和招聘摘要一起看，会更容易形成完整判断。" : "This post is one piece of the picture. These pages help place it in a clearer practical context."}
+        cards={nextStepCards}
+        locale={locale}
+      />
+    </>
   ) : (
     <p class="p">Locale not enabled.</p>
   )}

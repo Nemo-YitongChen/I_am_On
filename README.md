@@ -37,6 +37,14 @@ Public pages:
 - `/privacy/`
 - `/404`
 
+Homepage structure:
+
+- hero with clear CTA
+- start-here entry cards
+- selected proof cards
+- recent writing cards
+- focus-area topic cards
+
 Protected editing:
 
 - `/editor/home/`
@@ -125,6 +133,8 @@ Security is intentionally lightweight:
 - admin unlock stored for the current tab session
 
 This is meant for low-friction ownership, not for multi-user CMS security.
+
+The public pages also include reusable next-step handoff sections, so visitors can move between work, writing, recruiter context, and booking without needing to restart from the homepage.
 
 ## Documentation index
 

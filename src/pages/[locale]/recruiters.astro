@@ -1,8 +1,9 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import LinkCardsSection from "../../components/LinkCardsSection.astro";
 import RecruitersPage from "../../components/RecruitersPage.astro";
 import { getProfile } from "../../lib/content";
-import { getPage, isSecondaryLocaleEnabled } from "../../lib/site.js";
+import { getLocalePrefix, getPage, isSecondaryLocaleEnabled } from "../../lib/site.js";
 
 const locale = Astro.params.locale ?? "";
 const isValidLocale = isSecondaryLocaleEnabled(locale);
@@ -14,13 +15,14 @@ if (!isValidLocale) {
 const page = isValidLocale ? getPage(locale, "recruiters") : null;
 const profile = await getProfile();
 const isZh = locale === "zh";
+const prefix = isValidLocale ? getLocalePrefix(locale) : "";
 
 const quickLinks = [
   {
     label: isZh ? "案例" : "Work",
     title: isZh ? "查看工作案例" : "See selected work",
     summary: isZh ? "把代表性案例放在这里，帮助别人快速判断你的背景。" : "Use your work page as the fastest route into real examples.",
-    href: `/${locale}/work/`,
+    href: `${prefix}/work/`,
     external: false,
   },
   {
@@ -38,7 +40,47 @@ const quickLinks = [
     external: false,
   },
 ];
+
+const nextStepCards = [
+  {
+    href: `${prefix}/work/`,
+    label: isZh ? "案例" : "Work",
+    title: isZh ? "看更完整的案例和证明" : "See the fuller case-study view",
+    summary: isZh ? "让访问者先从真实项目、职责和结果开始判断。" : "Let visitors start with concrete roles, projects, and outcomes.",
+    meta: isZh ? "证明与案例" : "Proof and examples",
+    layout: "third",
+  },
+  {
+    href: `${prefix}/posts/`,
+    label: isZh ? "文章" : "Writing",
+    title: isZh ? "从文章理解你的思路" : "Use the writing to show how you think",
+    summary: isZh ? "适合补充工作方式、判断过程和表达风格。" : "Useful for showing working style, judgement, and explanation quality.",
+    meta: isZh ? "长文与说明" : "Notes and essays",
+    layout: "third",
+  },
+  {
+    href: `${prefix}/book/`,
+    label: isZh ? "预约" : "Book",
+    title: isZh ? "直接联系或开放预约" : "Offer a direct next step",
+    summary: isZh ? "如果对方已经判断得差不多，就把下一步联系做得更简单。" : "If the fit already looks strong, make the next step easy.",
+    meta: isZh ? "直接联系" : "Direct contact",
+    layout: "third",
+  },
+];
 ---
 <BaseLayout title={page?.title ?? "Not found"} description={page?.description ?? "Not found."} locale={isValidLocale ? locale : "en"}>
-  {isValidLocale && page ? <RecruitersPage page={page} locale={locale} quickLinks={quickLinks} /> : <p class="p">Locale not enabled.</p>}
+  {isValidLocale && page ? (
+    <>
+      <RecruitersPage page={page} locale={locale} quickLinks={quickLinks} />
+      <LinkCardsSection
+        eyebrow={isZh ? "下一步" : "Next pages"}
+        title={isZh ? "如果你想看得比摘要更深入一点" : "Use these if you want more than the short version"}
+        intro={isZh ? "招聘摘要适合快速浏览；如果你想继续确认案例、工作方式或联系路径，可以从下面三页继续看。" : "The recruiter page is the quick scan. These pages add proof, working style, and a direct next step without making someone browse the whole site."}
+        cards={nextStepCards}
+        locale={locale}
+      />
+    </>
+  ) : (
+    <p class="p">Locale not enabled.</p>
+  )}
 </BaseLayout>

@@ -1,14 +1,51 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import BookPage from "../components/BookPage.astro";
+import LinkCardsSection from "../components/LinkCardsSection.astro";
 import { getBookingOptions, getProfile } from "../lib/content";
-import { getDefaultLocale, getPage } from "../lib/site.js";
+import { getDefaultLocale, getLocalePrefix, getPage } from "../lib/site.js";
 
 const locale = getDefaultLocale();
 const page = getPage(locale, "book");
 const options = await getBookingOptions(locale);
 const profile = await getProfile();
+const isZh = locale === "zh";
+const prefix = getLocalePrefix(locale);
+
+const nextStepCards = [
+  {
+    href: `${prefix}/work/`,
+    label: isZh ? "案例" : "Work",
+    title: isZh ? "先看更具体的证明" : "See the proof first",
+    summary: isZh ? "如果你希望先看真实项目和案例，再决定是否联系，这一页最合适。" : "Use the work page if you want concrete examples before deciding whether to reach out.",
+    meta: isZh ? "先看证据" : "Evidence first",
+    layout: "third",
+  },
+  {
+    href: `${prefix}/recruiters/`,
+    label: isZh ? "招聘摘要" : "Recruiters",
+    title: isZh ? "先确认岗位匹配与联系信息" : "Check fit and essentials",
+    summary: isZh ? "适合把岗位方向、公开资料和联系入口整理到同一页。" : "Useful for fit summary, public profile links, and direct contact in one place.",
+    meta: isZh ? "招聘入口" : "Hiring snapshot",
+    layout: "third",
+  },
+  {
+    href: `${prefix}/posts/`,
+    label: isZh ? "文章" : "Writing",
+    title: isZh ? "先让别人理解你的思路" : "Read the longer explanations",
+    summary: isZh ? "如果你更想先展示判断方式、表达习惯和方法，这一页更合适。" : "Use the writing when you want more context on judgement, learning, and explanation style.",
+    meta: isZh ? "长文与说明" : "Notes and essays",
+    layout: "third",
+  },
+];
 ---
 <BaseLayout title={page.title} description={page.description} locale={locale}>
   <BookPage page={page} options={options} locale={locale} profile={profile} />
+  <LinkCardsSection
+    eyebrow={isZh ? "预约前" : "Before you book"}
+    title={isZh ? "如果你想先多了解一点" : "If you want more context first"}
+    intro={isZh ? "有些人会先看案例、招聘摘要或文章，再决定是否联系或开启预约。" : "Some visitors prefer to see proof, recruiter context, or longer writing before they book."}
+    cards={nextStepCards}
+    locale={locale}
+  />
 </BaseLayout>

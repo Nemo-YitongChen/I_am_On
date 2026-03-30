@@ -42,8 +42,8 @@
       "variant": "secondary"
     },
     {
-      "label": "For recruiters",
-      "href": "/recruiters/",
+      "label": "Read the blog",
+      "href": "/posts/",
       "variant": "secondary"
     }
   ]

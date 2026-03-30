@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+import LinkCardsSection from "../../../components/LinkCardsSection.astro";
 import LongformListPage from "../../../components/LongformListPage.astro";
 import { isSecondaryLocaleEnabled } from "../../../lib/site.js";
 import { getSlugFromContentId, getWorkList } from "../../../lib/content";
@@ -12,18 +13,59 @@ if (!isValidLocale) {
 }
 
 const entries = isValidLocale ? await getWorkList(locale) : [];
-const items = entries.map((entry) => ({
+const items = entries.map((entry, index) => ({
   href: `/${locale}/work/${getSlugFromContentId(entry.id)}/`,
   title: entry.data.title,
   summary: entry.data.summary,
   meta: `${entry.data.role} · ${entry.data.year}`,
   tags: entry.data.tags,
+  layout: index === 0 ? "feature" : "half",
 }));
+
+const nextStepCards = [
+  {
+    href: `/${locale}/recruiters/`,
+    label: locale === "zh" ? "招聘摘要" : "Recruiters",
+    title: locale === "zh" ? "把案例进一步对照到岗位匹配" : "Translate proof into role fit",
+    summary: locale === "zh" ? "如果你已经看过案例，这一页适合更快确认岗位方向和联系入口。" : "Use the recruiter page for a shorter summary of fit, profile context, and contact details.",
+    meta: locale === "zh" ? "招聘入口" : "Role fit",
+    layout: "third",
+  },
+  {
+    href: `/${locale}/book/`,
+    label: locale === "zh" ? "预约" : "Book",
+    title: locale === "zh" ? "提供一个直接下一步" : "Offer a direct conversation",
+    summary: locale === "zh" ? "如果案例已经足够说明问题，这里就是最简单的下一步。" : "If the work already makes the fit clear, this is the simplest next step.",
+    meta: locale === "zh" ? "直接联系" : "Direct contact",
+    layout: "third",
+  },
+  {
+    href: `/${locale}/posts/`,
+    label: locale === "zh" ? "文章" : "Writing",
+    title: locale === "zh" ? "再看背后的判断与方法" : "Use writing to explain the work",
+    summary: locale === "zh" ? "文章能补充案例背后的思路、表达方式和工作方法。" : "The writing is where the reasoning and working style behind the examples can be explained more fully.",
+    meta: locale === "zh" ? "长文与说明" : "Notes and essays",
+    layout: "third",
+  },
+];
 
 const copy = locale === "zh"
   ? { title: "案例", intro: "用这个集合展示代表性工作、项目或职责摘要。", eyebrow: "案例集合" }
   : { title: "Work", intro: "Use this collection for selected projects, roles, case studies, or representative proof.", eyebrow: "Selected work" };
 ---
 <BaseLayout title={`${copy.title} | Your Name`} description={copy.intro} locale={isValidLocale ? locale : "en"}>
-  {isValidLocale ? <LongformListPage title={copy.title} intro={copy.intro} eyebrow={copy.eyebrow} items={items} /> : <p class="p">Locale not enabled.</p>}
+  {isValidLocale ? (
+    <>
+      <LongformListPage title={copy.title} intro={copy.intro} eyebrow={copy.eyebrow} items={items} />
+      <LinkCardsSection
+        eyebrow={locale === "zh" ? "下一步" : "What to do next"}
+        title={locale === "zh" ? "如果这些案例已经足够有帮助" : "If the work looks relevant, go here next"}
+        intro={locale === "zh" ? "这些页面可以把案例继续连接到岗位匹配、直接联系或更完整的工作方式说明。" : "These pages make it easier to connect case studies with fit, contact, and longer explanation."}
+        cards={nextStepCards}
+        locale={locale}
+      />
+    </>
+  ) : (
+    <p class="p">Locale not enabled.</p>
+  )}
 </BaseLayout>

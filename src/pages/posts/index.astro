@@ -1,19 +1,49 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import LinkCardsSection from "../../components/LinkCardsSection.astro";
 import LongformListPage from "../../components/LongformListPage.astro";
-import { getDefaultLocale } from "../../lib/site.js";
+import { getDefaultLocale, getLocalePrefix } from "../../lib/site.js";
 import { getPostsList, getSlugFromContentId } from "../../lib/content";
 
 const locale = getDefaultLocale();
 const isZh = locale === "zh";
+const prefix = getLocalePrefix(locale);
 const entries = await getPostsList(locale);
-const items = entries.map((entry) => ({
-  href: `/posts/${getSlugFromContentId(entry.id)}/`,
+const items = entries.map((entry, index) => ({
+  href: `${prefix}/posts/${getSlugFromContentId(entry.id)}/`,
   title: entry.data.title,
   summary: entry.data.summary,
   meta: entry.data.publishedAt.toISOString().slice(0, 10),
   tags: entry.data.tags,
+  layout: index === 0 ? "feature" : "half",
 }));
+
+const nextStepCards = [
+  {
+    href: `${prefix}/work/`,
+    label: isZh ? "案例" : "Work",
+    title: isZh ? "把文章和实际证明放在一起看" : "Pair the writing with proof",
+    summary: isZh ? "案例页更适合展示项目、职责和结果；和文章放在一起看会更完整。" : "The work page shows how the ideas connect to actual projects, roles, and outcomes.",
+    meta: isZh ? "证明与案例" : "Proof and examples",
+    layout: "third",
+  },
+  {
+    href: `${prefix}/recruiters/`,
+    label: isZh ? "招聘摘要" : "Recruiters",
+    title: isZh ? "看更简洁的岗位匹配概览" : "See the concise hiring snapshot",
+    summary: isZh ? "如果你想更快看背景、角色方向和联系入口，这一页更直接。" : "Use this when you want a shorter fit summary, public profile links, and contact details.",
+    meta: isZh ? "招聘入口" : "Role fit",
+    layout: "third",
+  },
+  {
+    href: `${prefix}/book/`,
+    label: isZh ? "预约" : "Book",
+    title: isZh ? "把理解转成下一步交流" : "Turn the context into a conversation",
+    summary: isZh ? "如果这些文章已经足够帮助别人形成判断，这里就是最清楚的下一步。" : "If the writing already gives enough context, this is the cleanest next step.",
+    meta: isZh ? "直接联系" : "Direct contact",
+    layout: "third",
+  },
+];
 
 const copy = isZh
   ? { title: "文章", intro: "用这个集合展示你的写作、观点或说明性内容。", eyebrow: "文章集合" }
@@ -21,4 +51,11 @@ const copy = isZh
 ---
 <BaseLayout title={`${copy.title} | Your Name`} description={copy.intro} locale={locale}>
   <LongformListPage title={copy.title} intro={copy.intro} eyebrow={copy.eyebrow} items={items} />
+  <LinkCardsSection
+    eyebrow={isZh ? "下一步" : "What to open next"}
+    title={isZh ? "把文章和证明、岗位匹配放在一起看" : "Use writing together with proof and fit"}
+    intro={isZh ? "文章最适合补充工作方式和判断过程；结合案例页与招聘摘要去看，会更完整。" : "The writing is strongest when you pair it with case studies or a recruiter-facing summary."}
+    cards={nextStepCards}
+    locale={locale}
+  />
 </BaseLayout>

@@ -1,0 +1,31 @@
+---
+const { eyebrow, title, intro, cards = [], locale = "en" } = Astro.props;
+
+const defaultActionLabel = locale === "zh" ? "查看" : "Open";
+---
+{cards.length > 0 && (
+  <section class="section">
+    <div class="section-head">
+      <p class="eyebrow">{eyebrow}</p>
+      <h2 class="section-title">{title}</h2>
+      {intro && <p class="section-copy">{intro}</p>}
+    </div>
+
+    <div class="grid" style="margin-top:0;">
+      {cards.map((card) => (
+        <a
+          class={`card ${card.layout ?? "third"}`.trim()}
+          href={card.href}
+          target={card.external ? "_blank" : undefined}
+          rel={card.external ? "noreferrer" : undefined}
+        >
+          <p class="eyebrow" style="margin-bottom:10px;">{card.label}</p>
+          {card.meta && <p class="small" style="margin-bottom:10px;">{card.meta}</p>}
+          <p class="card-title">{card.title}</p>
+          <p class="card-copy">{card.summary}</p>
+          <p class="small" style="margin-top:16px;">{card.actionLabel ?? defaultActionLabel}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+)}

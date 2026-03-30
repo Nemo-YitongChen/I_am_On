@@ -42,8 +42,8 @@
       "variant": "secondary"
     },
     {
-      "label": "招聘摘要",
-      "href": "/zh/recruiters/",
+      "label": "阅读文章",
+      "href": "/zh/posts/",
       "variant": "secondary"
     }
   ]
