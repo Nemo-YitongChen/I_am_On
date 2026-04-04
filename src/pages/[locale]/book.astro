@@ -57,6 +57,9 @@ const structuredData = isValidLocale && page
       title: page.title,
       description: page.description,
       locale,
+      faqItems: page.faq ?? [],
+      faqStructuredData: page.faqStructuredData === true,
+      product: page.product ?? null,
     })
   : [];
 ---

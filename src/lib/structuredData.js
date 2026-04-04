@@ -68,6 +68,23 @@ export function buildWebSiteStructuredData({ profile, url, description, locale }
   return data;
 }
 
+export function buildFAQPageStructuredData({ url, locale, items = [] }) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    url,
+    inLanguage: getLanguage(locale),
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
+  };
+}
+
 export function buildServiceStructuredData({ profile, url, title, description, locale }) {
   return {
     "@context": "https://schema.org",
@@ -82,6 +99,36 @@ export function buildServiceStructuredData({ profile, url, title, description, l
       url: profile.website ?? url,
     },
   };
+}
+
+export function buildProductStructuredData({ profile, url, locale, product }) {
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description,
+    url: product.url ?? url,
+    image: product.image,
+    category: product.category,
+    sku: product.sku,
+    brand: {
+      "@type": "Brand",
+      name: product.brand ?? profile.brand,
+    },
+    inLanguage: getLanguage(locale),
+  };
+
+  if (product.offers) {
+    data.offers = {
+      "@type": "Offer",
+      priceCurrency: product.offers.priceCurrency,
+      price: product.offers.price,
+      availability: product.offers.availability,
+      url: product.offers.url ?? product.url ?? url,
+    };
+  }
+
+  return data;
 }
 
 export function buildArticleStructuredData({ profile, url, title, description, publishedAt, locale }) {
@@ -126,13 +173,18 @@ export function buildStructuredDataForPage({
   description,
   locale,
   publishedAt,
+  faqItems = [],
+  faqStructuredData = false,
+  product = null,
 }) {
   if (!profile || !url || !pageType) {
     return [];
   }
 
+  const schemas = [];
+
   if (pageType === "post" && publishedAt) {
-    return [
+    schemas.push(
       buildArticleStructuredData({
         profile,
         url,
@@ -141,11 +193,11 @@ export function buildStructuredDataForPage({
         publishedAt,
         locale,
       }),
-    ];
+    );
   }
 
   if (pageType === "work") {
-    return [
+    schemas.push(
       buildCreativeWorkStructuredData({
         profile,
         url,
@@ -153,23 +205,23 @@ export function buildStructuredDataForPage({
         description,
         locale,
       }),
-    ];
+    );
   }
 
   if (siteType === "personal") {
     if (pageType === "home") {
-      return [
+      schemas.push(
         buildPersonStructuredData({
           profile,
           url,
           description,
           locale,
         }),
-      ];
+      );
     }
 
     if (pageType === "about" || pageType === "recruiters") {
-      return [
+      schemas.push(
         buildProfilePageStructuredData({
           profile,
           url,
@@ -177,24 +229,24 @@ export function buildStructuredDataForPage({
           description,
           locale,
         }),
-      ];
+      );
     }
   }
 
   if (siteType === "business") {
     if (pageType === "home" || pageType === "about" || pageType === "recruiters") {
-      return [
+      schemas.push(
         buildOrganizationStructuredData({
           profile,
           url,
           description,
           locale,
         }),
-      ];
+      );
     }
 
     if (pageType === "services" || pageType === "book" || pageType === "consult") {
-      return [
+      schemas.push(
         buildServiceStructuredData({
           profile,
           url,
@@ -202,41 +254,43 @@ export function buildStructuredDataForPage({
           description,
           locale,
         }),
-      ];
+      );
     }
   }
 
   if (siteType === "platform") {
     if (pageType === "home") {
-      return [
+      schemas.push(
         buildWebSiteStructuredData({
           profile,
           url,
           description,
           locale,
         }),
+      );
+      schemas.push(
         buildOrganizationStructuredData({
           profile,
           url,
           description,
           locale,
         }),
-      ];
+      );
     }
 
     if (pageType === "about" || pageType === "recruiters") {
-      return [
+      schemas.push(
         buildOrganizationStructuredData({
           profile,
           url,
           description,
           locale,
         }),
-      ];
+      );
     }
 
     if (pageType === "services" || pageType === "book" || pageType === "consult") {
-      return [
+      schemas.push(
         buildServiceStructuredData({
           profile,
           url,
@@ -244,9 +298,40 @@ export function buildStructuredDataForPage({
           description,
           locale,
         }),
-      ];
+      );
     }
   }
 
-  return [];
+  if (pageType === "faq" && Array.isArray(faqItems) && faqItems.length > 0) {
+    schemas.push(
+      buildFAQPageStructuredData({
+        url,
+        locale,
+        items: faqItems,
+      }),
+    );
+  }
+
+  if (faqStructuredData && Array.isArray(faqItems) && faqItems.length > 0) {
+    schemas.push(
+      buildFAQPageStructuredData({
+        url,
+        locale,
+        items: faqItems,
+      }),
+    );
+  }
+
+  if (product?.name && product?.description) {
+    schemas.push(
+      buildProductStructuredData({
+        profile,
+        url,
+        locale,
+        product,
+      }),
+    );
+  }
+
+  return schemas;
 }

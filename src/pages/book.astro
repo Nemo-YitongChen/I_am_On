@@ -50,6 +50,9 @@ const structuredData = buildStructuredDataForPage({
   title: page.title,
   description: page.description,
   locale,
+  faqItems: page.faq ?? [],
+  faqStructuredData: page.faqStructuredData === true,
+  product: page.product ?? null,
 });
 ---
 <BaseLayout title={page.title} description={page.description} locale={locale} structuredData={structuredData}>

@@ -17,6 +17,7 @@ Current implementation priority:
 1. personal preset pages
 2. long-form article and case-study pages
 3. business and platform-specific schema on current core pages (`home`, `about`, `recruiters`, `services`, `consult`, `book`)
+4. content-conditioned support for `FAQPage`, `Product`, and `SearchAction`
 
 This means the template should treat structured data as a conditional capability, not as a blanket default.
 
@@ -71,7 +72,10 @@ Emit `FAQPage` only when:
 - each item is a real question-and-answer pair
 - the visible content matches the JSON-LD content
 
-Do not emit `FAQPage` for a short FAQ block inside a larger marketing page unless the page is genuinely FAQ-shaped.
+Do not emit `FAQPage` for a short FAQ block inside a larger marketing page unless either:
+
+- the page is genuinely FAQ-shaped
+- or the page content explicitly opts into FAQ structured data
 
 ## Product rule
 
@@ -81,6 +85,14 @@ Emit `Product` only when:
 - title, description, availability, and pricing are grounded in visible content
 
 Do not use `Product` for generic booking, profile, or content pages.
+
+## Search rule
+
+Emit `SearchAction` only when:
+
+- the site is using the `platform` preset
+- site search is actually enabled in configuration
+- the configured search URL is real and query-driven
 
 ## Authoring guardrails
 
