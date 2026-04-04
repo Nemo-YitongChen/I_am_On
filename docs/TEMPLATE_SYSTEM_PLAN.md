@@ -7,6 +7,9 @@ Status:
 - repo role: reusable template
 - target role: shared kernel for personal, business, and platform site presets
 - current state: strong personal-site starter, not yet a true multi-preset system
+- progress:
+  - 2026-04-04: Phase 1 foundation completed with `siteType`, preset helper, and home section registry
+  - 2026-04-04: Phase 2 baseline started with section-driven `StructuredPage` and optional shell modules (`SkipLink`, `Breadcrumb`)
 
 ## Goal
 

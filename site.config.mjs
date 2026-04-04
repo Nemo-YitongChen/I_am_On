@@ -2,6 +2,7 @@ export const siteConfig = {
   site: "https://example.com",
   siteType: "personal",
   shell: {
+    skipLink: true,
     announcementBar: false,
     utilityNav: false,
     serviceNav: false,

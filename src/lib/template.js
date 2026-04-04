@@ -1,6 +1,7 @@
 import { siteConfig } from "../../site.config.mjs";
 
 const defaultShell = {
+  skipLink: true,
   announcementBar: false,
   utilityNav: false,
   serviceNav: false,

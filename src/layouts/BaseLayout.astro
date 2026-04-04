@@ -2,11 +2,15 @@
 import {
   getAvailableLocales,
   getDefaultLocale,
+  getPageLabel,
   getLocalePrefix,
   getLocaleMeta,
   getPublicPath,
 } from "../lib/site.js";
 import { getProfile } from "../lib/content";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
+import SkipLink from "../components/SkipLink.astro";
+import { getShellConfig } from "../lib/template.js";
 import { siteConfig } from "../../site.config.mjs";
 
 const {
@@ -20,6 +24,7 @@ const pathname = Astro.url.pathname ?? "/";
 const defaultLocale = getDefaultLocale();
 const availableLocales = getAvailableLocales();
 const site = Astro.site ?? new URL(siteConfig.site);
+const shell = getShellConfig();
 
 function detectLocale(pathnameValue) {
   if (localeProp) return localeProp;
@@ -58,6 +63,7 @@ function withLocale(targetLocale) {
 }
 
 const homeUrl = locale === defaultLocale ? "/" : `/${locale}/`;
+const pathSegments = basePath.split("/").filter(Boolean);
 const localeLinks = !isAdmin && availableLocales.length > 1
   ? availableLocales.map((targetLocale) => ({
       code: targetLocale,
@@ -71,6 +77,21 @@ const alternateLinks = availableLocales.map((targetLocale) => ({
   href: new URL(withLocale(targetLocale), site).toString(),
 }));
 const shouldNoIndex = isEditor || isAdmin;
+const breadcrumbItems = !isAdmin && !isEditor && shell.breadcrumbs && pathSegments.length > 0
+  ? (() => {
+      const items = [{ label: localeMeta.homeLabel, href: homeUrl }];
+      const [section] = pathSegments;
+
+      if (pathSegments.length === 1) {
+        items.push({ label: getPageLabel(locale, section) });
+        return items;
+      }
+
+      items.push({ label: getPageLabel(locale, section), href: `${getLocalePrefix(locale)}/${section}/` });
+      items.push({ label: title });
+      return items;
+    })()
+  : [];
 
 const nav = locale === "zh"
   ? {
@@ -106,6 +127,11 @@ const urls = {
   privacy: getPublicPath(locale, "privacy"),
   admin: "/admin/",
 };
+
+function isCurrent(path) {
+  const normalized = path.endsWith("/") ? path : `${path}/`;
+  return pathname === normalized || pathname.startsWith(normalized);
+}
 ---
 <!doctype html>
 <html lang={localeMeta.htmlLang}>
@@ -128,17 +154,18 @@ const urls = {
     <link rel="stylesheet" href="/styles/global.css" />
   </head>
   <body>
+    {shell.skipLink && <SkipLink label={locale === "zh" ? "跳到正文" : "Skip to content"} />}
     <header class="header">
       <a class="brand" href={homeUrl}>{profile.brand}</a>
       <div class="header-controls">
         <nav class="nav nav-primary">
-          <a href={urls.about}>{nav.about}</a>
-          <a href={urls.work}>{nav.work}</a>
-          <a href={urls.consult}>{nav.consult}</a>
-          <a href={urls.recruiters}>{nav.recruiters}</a>
+          <a href={urls.about} aria-current={isCurrent(urls.about) ? "page" : undefined}>{nav.about}</a>
+          <a href={urls.work} aria-current={isCurrent(urls.work) ? "page" : undefined}>{nav.work}</a>
+          <a href={urls.consult} aria-current={isCurrent(urls.consult) ? "page" : undefined}>{nav.consult}</a>
+          <a href={urls.recruiters} aria-current={isCurrent(urls.recruiters) ? "page" : undefined}>{nav.recruiters}</a>
         </nav>
         <div class="nav nav-actions">
-          <a class="cta" href={urls.book}>{nav.book}</a>
+          <a class="cta" href={urls.book} aria-current={isCurrent(urls.book) ? "page" : undefined}>{nav.book}</a>
           {localeLinks.map((link) => (
             <a href={link.href} aria-current={link.code === locale ? "page" : undefined}>
               {link.label}
@@ -148,7 +175,10 @@ const urls = {
       </div>
     </header>
 
-    <main class="container"><slot /></main>
+    <main id="main-content" tabindex="-1" class="container">
+      <Breadcrumbs items={breadcrumbItems} label={locale === "zh" ? "面包屑导航" : "Breadcrumb"} />
+      <slot />
+    </main>
 
     <footer class="footer">
       <div class="footer-meta">

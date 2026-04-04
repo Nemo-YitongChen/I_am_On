@@ -56,18 +56,23 @@ const sectionCopy = {
       },
 };
 
-const copy = sectionCopy[section.type];
+const copy = {
+  ...(sectionCopy[section.type] ?? {}),
+  eyebrow: section.eyebrow ?? sectionCopy[section.type]?.eyebrow,
+  heading: section.heading ?? sectionCopy[section.type]?.heading,
+  intro: section.intro ?? sectionCopy[section.type]?.intro,
+};
 ---
-{copy && (
+{(copy.heading || copy.intro || copy.eyebrow) && (
   <section class="section">
     <div class="section-head">
-      <p class="eyebrow">{copy.eyebrow}</p>
-      <h2 class="section-title">{copy.heading}</h2>
-      <p class="section-copy">{copy.intro}</p>
+      {copy.eyebrow && <p class="eyebrow">{copy.eyebrow}</p>}
+      {copy.heading && <h2 class="section-title">{copy.heading}</h2>}
+      {copy.intro && <p class="section-copy">{copy.intro}</p>}
     </div>
 
     <div class="grid" style="margin-top:0;">
-      {section.type === "topics" ? (
+      {section.type === "topics" || section.type === "cards" ? (
         section.items.map((card) => (
           <article class={`card ${card.layout ?? "third"}`.trim()}>
             <p class="kicker">{card.title}</p>

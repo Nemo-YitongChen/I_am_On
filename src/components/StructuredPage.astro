@@ -1,5 +1,8 @@
 ---
-const { page, locale = "en", eyebrow, sectionTitle, sectionIntro } = Astro.props;
+import SectionRenderer from "./SectionRenderer.astro";
+import { buildStructuredSections } from "../lib/sections.js";
+
+const { page, locale = "en", eyebrow, sectionTitle, sectionIntro, sections: sectionsProp } = Astro.props;
 
 const isZh = locale === "zh";
 const copy = {
@@ -11,6 +14,13 @@ const copy = {
       ? "用更短、更清楚的方式把这个页面最重要的信息放在前面。"
       : "A faster overview of the most important details on this page."),
 };
+
+const sections = sectionsProp ?? buildStructuredSections({
+  cards: page.cards ?? [],
+  eyebrow: isZh ? "快速浏览" : "At a glance",
+  heading: copy.sectionTitle,
+  intro: copy.sectionIntro,
+});
 ---
 <section class="hero-block">
   <p class="eyebrow">{copy.eyebrow}</p>
@@ -28,21 +38,4 @@ const copy = {
   )}
 </section>
 
-{page.cards?.length > 0 && (
-  <section class="section">
-    <div class="section-head">
-      <p class="eyebrow">{isZh ? "快速浏览" : "At a glance"}</p>
-      <h2 class="section-title">{copy.sectionTitle}</h2>
-      <p class="section-copy">{copy.sectionIntro}</p>
-    </div>
-
-    <div class="grid" style="margin-top:0;">
-      {page.cards.map((card) => (
-        <article class={`card ${card.layout ?? "half"}`.trim()}>
-          <p class="kicker">{card.title}</p>
-          <p class="card-copy">{card.text}</p>
-        </article>
-      ))}
-    </div>
-  </section>
-)}
+{sections.map((section) => <SectionRenderer section={section} locale={locale} />)}

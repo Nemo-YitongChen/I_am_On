@@ -42,3 +42,23 @@ export function buildHomeSections({
     .map((type) => sectionMap[type])
     .filter((section) => Array.isArray(section?.items) && section.items.length > 0);
 }
+
+export function buildStructuredSections({
+  cards = [],
+  eyebrow,
+  heading,
+  intro,
+}) {
+  if (!Array.isArray(cards) || cards.length === 0) {
+    return [];
+  }
+
+  return [{
+    type: "cards",
+    version: 1,
+    eyebrow,
+    heading,
+    intro,
+    items: cards,
+  }];
+}
