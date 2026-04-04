@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import SectionRenderer from "./SectionRenderer.astro";
 
 const { page, locale = "en" } = Astro.props;
+const { structuredData = [] } = Astro.props;
 const hero = page.hero ?? null;
 const primaryCTA = hero?.primaryCTA ?? null;
 const secondaryCTA = hero?.secondaryCTA ?? null;
@@ -11,6 +12,7 @@ const secondaryCTA = hero?.secondaryCTA ?? null;
   title={page.seo?.title ?? page.title ?? "Your Name"}
   description={page.seo?.description ?? page.summary ?? ""}
   locale={locale}
+  structuredData={structuredData}
 >
   {hero && (
     <section class="hero-block">

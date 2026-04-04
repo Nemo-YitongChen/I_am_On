@@ -4,12 +4,16 @@ import LinkCardsSection from "../components/LinkCardsSection.astro";
 import RecruitersPage from "../components/RecruitersPage.astro";
 import { getProfile } from "../lib/content";
 import { getDefaultLocale, getLocalePrefix, getPage } from "../lib/site.js";
+import { getSiteType } from "../lib/template.js";
+import { buildStructuredDataForPage } from "../lib/structuredData.js";
+import { siteConfig } from "../../site.config.mjs";
 
 const locale = getDefaultLocale();
 const page = getPage(locale, "recruiters");
 const profile = await getProfile();
 const isZh = locale === "zh";
 const prefix = getLocalePrefix(locale);
+const site = Astro.site ?? new URL(siteConfig.site);
 
 const quickLinks = [
   {
@@ -61,8 +65,17 @@ const nextStepCards = [
     layout: "third",
   },
 ];
+const structuredData = buildStructuredDataForPage({
+  siteType: getSiteType(),
+  pageType: "recruiters",
+  profile,
+  url: new URL(`${prefix}/recruiters/`, site).toString(),
+  title: page.title,
+  description: page.description,
+  locale,
+});
 ---
-<BaseLayout title={page.title} description={page.description} locale={locale}>
+<BaseLayout title={page.title} description={page.description} locale={locale} structuredData={structuredData}>
   <RecruitersPage page={page} locale={locale} quickLinks={quickLinks} />
   <LinkCardsSection
     eyebrow={isZh ? "下一步" : "Next pages"}

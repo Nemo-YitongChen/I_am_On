@@ -2,13 +2,17 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import HomePage from "../components/HomePage.astro";
 import { getDefaultLocale, getLocalePrefix, getPage } from "../lib/site.js";
-import { getPostsList, getSlugFromContentId, getWorkList } from "../lib/content";
+import { getPostsList, getProfile, getSlugFromContentId, getWorkList } from "../lib/content";
 import { getSiteType } from "../lib/template.js";
 import { buildHomeSections } from "../lib/sections.js";
+import { buildStructuredDataForPage } from "../lib/structuredData.js";
+import { siteConfig } from "../../site.config.mjs";
 
 const locale = getDefaultLocale();
 const page = getPage(locale, "home");
 const prefix = getLocalePrefix(locale);
+const site = Astro.site ?? new URL(siteConfig.site);
+const profile = await getProfile();
 const postEntries = await getPostsList(locale);
 const workEntries = await getWorkList(locale);
 const topWorkEntries = workEntries.slice(0, 2);
@@ -74,7 +78,17 @@ const sections = buildHomeSections({
   writingCards,
   topicCards: page.cards ?? [],
 });
+
+const structuredData = buildStructuredDataForPage({
+  siteType: getSiteType(),
+  pageType: "home",
+  profile,
+  url: new URL(prefix === "/" ? "/" : prefix, site).toString(),
+  title: page.title,
+  description: page.description,
+  locale,
+});
 ---
-<BaseLayout title={page.title} description={page.description} locale={locale}>
+<BaseLayout title={page.title} description={page.description} locale={locale} structuredData={structuredData}>
   <HomePage page={page} locale={locale} pathwayCards={pathwayCards} proofCards={proofCards} writingCards={writingCards} sections={sections} />
 </BaseLayout>

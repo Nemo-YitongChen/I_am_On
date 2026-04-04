@@ -3,7 +3,10 @@ import { getEntry, render } from "astro:content";
 import PageSchemaPage from "../../components/PageSchemaPage.astro";
 import { buildLongformEntryPageSchema } from "../../lib/pageSchemas.js";
 import { getDefaultLocale, getLocalePrefix } from "../../lib/site.js";
-import { getSlugFromContentId, getWorkList } from "../../lib/content";
+import { getProfile, getSlugFromContentId, getWorkList } from "../../lib/content";
+import { getSiteType } from "../../lib/template.js";
+import { buildStructuredDataForPage } from "../../lib/structuredData.js";
+import { siteConfig } from "../../../site.config.mjs";
 
 export const prerender = true;
 
@@ -19,6 +22,8 @@ export async function getStaticPaths() {
 const { id, locale } = Astro.props;
 const entry = await getEntry("work", id);
 const prefix = getLocalePrefix(locale);
+const site = Astro.site ?? new URL(siteConfig.site);
+const profile = await getProfile();
 
 if (!entry) {
   throw new Error(`Missing work entry: ${id}`);
@@ -62,5 +67,14 @@ const page = buildLongformEntryPageSchema({
   nextStepCards,
   Content,
 });
+const structuredData = buildStructuredDataForPage({
+  siteType: getSiteType(),
+  pageType: "work",
+  profile,
+  url: new URL(`${prefix}/work/${getSlugFromContentId(entry.id)}/`, site).toString(),
+  title: entry.data.title,
+  description: entry.data.description,
+  locale,
+});
 ---
-<PageSchemaPage page={page} locale={locale} />
+<PageSchemaPage page={page} locale={locale} structuredData={structuredData} />

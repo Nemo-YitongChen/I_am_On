@@ -4,6 +4,9 @@ import LinkCardsSection from "../../components/LinkCardsSection.astro";
 import RecruitersPage from "../../components/RecruitersPage.astro";
 import { getProfile } from "../../lib/content";
 import { getLocalePrefix, getPage, isSecondaryLocaleEnabled } from "../../lib/site.js";
+import { getSiteType } from "../../lib/template.js";
+import { buildStructuredDataForPage } from "../../lib/structuredData.js";
+import { siteConfig } from "../../../site.config.mjs";
 
 const locale = Astro.params.locale ?? "";
 const isValidLocale = isSecondaryLocaleEnabled(locale);
@@ -16,6 +19,7 @@ const page = isValidLocale ? getPage(locale, "recruiters") : null;
 const profile = await getProfile();
 const isZh = locale === "zh";
 const prefix = isValidLocale ? getLocalePrefix(locale) : "";
+const site = Astro.site ?? new URL(siteConfig.site);
 
 const quickLinks = [
   {
@@ -67,8 +71,24 @@ const nextStepCards = [
     layout: "third",
   },
 ];
+const structuredData = isValidLocale && page
+  ? buildStructuredDataForPage({
+      siteType: getSiteType(),
+      pageType: "recruiters",
+      profile,
+      url: new URL(`/${locale}/recruiters/`, site).toString(),
+      title: page.title,
+      description: page.description,
+      locale,
+    })
+  : [];
 ---
-<BaseLayout title={page?.title ?? "Not found"} description={page?.description ?? "Not found."} locale={isValidLocale ? locale : "en"}>
+<BaseLayout
+  title={page?.title ?? "Not found"}
+  description={page?.description ?? "Not found."}
+  locale={isValidLocale ? locale : "en"}
+  structuredData={structuredData}
+>
   {isValidLocale && page ? (
     <>
       <RecruitersPage page={page} locale={locale} quickLinks={quickLinks} />

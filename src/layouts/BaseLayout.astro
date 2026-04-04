@@ -17,6 +17,7 @@ const {
   title = "Your Name · Personal site",
   description = "A content-driven Astro starter.",
   locale: localeProp,
+  structuredData = [],
 } = Astro.props;
 
 const profile = await getProfile();
@@ -132,6 +133,21 @@ function isCurrent(path) {
   const normalized = path.endsWith("/") ? path : `${path}/`;
   return pathname === normalized || pathname.startsWith(normalized);
 }
+
+const jsonLdItems = Array.isArray(structuredData) ? [...structuredData] : structuredData ? [structuredData] : [];
+
+if (breadcrumbItems.length > 0) {
+  jsonLdItems.push({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: breadcrumbItems.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.label,
+      item: item.href ? new URL(item.href, site).toString() : canonical,
+    })),
+  });
+}
 ---
 <!doctype html>
 <html lang={localeMeta.htmlLang}>
@@ -151,6 +167,9 @@ function isCurrent(path) {
     <meta property="og:site_name" content={profile.brand} />
     <meta property="og:locale" content={locale === "zh" ? "zh_CN" : "en_US"} />
     <meta name="twitter:card" content="summary_large_image" />
+    {jsonLdItems.map((item) => (
+      <script type="application/ld+json" set:html={JSON.stringify(item)} />
+    ))}
     <link rel="stylesheet" href="/styles/global.css" />
   </head>
   <body>
@@ -158,7 +177,7 @@ function isCurrent(path) {
     <header class="header">
       <a class="brand" href={homeUrl}>{profile.brand}</a>
       <div class="header-controls">
-        <nav class="nav nav-primary">
+        <nav class="nav nav-primary" aria-label={locale === "zh" ? "主导航" : "Primary navigation"}>
           <a href={urls.about} aria-current={isCurrent(urls.about) ? "page" : undefined}>{nav.about}</a>
           <a href={urls.work} aria-current={isCurrent(urls.work) ? "page" : undefined}>{nav.work}</a>
           <a href={urls.consult} aria-current={isCurrent(urls.consult) ? "page" : undefined}>{nav.consult}</a>

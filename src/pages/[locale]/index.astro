@@ -2,9 +2,11 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import HomePage from "../../components/HomePage.astro";
 import { getLocalePrefix, getPage, isSecondaryLocaleEnabled } from "../../lib/site.js";
-import { getPostsList, getSlugFromContentId, getWorkList } from "../../lib/content";
+import { getPostsList, getProfile, getSlugFromContentId, getWorkList } from "../../lib/content";
 import { getSiteType } from "../../lib/template.js";
 import { buildHomeSections } from "../../lib/sections.js";
+import { buildStructuredDataForPage } from "../../lib/structuredData.js";
+import { siteConfig } from "../../../site.config.mjs";
 
 const locale = Astro.params.locale ?? "";
 const isValidLocale = isSecondaryLocaleEnabled(locale);
@@ -15,6 +17,8 @@ if (!isValidLocale) {
 
 const page = isValidLocale ? getPage(locale, "home") : null;
 const prefix = isValidLocale ? getLocalePrefix(locale) : "";
+const site = Astro.site ?? new URL(siteConfig.site);
+const profile = await getProfile();
 const postEntries = isValidLocale ? await getPostsList(locale) : [];
 const workEntries = isValidLocale ? await getWorkList(locale) : [];
 const topWorkEntries = workEntries.slice(0, 2);
@@ -84,8 +88,25 @@ const sections = isValidLocale && page
       topicCards: page.cards ?? [],
     })
   : [];
+
+const structuredData = isValidLocale && page
+  ? buildStructuredDataForPage({
+      siteType: getSiteType(),
+      pageType: "home",
+      profile,
+      url: new URL(prefix, site).toString(),
+      title: page.title,
+      description: page.description,
+      locale,
+    })
+  : [];
 ---
-<BaseLayout title={isValidLocale && page ? page.title : "Not found"} description={isValidLocale && page ? page.description : "Not found."} locale={isValidLocale ? locale : "en"}>
+<BaseLayout
+  title={isValidLocale && page ? page.title : "Not found"}
+  description={isValidLocale && page ? page.description : "Not found."}
+  locale={isValidLocale ? locale : "en"}
+  structuredData={structuredData}
+>
   {isValidLocale && page ? (
     <HomePage page={page} locale={locale} pathwayCards={pathwayCards} proofCards={proofCards} writingCards={writingCards} sections={sections} />
   ) : (
