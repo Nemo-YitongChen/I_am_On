@@ -3,6 +3,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import HomePage from "../components/HomePage.astro";
 import { getDefaultLocale, getLocalePrefix, getPage } from "../lib/site.js";
 import { getPostsList, getSlugFromContentId, getWorkList } from "../lib/content";
+import { getSiteType } from "../lib/template.js";
+import { buildHomeSections } from "../lib/sections.js";
 
 const locale = getDefaultLocale();
 const page = getPage(locale, "home");
@@ -64,7 +66,15 @@ const writingCards = topPostEntries.map((entry) => ({
   meta: entry.data.publishedAt.toISOString().slice(0, 10),
   layout: "half",
 }));
+
+const sections = buildHomeSections({
+  siteType: getSiteType(),
+  pathwayCards,
+  proofCards,
+  writingCards,
+  topicCards: page.cards ?? [],
+});
 ---
 <BaseLayout title={page.title} description={page.description} locale={locale}>
-  <HomePage page={page} locale={locale} pathwayCards={pathwayCards} proofCards={proofCards} writingCards={writingCards} />
+  <HomePage page={page} locale={locale} pathwayCards={pathwayCards} proofCards={proofCards} writingCards={writingCards} sections={sections} />
 </BaseLayout>

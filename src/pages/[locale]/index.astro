@@ -3,6 +3,8 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import HomePage from "../../components/HomePage.astro";
 import { getLocalePrefix, getPage, isSecondaryLocaleEnabled } from "../../lib/site.js";
 import { getPostsList, getSlugFromContentId, getWorkList } from "../../lib/content";
+import { getSiteType } from "../../lib/template.js";
+import { buildHomeSections } from "../../lib/sections.js";
 
 const locale = Astro.params.locale ?? "";
 const isValidLocale = isSecondaryLocaleEnabled(locale);
@@ -72,10 +74,20 @@ const writingCards = topPostEntries.map((entry) => ({
   meta: entry.data.publishedAt.toISOString().slice(0, 10),
   layout: "half",
 }));
+
+const sections = isValidLocale && page
+  ? buildHomeSections({
+      siteType: getSiteType(),
+      pathwayCards,
+      proofCards,
+      writingCards,
+      topicCards: page.cards ?? [],
+    })
+  : [];
 ---
 <BaseLayout title={isValidLocale && page ? page.title : "Not found"} description={isValidLocale && page ? page.description : "Not found."} locale={isValidLocale ? locale : "en"}>
   {isValidLocale && page ? (
-    <HomePage page={page} locale={locale} pathwayCards={pathwayCards} proofCards={proofCards} writingCards={writingCards} />
+    <HomePage page={page} locale={locale} pathwayCards={pathwayCards} proofCards={proofCards} writingCards={writingCards} sections={sections} />
   ) : (
     <p class="p">Locale not enabled.</p>
   )}

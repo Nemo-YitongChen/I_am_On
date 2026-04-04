@@ -1,5 +1,14 @@
 export const siteConfig = {
   site: "https://example.com",
+  siteType: "personal",
+  shell: {
+    announcementBar: false,
+    utilityNav: false,
+    serviceNav: false,
+    breadcrumbs: true,
+    searchModal: false,
+    consentBanner: false,
+  },
   i18n: {
     defaultLocale: "en",
     // Add locales such as "zh" or "ja" here when their content files are ready.

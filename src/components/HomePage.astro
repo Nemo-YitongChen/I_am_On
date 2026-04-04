@@ -1,10 +1,14 @@
 ---
+import SectionRenderer from "./SectionRenderer.astro";
+import { buildHomeSections } from "../lib/sections.js";
+
 const {
   page,
   locale = "en",
   pathwayCards = [],
   proofCards = [],
   writingCards = [],
+  sections: sectionsProp,
 } = Astro.props;
 
 const isZh = locale === "zh";
@@ -55,6 +59,13 @@ const copy = isZh
       topicsIntro: "These themes show up repeatedly across my roles, projects, and the conversations I am most useful in.",
       openLabel: "Open",
     };
+
+const sections = sectionsProp ?? buildHomeSections({
+  pathwayCards,
+  proofCards,
+  writingCards,
+  topicCards: page.cards ?? [],
+});
 ---
 <section class="hero-block hero-shell">
   <div>
@@ -84,87 +95,4 @@ const copy = isZh
   </aside>
 </section>
 
-{pathwayCards.length > 0 && (
-  <section class="section">
-    <div class="section-head">
-      <p class="eyebrow">{copy.pathEyebrow}</p>
-      <h2 class="section-title">{copy.pathHeading}</h2>
-      <p class="section-copy">{copy.pathIntro}</p>
-    </div>
-
-    <div class="grid" style="margin-top:0;">
-      {pathwayCards.map((card) => (
-        <a class={`card ${card.layout ?? "half"}`.trim()} href={card.href}>
-          <p class="eyebrow" style="margin-bottom:10px;">{card.label}</p>
-          {card.meta && <p class="small" style="margin-bottom:10px;">{card.meta}</p>}
-          <p class="card-title">{card.title}</p>
-          <p class="card-copy">{card.summary}</p>
-          <p class="small" style="margin-top:16px;">{copy.openLabel}</p>
-        </a>
-      ))}
-    </div>
-  </section>
-)}
-
-{proofCards.length > 0 && (
-  <section class="section">
-    <div class="section-head">
-      <p class="eyebrow">{copy.proofEyebrow}</p>
-      <h2 class="section-title">{copy.proofHeading}</h2>
-      <p class="section-copy">{copy.proofIntro}</p>
-    </div>
-
-    <div class="grid" style="margin-top:0;">
-      {proofCards.map((card) => (
-        <a class={`card ${card.layout ?? "third"}`.trim()} href={card.href}>
-          <p class="eyebrow" style="margin-bottom:10px;">{card.label}</p>
-          {card.meta && <p class="small" style="margin-bottom:10px;">{card.meta}</p>}
-          <p class="card-title">{card.title}</p>
-          <p class="card-copy">{card.summary}</p>
-          <p class="small" style="margin-top:16px;">{copy.openLabel}</p>
-        </a>
-      ))}
-    </div>
-  </section>
-)}
-
-{writingCards.length > 0 && (
-  <section class="section">
-    <div class="section-head">
-      <p class="eyebrow">{copy.writingEyebrow}</p>
-      <h2 class="section-title">{copy.writingHeading}</h2>
-      <p class="section-copy">{copy.writingIntro}</p>
-    </div>
-
-    <div class="grid" style="margin-top:0;">
-      {writingCards.map((card) => (
-        <a class={`card ${card.layout ?? "half"}`.trim()} href={card.href}>
-          <p class="eyebrow" style="margin-bottom:10px;">{card.label}</p>
-          {card.meta && <p class="small" style="margin-bottom:10px;">{card.meta}</p>}
-          <p class="card-title">{card.title}</p>
-          <p class="card-copy">{card.summary}</p>
-          <p class="small" style="margin-top:16px;">{copy.openLabel}</p>
-        </a>
-      ))}
-    </div>
-  </section>
-)}
-
-{page.cards?.length > 0 && (
-  <section class="section">
-    <div class="section-head">
-      <p class="eyebrow">{copy.topicsEyebrow}</p>
-      <h2 class="section-title">{copy.topicsHeading}</h2>
-      <p class="section-copy">{copy.topicsIntro}</p>
-    </div>
-
-    <div class="grid" style="margin-top:0;">
-      {page.cards.map((card) => (
-        <article class={`card ${card.layout ?? "third"}`.trim()}>
-          <p class="kicker">{card.title}</p>
-          <p class="card-copy">{card.text}</p>
-        </article>
-      ))}
-    </div>
-  </section>
-)}
+{sections.map((section) => <SectionRenderer section={section} locale={locale} />)}

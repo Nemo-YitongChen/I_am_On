@@ -136,10 +136,15 @@ This is meant for low-friction ownership, not for multi-user CMS security.
 
 The public pages also include reusable next-step handoff sections, so visitors can move between work, writing, recruiter context, and booking without needing to restart from the homepage.
 
+This repo is currently moving from a strong personal-site starter toward a multi-preset template kernel. The current implementation foundation is tracked in:
+
+- `docs/TEMPLATE_SYSTEM_PLAN.md`
+
 ## Documentation index
 
 - `docs/QUICKSTART.md`
 - `docs/OPERATIONS.md`
+- `docs/TEMPLATE_SYSTEM_PLAN.md`
 - `docs/TEMPLATE_BOUNDARY_CHECKLIST.md`
 - `docs/PAGES_WORKERS_SYNC_CHECKLIST.md`
 
