@@ -1,7 +1,11 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import StructuredPage from "../../components/StructuredPage.astro";
+import { getProfile } from "../../lib/content";
 import { getPage, isSecondaryLocaleEnabled } from "../../lib/site.js";
+import { getSiteType } from "../../lib/template.js";
+import { buildStructuredDataForPage } from "../../lib/structuredData.js";
+import { siteConfig } from "../../../site.config.mjs";
 
 const locale = Astro.params.locale ?? "";
 const isValidLocale = isSecondaryLocaleEnabled(locale);
@@ -11,7 +15,25 @@ if (!isValidLocale) {
 }
 
 const page = isValidLocale ? getPage(locale, "consult") : null;
+const profile = await getProfile();
+const site = Astro.site ?? new URL(siteConfig.site);
+const structuredData = isValidLocale && page
+  ? buildStructuredDataForPage({
+      siteType: getSiteType(),
+      pageType: "consult",
+      profile,
+      url: new URL(`/${locale}/consult/`, site).toString(),
+      title: page.title,
+      description: page.description,
+      locale,
+    })
+  : [];
 ---
-<BaseLayout title={page?.title ?? "Not found"} description={page?.description ?? "Not found."} locale={isValidLocale ? locale : "en"}>
+<BaseLayout
+  title={page?.title ?? "Not found"}
+  description={page?.description ?? "Not found."}
+  locale={isValidLocale ? locale : "en"}
+  structuredData={structuredData}
+>
   {isValidLocale && page ? <StructuredPage page={page} locale={locale} /> : <p class="p">Locale not enabled.</p>}
 </BaseLayout>

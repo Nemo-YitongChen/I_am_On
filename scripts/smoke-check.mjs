@@ -52,6 +52,7 @@ const contentChecks = [
       { pattern: '"@type": "ProfilePage"', label: "profile page schema builder" },
       { pattern: '"@type": "Article"', label: "article schema builder" },
       { pattern: '"@type": "CreativeWork"', label: "creative work schema builder" },
+      { pattern: '"@type": "Service"', label: "service schema builder" },
       { pattern: '"@type": "WebSite"', label: "website schema builder" },
       { pattern: '"@type": "Organization"', label: "organization schema builder" },
     ],

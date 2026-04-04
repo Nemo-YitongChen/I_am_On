@@ -1,4 +1,5 @@
 import { getSiteType } from "./template.js";
+import { siteConfig } from "../../site.config.mjs";
 
 function getLanguage(locale) {
   return locale === "zh" ? "zh-CN" : "en";
@@ -47,13 +48,39 @@ export function buildOrganizationStructuredData({ profile, url, description, loc
 }
 
 export function buildWebSiteStructuredData({ profile, url, description, locale }) {
-  return {
+  const data = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: profile.brand,
     url,
     description,
     inLanguage: getLanguage(locale),
+  };
+
+  if (siteConfig.search?.enabled && siteConfig.search?.path) {
+    data.potentialAction = {
+      "@type": "SearchAction",
+      target: new URL(siteConfig.search.path, url).toString(),
+      "query-input": "required name=search_term_string",
+    };
+  }
+
+  return data;
+}
+
+export function buildServiceStructuredData({ profile, url, title, description, locale }) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: title,
+    description,
+    url,
+    inLanguage: getLanguage(locale),
+    provider: {
+      "@type": "Organization",
+      name: profile.brand,
+      url: profile.website ?? url,
+    },
   };
 }
 
@@ -165,12 +192,30 @@ export function buildStructuredDataForPage({
         }),
       ];
     }
+
+    if (pageType === "services" || pageType === "book" || pageType === "consult") {
+      return [
+        buildServiceStructuredData({
+          profile,
+          url,
+          title,
+          description,
+          locale,
+        }),
+      ];
+    }
   }
 
   if (siteType === "platform") {
     if (pageType === "home") {
       return [
         buildWebSiteStructuredData({
+          profile,
+          url,
+          description,
+          locale,
+        }),
+        buildOrganizationStructuredData({
           profile,
           url,
           description,
@@ -184,6 +229,18 @@ export function buildStructuredDataForPage({
         buildOrganizationStructuredData({
           profile,
           url,
+          description,
+          locale,
+        }),
+      ];
+    }
+
+    if (pageType === "services" || pageType === "book" || pageType === "consult") {
+      return [
+        buildServiceStructuredData({
+          profile,
+          url,
+          title,
           description,
           locale,
         }),

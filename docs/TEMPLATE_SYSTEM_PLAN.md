@@ -14,6 +14,7 @@ Status:
   - 2026-04-04: Phase 3 expanded so `posts/work` list and detail pages now build explicit page schemas before rendering
   - 2026-04-04: structured data rules were split into a dedicated rules document for future renderer work
   - 2026-04-05: preset-aware structured-data rendering started in the layout and key page routes
+  - 2026-04-05: business/platform schema coverage expanded onto current core pages such as `services`, `consult`, and `book`
 
 ## Goal
 

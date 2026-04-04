@@ -1,6 +1,10 @@
 export const siteConfig = {
   site: "https://example.com",
   siteType: "personal",
+  search: {
+    enabled: false,
+    path: "/search/?q={search_term_string}",
+  },
   shell: {
     skipLink: true,
     announcementBar: false,

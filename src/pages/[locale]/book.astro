@@ -4,6 +4,9 @@ import BookPage from "../../components/BookPage.astro";
 import LinkCardsSection from "../../components/LinkCardsSection.astro";
 import { getBookingOptions, getProfile } from "../../lib/content";
 import { getLocalePrefix, getPage, isSecondaryLocaleEnabled } from "../../lib/site.js";
+import { getSiteType } from "../../lib/template.js";
+import { buildStructuredDataForPage } from "../../lib/structuredData.js";
+import { siteConfig } from "../../../site.config.mjs";
 
 const locale = Astro.params.locale ?? "";
 const isValidLocale = isSecondaryLocaleEnabled(locale);
@@ -17,6 +20,7 @@ const options = isValidLocale ? await getBookingOptions(locale) : [];
 const profile = await getProfile();
 const isZh = locale === "zh";
 const prefix = isValidLocale ? getLocalePrefix(locale) : "";
+const site = Astro.site ?? new URL(siteConfig.site);
 
 const nextStepCards = [
   {
@@ -44,8 +48,24 @@ const nextStepCards = [
     layout: "third",
   },
 ];
+const structuredData = isValidLocale && page
+  ? buildStructuredDataForPage({
+      siteType: getSiteType(),
+      pageType: "book",
+      profile,
+      url: new URL(`/${locale}/book/`, site).toString(),
+      title: page.title,
+      description: page.description,
+      locale,
+    })
+  : [];
 ---
-<BaseLayout title={page?.title ?? "Not found"} description={page?.description ?? "Not found."} locale={isValidLocale ? locale : "en"}>
+<BaseLayout
+  title={page?.title ?? "Not found"}
+  description={page?.description ?? "Not found."}
+  locale={isValidLocale ? locale : "en"}
+  structuredData={structuredData}
+>
   {isValidLocale && page ? (
     <>
       <BookPage page={page} options={options} locale={locale} profile={profile} />

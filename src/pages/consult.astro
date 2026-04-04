@@ -1,11 +1,26 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import StructuredPage from "../components/StructuredPage.astro";
+import { getProfile } from "../lib/content";
 import { getDefaultLocale, getPage } from "../lib/site.js";
+import { getSiteType } from "../lib/template.js";
+import { buildStructuredDataForPage } from "../lib/structuredData.js";
+import { siteConfig } from "../../site.config.mjs";
 
 const locale = getDefaultLocale();
 const page = getPage(locale, "consult");
+const profile = await getProfile();
+const site = Astro.site ?? new URL(siteConfig.site);
+const structuredData = buildStructuredDataForPage({
+  siteType: getSiteType(),
+  pageType: "consult",
+  profile,
+  url: new URL("/consult/", site).toString(),
+  title: page.title,
+  description: page.description,
+  locale,
+});
 ---
-<BaseLayout title={page.title} description={page.description} locale={locale}>
+<BaseLayout title={page.title} description={page.description} locale={locale} structuredData={structuredData}>
   <StructuredPage page={page} locale={locale} />
 </BaseLayout>

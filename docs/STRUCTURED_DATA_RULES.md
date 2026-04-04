@@ -16,7 +16,7 @@ Current implementation priority:
 
 1. personal preset pages
 2. long-form article and case-study pages
-3. business and platform-specific schema once those presets are explicit
+3. business and platform-specific schema on current core pages (`home`, `about`, `recruiters`, `services`, `consult`, `book`)
 
 This means the template should treat structured data as a conditional capability, not as a blanket default.
 
@@ -38,6 +38,7 @@ Do not emit `Organization` on a personal preset unless the site is genuinely rep
 Use these mappings only when the content and site config clearly represent a business:
 
 - home / company page: `Organization` or a more specific organization subtype
+- services / consult / book pages: `Service`
 - FAQ page: `FAQPage` only when the page is primarily a real FAQ
 - case-study detail page: `CreativeWork` or a more specific subtype if justified
 
@@ -45,7 +46,9 @@ Use these mappings only when the content and site config clearly represent a bus
 
 Use these mappings only when the product model is real and specific:
 
-- site root: `WebSite`
+- site root: `WebSite`, and optionally `SearchAction` when site search is actually enabled
+- about / recruiters pages: `Organization`
+- services / consult / book pages: `Service`
 - site search: `WebSite` with `SearchAction`, only if site search exists
 - product detail page: `Product`, only when the page represents a concrete product or plan
 - documentation article: `TechArticle` or `Article` if the page is genuinely article-like
