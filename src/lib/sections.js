@@ -62,3 +62,32 @@ export function buildStructuredSections({
     items: cards,
   }];
 }
+
+export function buildLinkCardSection({
+  eyebrow,
+  heading,
+  intro,
+  items = [],
+}) {
+  if (!Array.isArray(items) || items.length === 0) {
+    return [];
+  }
+
+  return [{
+    type: "link-cards",
+    version: 1,
+    eyebrow,
+    heading,
+    intro,
+    items,
+  }];
+}
+
+export function buildBookingSections({
+  contactSection,
+  detailSection,
+  bookingSection,
+  faqSection,
+}) {
+  return [contactSection, detailSection, bookingSection, faqSection].filter(Boolean);
+}

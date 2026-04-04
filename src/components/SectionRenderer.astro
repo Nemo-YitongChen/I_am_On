@@ -2,6 +2,9 @@
 const { section, locale = "en" } = Astro.props;
 
 const isZh = locale === "zh";
+const actionLabel = isZh ? "查看" : "Open";
+const bookingCtaLabel = isZh ? "预约一次交流" : "Book a chat";
+const bookingOpensLabel = isZh ? "将打开 Calendly" : "Opens Calendly";
 
 const sectionCopy = {
   pathways: isZh
@@ -79,6 +82,44 @@ const copy = {
             <p class="card-copy">{card.text}</p>
           </article>
         ))
+      ) : section.type === "link-cards" ? (
+        section.items.map((card) => (
+          <a
+            class={`card ${card.layout ?? "third"}`.trim()}
+            href={card.href}
+            target={card.external ? "_blank" : undefined}
+            rel={card.external ? "noreferrer" : undefined}
+            download={card.download ? true : undefined}
+          >
+            <p class="eyebrow" style="margin-bottom:10px;">{card.label}</p>
+            {card.meta && <p class="small" style="margin-bottom:10px;">{card.meta}</p>}
+            <p class="card-title">{card.title}</p>
+            <p class="card-copy">{card.summary}</p>
+            <p class="small" style="margin-top:16px;">{card.actionLabel ?? actionLabel}</p>
+          </a>
+        ))
+      ) : section.type === "booking-options" ? (
+        section.items.map((option) => (
+          <section class="card">
+            <p class="eyebrow" style="margin-bottom:10px;">{option.label ?? (isZh ? "形式" : "Format")}</p>
+            <p class="card-title">{option.name}</p>
+            {option.duration && <p class="small" style="margin-top:10px;">{option.duration}</p>}
+            <p class="card-copy">{option.teaser}</p>
+            <div class="cta-row">
+              <a class="cta" href={option.url} target="_blank" rel="noreferrer">{option.ctaLabel ?? bookingCtaLabel}</a>
+            </div>
+            <p class="small" style="margin-top:12px;">{option.opensLabel ?? bookingOpensLabel}</p>
+          </section>
+        ))
+      ) : section.type === "faq" ? (
+        <div class="faq-list">
+          {section.items.map((item) => (
+            <article class="card faq-item">
+              <p class="faq-question">{item.question}</p>
+              <p class="card-copy">{item.answer}</p>
+            </article>
+          ))}
+        </div>
       ) : (
         section.items.map((card) => (
           <a class={`card ${card.layout ?? "half"}`.trim()} href={card.href}>

@@ -1,4 +1,7 @@
 ---
+import SectionRenderer from "./SectionRenderer.astro";
+import { buildLinkCardSection, buildStructuredSections } from "../lib/sections.js";
+
 const { page, locale = "en", quickLinks = [] } = Astro.props;
 
 const isZh = locale === "zh";
@@ -21,6 +24,23 @@ const copy = isZh
       detailTitle: "A clearer hiring snapshot",
       detailIntro: "The cards below summarise the parts of my background that tend to matter most in hiring conversations.",
     };
+
+const [quickLinksSection] = buildLinkCardSection({
+  eyebrow: copy.quickEyebrow,
+  heading: copy.quickTitle,
+  intro: copy.quickIntro,
+  items: quickLinks.map((item) => ({
+    ...item,
+    download: item.href?.endsWith(".pdf"),
+  })),
+});
+
+const detailSections = buildStructuredSections({
+  cards: page.cards ?? [],
+  eyebrow: copy.detailEyebrow,
+  heading: copy.detailTitle,
+  intro: copy.detailIntro,
+});
 ---
 <section class="hero-block">
   <p class="eyebrow">{copy.eyebrow}</p>
@@ -38,41 +58,5 @@ const copy = isZh
   )}
 </section>
 
-{quickLinks.length > 0 && (
-  <section class="section">
-    <div class="section-head">
-      <p class="eyebrow">{copy.quickEyebrow}</p>
-      <h2 class="section-title">{copy.quickTitle}</h2>
-      <p class="section-copy">{copy.quickIntro}</p>
-    </div>
-
-    <div class="grid" style="margin-top:0;">
-      {quickLinks.map((item) => (
-        <a class={`card ${item.layout ?? "third"}`.trim()} href={item.href} target={item.external ? "_blank" : undefined} rel={item.external ? "noreferrer" : undefined}>
-          <p class="eyebrow" style="margin-bottom:10px;">{item.label}</p>
-          <p class="card-title">{item.title}</p>
-          <p class="card-copy">{item.summary}</p>
-        </a>
-      ))}
-    </div>
-  </section>
-)}
-
-{page.cards?.length > 0 && (
-  <section class="section">
-    <div class="section-head">
-      <p class="eyebrow">{copy.detailEyebrow}</p>
-      <h2 class="section-title">{copy.detailTitle}</h2>
-      <p class="section-copy">{copy.detailIntro}</p>
-    </div>
-
-    <div class="grid" style="margin-top:0;">
-      {page.cards.map((card) => (
-        <article class={`card ${card.layout ?? "half"}`.trim()}>
-          <p class="kicker">{card.title}</p>
-          <p class="card-copy">{card.text}</p>
-        </article>
-      ))}
-    </div>
-  </section>
-)}
+{quickLinksSection && <SectionRenderer section={quickLinksSection} locale={locale} />}
+{detailSections.map((section) => <SectionRenderer section={section} locale={locale} />)}

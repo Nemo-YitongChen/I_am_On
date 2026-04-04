@@ -1,4 +1,7 @@
 ---
+import SectionRenderer from "./SectionRenderer.astro";
+import { buildBookingSections, buildLinkCardSection, buildStructuredSections } from "../lib/sections.js";
+
 const { page, options, locale = "en", profile } = Astro.props;
 
 const copy = locale === "zh"
@@ -52,6 +55,62 @@ const contactDetails = [
     href: profile?.linkedin,
   },
 ].filter((item) => item.value && item.href);
+
+const [contactSection] = buildLinkCardSection({
+  eyebrow: copy.directEyebrow,
+  heading: copy.directHeading,
+  intro: copy.directIntro,
+  items: contactDetails.map((item) => ({
+    label: item.label,
+    title: item.value,
+    summary: "",
+    href: item.href,
+    external: item.href.startsWith("http"),
+    layout: "third",
+    actionLabel: locale === "zh" ? "打开" : "Open",
+  })),
+});
+
+const [detailSection] = buildStructuredSections({
+  cards: page.cards ?? [],
+  eyebrow: locale === "zh" ? "联系方式" : "Contact options",
+  heading: locale === "zh" ? "先确认是否适合联系我" : "A clearer sense of fit",
+  intro: "",
+});
+
+const bookingSection = visibleOptions.length > 0
+  ? {
+      type: "booking-options",
+      version: 1,
+      eyebrow: copy.bookingEyebrow,
+      heading: copy.optionsHeading,
+      intro: copy.optionsIntro,
+      items: visibleOptions.map((option) => ({
+        ...option,
+        ctaLabel: option.ctaLabel ?? copy.bookLabel,
+        opensLabel: copy.opensCalendly,
+        label: copy.durationLabel,
+      })),
+    }
+  : null;
+
+const faqSection = page.faq?.length > 0
+  ? {
+      type: "faq",
+      version: 1,
+      eyebrow: copy.faqEyebrow,
+      heading: copy.faqHeading,
+      intro: copy.faqIntro,
+      items: page.faq,
+    }
+  : null;
+
+const sections = buildBookingSections({
+  contactSection,
+  detailSection,
+  bookingSection,
+  faqSection,
+});
 ---
 <section class="hero-block">
   <p class="eyebrow">{copy.bookingEyebrow}</p>
@@ -69,83 +128,4 @@ const contactDetails = [
   )}
 </section>
 
-{contactDetails.length > 0 && (
-  <section class="section">
-    <div class="section-head">
-      <p class="eyebrow">{copy.directEyebrow}</p>
-      <h2 class="section-title">{copy.directHeading}</h2>
-      <p class="section-copy">{copy.directIntro}</p>
-    </div>
-
-    <div class="grid" style="margin-top:0;">
-      {contactDetails.map((item) => (
-        <a class="card third" href={item.href} target={item.href.startsWith("http") ? "_blank" : undefined} rel={item.href.startsWith("http") ? "noreferrer" : undefined}>
-          <p class="eyebrow" style="margin-bottom:10px;">{item.label}</p>
-          <p class="card-title">{item.value}</p>
-        </a>
-      ))}
-    </div>
-  </section>
-)}
-
-{page.cards?.length > 0 && (
-  <section class="section">
-    <div class="section-head">
-      <p class="eyebrow">{locale === "zh" ? "联系方式" : "Contact options"}</p>
-      <h2 class="section-title">{locale === "zh" ? "先确认是否适合联系我" : "A clearer sense of fit"}</h2>
-    </div>
-
-    <div class="grid" style="margin-top:0;">
-      {page.cards.map((card) => (
-        <article class={`card ${card.layout ?? "half"}`.trim()}>
-          <p class="kicker">{card.title}</p>
-          <p class="card-copy">{card.text}</p>
-        </article>
-      ))}
-    </div>
-  </section>
-)}
-
-{visibleOptions.length > 0 && (
-  <section class="section">
-    <div class="section-head">
-      <p class="eyebrow">{copy.bookingEyebrow}</p>
-      <h2 class="section-title">{copy.optionsHeading}</h2>
-      <p class="section-copy">{copy.optionsIntro}</p>
-    </div>
-
-    <div class="grid" style="margin-top:0;">
-      {visibleOptions.map((option) => (
-        <section class="card">
-          <p class="eyebrow" style="margin-bottom:10px;">{copy.durationLabel}</p>
-          <p class="card-title">{option.name}</p>
-          <p class="small" style="margin-top:10px;">{option.duration}</p>
-          <p class="card-copy">{option.teaser}</p>
-          <div class="cta-row">
-            <a class="cta" href={option.url} target="_blank" rel="noreferrer">{copy.bookLabel}</a>
-          </div>
-          <p class="small" style="margin-top:12px;">{copy.opensCalendly}</p>
-        </section>
-      ))}
-    </div>
-  </section>
-)}
-
-{page.faq?.length > 0 && (
-  <section class="section">
-    <div class="section-head">
-      <p class="eyebrow">{copy.faqEyebrow}</p>
-      <h2 class="section-title">{copy.faqHeading}</h2>
-      <p class="section-copy">{copy.faqIntro}</p>
-    </div>
-
-    <div class="faq-list">
-      {page.faq.map((item) => (
-        <article class="card faq-item">
-          <p class="faq-question">{item.question}</p>
-          <p class="card-copy">{item.answer}</p>
-        </article>
-      ))}
-    </div>
-  </section>
-)}
+{sections.map((section) => <SectionRenderer section={section} locale={locale} />)}
