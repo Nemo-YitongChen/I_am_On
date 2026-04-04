@@ -11,6 +11,8 @@ Status:
   - 2026-04-04: Phase 1 foundation completed with `siteType`, preset helper, and home section registry
   - 2026-04-04: Phase 2 baseline started with section-driven `StructuredPage` and optional shell modules (`SkipLink`, `Breadcrumb`)
   - 2026-04-04: Phase 3 started by routing `Recruiters`, `Book`, and reusable next-step blocks through the shared section renderer
+  - 2026-04-04: Phase 3 expanded so `posts/work` list and detail pages now build explicit page schemas before rendering
+  - 2026-04-04: structured data rules were split into a dedicated rules document for future renderer work
 
 ## Goal
 

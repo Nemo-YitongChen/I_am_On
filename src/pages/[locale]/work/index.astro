@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import LinkCardsSection from "../../../components/LinkCardsSection.astro";
-import LongformListPage from "../../../components/LongformListPage.astro";
+import PageSchemaPage from "../../../components/PageSchemaPage.astro";
+import { buildLongformListPageSchema } from "../../../lib/pageSchemas.js";
 import { isSecondaryLocaleEnabled } from "../../../lib/site.js";
 import { getSlugFromContentId, getWorkList } from "../../../lib/content";
 
@@ -49,23 +49,23 @@ const nextStepCards = [
   },
 ];
 
-const copy = locale === "zh"
-  ? { title: "案例", intro: "用这个集合展示代表性工作、项目或职责摘要。", eyebrow: "案例集合" }
-  : { title: "Work", intro: "Use this collection for selected projects, roles, case studies, or representative proof.", eyebrow: "Selected work" };
+const page = isValidLocale
+  ? buildLongformListPageSchema({
+      locale,
+      collection: "work",
+      items,
+      nextStepCards,
+    })
+  : null;
 ---
-<BaseLayout title={`${copy.title} | Your Name`} description={copy.intro} locale={isValidLocale ? locale : "en"}>
-  {isValidLocale ? (
-    <>
-      <LongformListPage title={copy.title} intro={copy.intro} eyebrow={copy.eyebrow} items={items} />
-      <LinkCardsSection
-        eyebrow={locale === "zh" ? "下一步" : "What to do next"}
-        title={locale === "zh" ? "如果这些案例已经足够有帮助" : "If the work looks relevant, go here next"}
-        intro={locale === "zh" ? "这些页面可以把案例继续连接到岗位匹配、直接联系或更完整的工作方式说明。" : "These pages make it easier to connect case studies with fit, contact, and longer explanation."}
-        cards={nextStepCards}
-        locale={locale}
-      />
-    </>
-  ) : (
+{isValidLocale ? (
+  <PageSchemaPage page={page} locale={locale} />
+) : (
+  <BaseLayout
+    title="Not found | Your Name"
+    description="Locale not enabled."
+    locale="en"
+  >
     <p class="p">Locale not enabled.</p>
-  )}
-</BaseLayout>
+  </BaseLayout>
+)}

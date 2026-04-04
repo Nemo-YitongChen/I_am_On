@@ -120,6 +120,34 @@ const copy = {
             </article>
           ))}
         </div>
+      ) : section.type === "longform-list" ? (
+        section.items.length === 0 ? (
+          <div class="card">
+            <p class="kicker">{isZh ? "还没有内容" : "No entries yet"}</p>
+            <p class="card-copy">{isZh ? "这个集合已经准备好，但还没有发布内容。" : "This collection is ready, but it does not have any published items yet."}</p>
+          </div>
+        ) : (
+          section.items.map((item) => (
+            <a class={`card ${item.layout ?? "half"}`.trim()} href={item.href}>
+              {item.proof && <p class="eyebrow" style="margin-bottom:10px;">{item.proof}</p>}
+              {item.meta && <p class="small" style="margin-bottom:10px;">{item.meta}</p>}
+              <p class="card-title">{item.title}</p>
+              <p class="card-copy">{item.summary}</p>
+              {item.tags?.length > 0 && (
+                <p class="small" style="margin-top:14px;">{item.tags.join(" · ")}</p>
+              )}
+            </a>
+          ))
+        )
+      ) : section.type === "lead" ? (
+        <section class="card callout">
+          {section.eyebrow && <p class="eyebrow">{section.eyebrow}</p>}
+          <p class="card-copy" style="margin-top:0;">{section.text}</p>
+        </section>
+      ) : section.type === "prose" ? (
+        <article class="card prose" style="line-height:1.8;">
+          <section.Content />
+        </article>
       ) : (
         section.items.map((card) => (
           <a class={`card ${card.layout ?? "half"}`.trim()} href={card.href}>

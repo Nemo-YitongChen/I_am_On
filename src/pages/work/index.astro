@@ -1,7 +1,6 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import LinkCardsSection from "../../components/LinkCardsSection.astro";
-import LongformListPage from "../../components/LongformListPage.astro";
+import PageSchemaPage from "../../components/PageSchemaPage.astro";
+import { buildLongformListPageSchema } from "../../lib/pageSchemas.js";
 import { getDefaultLocale, getLocalePrefix } from "../../lib/site.js";
 import { getSlugFromContentId, getWorkList } from "../../lib/content";
 
@@ -45,17 +44,11 @@ const nextStepCards = [
   },
 ];
 
-const copy = isZh
-  ? { title: "案例", intro: "用这个集合展示代表性工作、项目或职责摘要。", eyebrow: "案例集合" }
-  : { title: "Work", intro: "Use this collection for selected projects, roles, case studies, or representative proof.", eyebrow: "Selected work" };
+const page = buildLongformListPageSchema({
+  locale,
+  collection: "work",
+  items,
+  nextStepCards,
+});
 ---
-<BaseLayout title={`${copy.title} | Your Name`} description={copy.intro} locale={locale}>
-  <LongformListPage title={copy.title} intro={copy.intro} eyebrow={copy.eyebrow} items={items} />
-  <LinkCardsSection
-    eyebrow={isZh ? "下一步" : "What to do next"}
-    title={isZh ? "如果这些案例已经足够有帮助" : "If the work looks relevant, go here next"}
-    intro={isZh ? "这些页面可以把案例继续连接到岗位匹配、直接联系或更完整的工作方式说明。" : "These pages make it easier to connect case studies with fit, contact, and longer explanation."}
-    cards={nextStepCards}
-    locale={locale}
-  />
-</BaseLayout>
+<PageSchemaPage page={page} locale={locale} />

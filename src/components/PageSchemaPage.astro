@@ -1,0 +1,41 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SectionRenderer from "./SectionRenderer.astro";
+
+const { page, locale = "en" } = Astro.props;
+const hero = page.hero ?? null;
+const primaryCTA = hero?.primaryCTA ?? null;
+const secondaryCTA = hero?.secondaryCTA ?? null;
+---
+<BaseLayout
+  title={page.seo?.title ?? page.title ?? "Your Name"}
+  description={page.seo?.description ?? page.summary ?? ""}
+  locale={locale}
+>
+  {hero && (
+    <section class="hero-block">
+      {hero.eyebrow && <p class="eyebrow">{hero.eyebrow}</p>}
+      <h1 class="hero-title">{hero.title}</h1>
+      {hero.body && <p class="hero-copy">{hero.body}</p>}
+      {hero.meta && <p class="small" style="margin-bottom:10px;">{hero.meta}</p>}
+      {hero.tags?.length > 0 && <p class="small">{hero.tags.join(" · ")}</p>}
+
+      {(primaryCTA || secondaryCTA) && (
+        <div class="cta-row">
+          {primaryCTA && (
+            <a class="cta" href={primaryCTA.href}>
+              {primaryCTA.label}
+            </a>
+          )}
+          {secondaryCTA && (
+            <a class="ghost-btn" href={secondaryCTA.href}>
+              {secondaryCTA.label}
+            </a>
+          )}
+        </div>
+      )}
+    </section>
+  )}
+
+  {(page.sections ?? []).map((section) => <SectionRenderer section={section} locale={locale} />)}
+</BaseLayout>

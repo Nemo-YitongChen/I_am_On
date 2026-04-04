@@ -145,6 +145,7 @@ This repo is currently moving from a strong personal-site starter toward a multi
 - `docs/QUICKSTART.md`
 - `docs/OPERATIONS.md`
 - `docs/TEMPLATE_SYSTEM_PLAN.md`
+- `docs/STRUCTURED_DATA_RULES.md`
 - `docs/TEMPLATE_BOUNDARY_CHECKLIST.md`
 - `docs/PAGES_WORKERS_SYNC_CHECKLIST.md`
 

@@ -1,7 +1,6 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import LinkCardsSection from "../../components/LinkCardsSection.astro";
-import LongformListPage from "../../components/LongformListPage.astro";
+import PageSchemaPage from "../../components/PageSchemaPage.astro";
+import { buildLongformListPageSchema } from "../../lib/pageSchemas.js";
 import { getDefaultLocale, getLocalePrefix } from "../../lib/site.js";
 import { getPostsList, getSlugFromContentId } from "../../lib/content";
 
@@ -45,17 +44,11 @@ const nextStepCards = [
   },
 ];
 
-const copy = isZh
-  ? { title: "文章", intro: "用这个集合展示你的写作、观点或说明性内容。", eyebrow: "文章集合" }
-  : { title: "Writing", intro: "Use this collection for essays, notes, and writing that helps people understand how you think.", eyebrow: "Writing" };
+const page = buildLongformListPageSchema({
+  locale,
+  collection: "posts",
+  items,
+  nextStepCards,
+});
 ---
-<BaseLayout title={`${copy.title} | Your Name`} description={copy.intro} locale={locale}>
-  <LongformListPage title={copy.title} intro={copy.intro} eyebrow={copy.eyebrow} items={items} />
-  <LinkCardsSection
-    eyebrow={isZh ? "下一步" : "What to open next"}
-    title={isZh ? "把文章和证明、岗位匹配放在一起看" : "Use writing together with proof and fit"}
-    intro={isZh ? "文章最适合补充工作方式和判断过程；结合案例页与招聘摘要去看，会更完整。" : "The writing is strongest when you pair it with case studies or a recruiter-facing summary."}
-    cards={nextStepCards}
-    locale={locale}
-  />
-</BaseLayout>
+<PageSchemaPage page={page} locale={locale} />

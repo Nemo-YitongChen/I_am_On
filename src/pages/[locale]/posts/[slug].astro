@@ -1,8 +1,8 @@
 ---
 import { getEntry, render } from "astro:content";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import LinkCardsSection from "../../../components/LinkCardsSection.astro";
-import LongformEntryPage from "../../../components/LongformEntryPage.astro";
+import PageSchemaPage from "../../../components/PageSchemaPage.astro";
+import { buildLongformEntryPageSchema } from "../../../lib/pageSchemas.js";
 import { getSecondaryLocales, isSecondaryLocaleEnabled } from "../../../lib/site.js";
 import { getPostsList, getSlugFromContentId } from "../../../lib/content";
 
@@ -31,7 +31,6 @@ if (!entry) {
 }
 
 const { Content } = await render(entry);
-const eyebrow = locale === "zh" ? "文章" : "Writing";
 const meta = entry.data.publishedAt.toISOString().slice(0, 10);
 const nextStepCards = [
   {
@@ -59,29 +58,21 @@ const nextStepCards = [
     layout: "third",
   },
 ];
+const page = buildLongformEntryPageSchema({
+  locale,
+  collection: "posts",
+  entry,
+  meta,
+  leadTitle: locale === "zh" ? "核心观点" : "Key idea",
+  leadText: entry.data.summary,
+  nextStepCards,
+  Content,
+});
 ---
-<BaseLayout title={entry.data.title} description={entry.data.description} locale={isValidLocale ? locale : "en"}>
-  {isValidLocale ? (
-    <>
-      <LongformEntryPage
-        eyebrow={eyebrow}
-        leadTitle={locale === "zh" ? "核心观点" : "Key idea"}
-        leadText={entry.data.summary}
-        title={entry.data.title}
-        description={entry.data.description}
-        meta={meta}
-        tags={entry.data.tags}
-        Content={Content}
-      />
-      <LinkCardsSection
-        eyebrow={locale === "zh" ? "下一步" : "Next step"}
-        title={locale === "zh" ? "把这篇文章和证明、岗位匹配一起看" : "Use this note with proof and fit"}
-        intro={locale === "zh" ? "单篇文章能说明你的思路，但结合案例页和招聘摘要一起看，会更容易形成完整判断。" : "This post is one piece of the picture. These pages help place it in a clearer practical context."}
-        cards={nextStepCards}
-        locale={locale}
-      />
-    </>
-  ) : (
+{isValidLocale ? (
+  <PageSchemaPage page={page} locale={locale} />
+) : (
+  <BaseLayout title="Not found | Your Name" description="Locale not enabled." locale="en">
     <p class="p">Locale not enabled.</p>
-  )}
-</BaseLayout>
+  </BaseLayout>
+)}
