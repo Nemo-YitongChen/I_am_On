@@ -8,5 +8,15 @@
     "url": "https://calendly.com/signup",
     "order": 10,
     "featured": true
+  },
+  {
+    "id": "zh-business-contact",
+    "lang": "zh",
+    "name": "外部预约或联系入口",
+    "duration": "替换成你的真实预约、报价或联系流程",
+    "teaser": "适合只保留一个明确入口的商务站，不必在页面上堆很多选择。",
+    "url": "https://calendly.com/signup",
+    "order": 10,
+    "featured": true
   }
 ]

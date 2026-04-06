@@ -84,6 +84,7 @@ Starter preset content:
 
 - `npm run preset:apply -- --type business`
 - `npm run preset:apply -- --type platform`
+- `npm run preset:apply -- --type business --locales en,zh`
 
 ## Local development
 

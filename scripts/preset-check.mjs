@@ -60,12 +60,14 @@ assert.equal(
 );
 
 for (const presetType of ["business", "platform"]) {
-  for (const page of ["home", "about", "services", "consult", "recruiters", "book"]) {
-    assert.equal(
-      existsSync(join(rootDir, "src", "presets", presetType, "content-live", "en", `${page}.json`)),
-      true,
-      `${presetType} preset should provide starter content for ${page}`,
-    );
+  for (const locale of ["en", "zh"]) {
+    for (const page of ["home", "about", "services", "consult", "recruiters", "book"]) {
+      assert.equal(
+        existsSync(join(rootDir, "src", "presets", presetType, "content-live", locale, `${page}.json`)),
+        true,
+        `${presetType} preset should provide ${locale} starter content for ${page}`,
+      );
+    }
   }
 
   assert.equal(

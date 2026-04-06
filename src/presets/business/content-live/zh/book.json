@@ -1,0 +1,41 @@
+{
+  "title": "联系 | 你的业务品牌",
+  "description": "适用于商务网站的联系页面模板，可用于邮箱优先或外部预约入口。",
+  "heroTitle": "给访问者一个明确的下一步",
+  "heroText": "这个页面适合只保留一个清楚动作：直接联系、提交询问，或跳到一个外部预约入口。重点是动作明确，不要同时给太多弱入口。",
+  "showCalendly": false,
+  "cards": [
+    {
+      "title": "什么情况适合联系",
+      "text": "项目咨询、范围判断、能力确认、时间安排，或先聊一聊看是否匹配。",
+      "layout": "half"
+    },
+    {
+      "title": "提前提供什么最有帮助",
+      "text": "目标、时间节点、预算区间或当前卡点，通常就足够让第一次回复更有用。",
+      "layout": "half"
+    }
+  ],
+  "ctas": [
+    {
+      "label": "先发邮件",
+      "href": "mailto:hello@example.com",
+      "variant": "primary"
+    },
+    {
+      "label": "查看证明",
+      "href": "/zh/recruiters/",
+      "variant": "secondary"
+    }
+  ],
+  "faq": [
+    {
+      "question": "还没完全想清范围，可以先联系吗？",
+      "answer": "可以。只要先说明问题、时间或预期结果，通常就足够开始第一轮判断。"
+    },
+    {
+      "question": "这个页面可以只保留邮箱吗？",
+      "answer": "可以。把 booking.mode 保持为 contact-only，就可以只保留直接联系，不显示外部预约入口。"
+    }
+  ]
+}

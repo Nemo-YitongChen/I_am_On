@@ -30,6 +30,7 @@ If you want the starter content to match the preset immediately:
 
 ```bash
 npm run preset:apply -- --type business
+npm run preset:apply -- --type business --locales en,zh
 ```
 
 or:
@@ -37,6 +38,8 @@ or:
 ```bash
 npm run preset:apply -- --type platform
 ```
+
+If you only want selected locales, pass `--locales en` or another comma-separated list that exists in `src/presets/<type>/content-live/`.
 
 ## 3. Rewrite starter content
 

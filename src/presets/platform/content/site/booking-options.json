@@ -8,5 +8,15 @@
     "url": "https://calendly.com/signup",
     "order": 10,
     "featured": true
+  },
+  {
+    "id": "zh-platform-contact",
+    "lang": "zh",
+    "name": "产品咨询或演示入口",
+    "duration": "替换成你的真实联系或演示流程",
+    "teaser": "适合平台或产品站只保留一个明确的咨询、演示或联系入口。",
+    "url": "https://calendly.com/signup",
+    "order": 10,
+    "featured": true
   }
 ]
