@@ -1,0 +1,40 @@
+{
+  "title": "Proof | Your Business",
+  "description": "A business-site starter proof page for case studies, trust, and contact essentials.",
+  "heroTitle": "Create one page that proves the business is credible",
+  "heroText": "Use this page as a short trust summary: what the business is good at, the work it is known for, and the clearest ways to continue the conversation.",
+  "cards": [
+    {
+      "title": "Best-fit client types",
+      "text": "Explain the client or project types that match your strengths best.",
+      "layout": "half"
+    },
+    {
+      "title": "What the work often includes",
+      "text": "Use this to summarise the mix of delivery, advisory, communication, or specialist support the business usually provides.",
+      "layout": "half"
+    },
+    {
+      "title": "Operational strengths",
+      "text": "Highlight the execution, systems, or communication qualities that reduce risk for clients.",
+      "layout": "half"
+    },
+    {
+      "title": "Why people continue",
+      "text": "Use this area for retention signals, repeat work, or the kind of trust statement that feels real rather than inflated.",
+      "layout": "half"
+    }
+  ],
+  "ctas": [
+    {
+      "label": "See work",
+      "href": "/work/",
+      "variant": "primary"
+    },
+    {
+      "label": "Email the business",
+      "href": "mailto:hello@example.com",
+      "variant": "secondary"
+    }
+  ]
+}

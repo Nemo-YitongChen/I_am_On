@@ -1,7 +1,13 @@
+import { existsSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 
 import { getHomePresetCopy, getSectionPresetCopy } from "../src/lib/presetCopy.js";
 import { getPrimaryNavKeys, getTemplatePreset } from "../src/lib/template.js";
+
+const scriptDir = dirname(fileURLToPath(import.meta.url));
+const rootDir = dirname(scriptDir);
 
 const personalPreset = getTemplatePreset("personal");
 const businessPreset = getTemplatePreset("business");
@@ -52,5 +58,21 @@ assert.equal(
   "What the platform covers",
   "platform preset should use product-scope copy for topics",
 );
+
+for (const presetType of ["business", "platform"]) {
+  for (const page of ["home", "about", "services", "consult", "recruiters", "book"]) {
+    assert.equal(
+      existsSync(join(rootDir, "src", "presets", presetType, "content-live", "en", `${page}.json`)),
+      true,
+      `${presetType} preset should provide starter content for ${page}`,
+    );
+  }
+
+  assert.equal(
+    existsSync(join(rootDir, "src", "presets", presetType, "content", "site", "booking-options.json")),
+    true,
+    `${presetType} preset should provide booking option content`,
+  );
+}
 
 console.log("Preset check passed.");

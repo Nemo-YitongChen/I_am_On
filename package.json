@@ -6,6 +6,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "smoke": "node scripts/smoke-check.mjs",
+    "preset:apply": "node scripts/apply-preset-content.mjs",
     "preset:check": "node scripts/preset-check.mjs",
     "validate": "npm run build && npm run smoke && npm run preset:check",
     "preview": "astro preview",

@@ -1,0 +1,40 @@
+{
+  "title": "Trust | Your Product",
+  "description": "A platform-site starter trust page for product credibility, team links, and key context.",
+  "heroTitle": "Keep product trust signals in one easy-to-scan place",
+  "heroText": "Use this route for the shortest version of product trust: team context, public links, and the essentials someone wants before starting a conversation.",
+  "cards": [
+    {
+      "title": "Product context",
+      "text": "Use this card for product category, team shape, or the operational environment the platform fits best.",
+      "layout": "half"
+    },
+    {
+      "title": "Implementation confidence",
+      "text": "Summarise the delivery, support, documentation, or system-thinking strengths that reduce risk.",
+      "layout": "half"
+    },
+    {
+      "title": "Public profile links",
+      "text": "Use this area for docs, changelog, support channels, public roadmap, or other trust-building links.",
+      "layout": "half"
+    },
+    {
+      "title": "Next-step contact",
+      "text": "Keep one clear contact or onboarding path visible instead of many weak options.",
+      "layout": "half"
+    }
+  ],
+  "ctas": [
+    {
+      "label": "See product",
+      "href": "/services/",
+      "variant": "primary"
+    },
+    {
+      "label": "Contact the team",
+      "href": "/book/",
+      "variant": "secondary"
+    }
+  ]
+}

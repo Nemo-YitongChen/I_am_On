@@ -1,0 +1,12 @@
+[
+  {
+    "id": "en-platform-contact",
+    "lang": "en",
+    "name": "Optional product contact or demo link",
+    "duration": "Replace with your real contact or demo flow",
+    "teaser": "Use this when the platform needs a single external booking or demo URL instead of an email-first flow.",
+    "url": "https://calendly.com/signup",
+    "order": 10,
+    "featured": true
+  }
+]

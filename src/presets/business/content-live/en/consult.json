@@ -1,0 +1,40 @@
+{
+  "title": "Consult | Your Business",
+  "description": "A business-site starter consultation page focused on fit, scope, and next steps.",
+  "heroTitle": "Make the first conversation feel specific and low-friction",
+  "heroText": "Use this page to explain who the consultation is for, what people should bring, and what happens after the first conversation.",
+  "cards": [
+    {
+      "title": "Who this is for",
+      "text": "Describe the kinds of teams, founders, clients, or problems that are most likely to fit.",
+      "layout": "half"
+    },
+    {
+      "title": "What to bring",
+      "text": "Set expectations clearly: project context, a decision point, a rough brief, or a specific operational problem.",
+      "layout": "half"
+    },
+    {
+      "title": "What happens after",
+      "text": "Explain whether the next step is a proposal, a scope note, a follow-up email, or a simple no-fit decision.",
+      "layout": "half"
+    },
+    {
+      "title": "What a good fit looks like",
+      "text": "Use this area to be honest about boundaries so the page feels more professional and more trustworthy.",
+      "layout": "half"
+    }
+  ],
+  "ctas": [
+    {
+      "label": "Contact the business",
+      "href": "/book/",
+      "variant": "primary"
+    },
+    {
+      "label": "See services",
+      "href": "/services/",
+      "variant": "secondary"
+    }
+  ]
+}

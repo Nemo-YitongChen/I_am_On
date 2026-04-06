@@ -1,0 +1,41 @@
+{
+  "title": "Contact | Your Product",
+  "description": "A platform-site starter contact page for product questions, onboarding, or demo requests.",
+  "heroTitle": "Make the next contact step obvious",
+  "heroText": "Use this page for product questions, onboarding requests, or a simple way to reach the team. Keep the route clear and the contact expectation specific.",
+  "showCalendly": false,
+  "cards": [
+    {
+      "title": "Good reasons to reach out",
+      "text": "A product question, onboarding interest, implementation context, support path, or an initial check on whether the platform fits.",
+      "layout": "half"
+    },
+    {
+      "title": "What helps the first reply",
+      "text": "A short note on team size, use case, current tool stack, or the problem you are solving usually makes the response more useful.",
+      "layout": "half"
+    }
+  ],
+  "ctas": [
+    {
+      "label": "Email the team",
+      "href": "mailto:hello@example.com",
+      "variant": "primary"
+    },
+    {
+      "label": "Read product updates",
+      "href": "/posts/",
+      "variant": "secondary"
+    }
+  ],
+  "faq": [
+    {
+      "question": "Should this page use a booking link or direct email?",
+      "answer": "Either can work. Use direct email first if the product still needs context-gathering before a demo or onboarding conversation."
+    },
+    {
+      "question": "Can this route stay simple?",
+      "answer": "Yes. One clear contact path usually works better than several competing actions."
+    }
+  ]
+}

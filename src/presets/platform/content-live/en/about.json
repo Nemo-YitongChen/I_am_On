@@ -1,0 +1,32 @@
+{
+  "title": "About | Your Product",
+  "description": "A platform-site starter About page for the product story, team, and operating context.",
+  "heroTitle": "Explain the product story without burying the product",
+  "heroText": "Use this page for the product mission, team context, and the operating point of view behind the platform.",
+  "cards": [
+    {
+      "title": "Why the product exists",
+      "text": "Summarise the problem or workflow the platform is trying to improve."
+    },
+    {
+      "title": "Who is building it",
+      "text": "Use this card for founder, team, or company context that supports trust without becoming the main story."
+    },
+    {
+      "title": "What the product is trying to change",
+      "text": "Explain the product's practical ambition in terms that feel specific, not inflated."
+    }
+  ],
+  "ctas": [
+    {
+      "label": "See product",
+      "href": "/services/",
+      "variant": "primary"
+    },
+    {
+      "label": "Read updates",
+      "href": "/posts/",
+      "variant": "secondary"
+    }
+  ]
+}

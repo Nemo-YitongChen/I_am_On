@@ -1,0 +1,12 @@
+[
+  {
+    "id": "en-business-contact",
+    "lang": "en",
+    "name": "External booking or contact link",
+    "duration": "Replace with your real booking or quote flow",
+    "teaser": "Use this when the business wants a single external booking or contact flow instead of multiple choices on the page.",
+    "url": "https://calendly.com/signup",
+    "order": 10,
+    "featured": true
+  }
+]

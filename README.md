@@ -77,8 +77,13 @@ You can already run this starter in a few practical modes without changing the c
 Main toggles:
 
 - locales: `site.config.mjs`
-- booking visibility: `showCalendly` in `src/content-live/<locale>/book.json`
+- booking mode: `site.config.mjs`
 - real booking link: `src/content/site/booking-options.json`
+
+Starter preset content:
+
+- `npm run preset:apply -- --type business`
+- `npm run preset:apply -- --type platform`
 
 ## Local development
 

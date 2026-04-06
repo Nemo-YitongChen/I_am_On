@@ -1,0 +1,40 @@
+{
+  "title": "Services | Your Business",
+  "description": "A business-site starter services page with concrete offers and clearer scope.",
+  "heroTitle": "Turn broad capability into concrete services",
+  "heroText": "Visitors should leave this page understanding what you offer, who each service is for, and what kinds of outcomes it supports.",
+  "cards": [
+    {
+      "title": "Strategy and direction",
+      "text": "Use this card for advisory, planning, prioritisation, or decision-support offers.",
+      "layout": "half"
+    },
+    {
+      "title": "Content and communication",
+      "text": "Use this space for writing, messaging, research synthesis, documentation, or stakeholder communication support.",
+      "layout": "half"
+    },
+    {
+      "title": "Operations and delivery",
+      "text": "Describe coordination, workflow support, project delivery, or process improvement work.",
+      "layout": "half"
+    },
+    {
+      "title": "Specialist support",
+      "text": "Reserve this for the specific expertise, domain, or operational strength that makes the business different.",
+      "layout": "half"
+    }
+  ],
+  "ctas": [
+    {
+      "label": "Ask about fit",
+      "href": "/consult/",
+      "variant": "primary"
+    },
+    {
+      "label": "Contact the business",
+      "href": "/book/",
+      "variant": "secondary"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "title": "Home | Your Business",
+  "description": "A business-site starter homepage focused on services, trust, and clear next steps.",
+  "heroTitle": "Make the offer clear before asking for trust",
+  "heroText": "Use this homepage to explain what the business does, who it helps, and why someone should keep reading instead of bouncing.",
+  "cards": [
+    {
+      "title": "Services and offers",
+      "text": "Use clear cards here for each service line, support area, or business capability.",
+      "layout": "third"
+    },
+    {
+      "title": "Use cases and industries",
+      "text": "Show where the offer works best so visitors can place themselves quickly.",
+      "layout": "third"
+    },
+    {
+      "title": "Trust and delivery",
+      "text": "Use this space for process confidence, case-study proof, or a concise explanation of how work gets done.",
+      "layout": "third"
+    }
+  ],
+  "ctas": [
+    {
+      "label": "See services",
+      "href": "/services/",
+      "variant": "primary"
+    },
+    {
+      "label": "Read case studies",
+      "href": "/work/",
+      "variant": "secondary"
+    }
+  ]
+}

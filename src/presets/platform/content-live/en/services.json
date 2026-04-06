@@ -1,0 +1,40 @@
+{
+  "title": "Product | Your Product",
+  "description": "A platform-site starter product page for capabilities, workflows, and feature groups.",
+  "heroTitle": "Use this page as the product overview",
+  "heroText": "This route can act as the product page: describe the capability groups, core workflows, and product scope as clearly as possible.",
+  "cards": [
+    {
+      "title": "Core capability one",
+      "text": "Use this card for the product feature or workflow that matters most to new visitors.",
+      "layout": "half"
+    },
+    {
+      "title": "Core capability two",
+      "text": "Use this space for the second product area or the next most important workflow.",
+      "layout": "half"
+    },
+    {
+      "title": "Integrations or compatibility",
+      "text": "Use this area for connected systems, supported environments, or practical implementation detail.",
+      "layout": "half"
+    },
+    {
+      "title": "Security or operating confidence",
+      "text": "Reserve this for reliability, security, compliance, or support information that reduces hesitation.",
+      "layout": "half"
+    }
+  ],
+  "ctas": [
+    {
+      "label": "See use cases",
+      "href": "/consult/",
+      "variant": "primary"
+    },
+    {
+      "label": "Read updates",
+      "href": "/posts/",
+      "variant": "secondary"
+    }
+  ]
+}

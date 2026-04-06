@@ -1,0 +1,41 @@
+{
+  "title": "Contact | Your Business",
+  "description": "A business-site starter contact page that can stay email-first or link to an external booking flow.",
+  "heroTitle": "Give people one clear way to move forward",
+  "heroText": "Use this page for direct contact, a quote request, or one clean booking link. Keep the next step specific and avoid making people choose between too many weak options.",
+  "showCalendly": false,
+  "cards": [
+    {
+      "title": "Good reasons to get in touch",
+      "text": "A project enquiry, a scope question, a capability check, a request for availability, or a first call to see if the fit is real.",
+      "layout": "half"
+    },
+    {
+      "title": "What helps first",
+      "text": "A short note on goals, timing, budget range, or current blockers usually makes the next step faster and more useful.",
+      "layout": "half"
+    }
+  ],
+  "ctas": [
+    {
+      "label": "Email first",
+      "href": "mailto:hello@example.com",
+      "variant": "primary"
+    },
+    {
+      "label": "See proof",
+      "href": "/recruiters/",
+      "variant": "secondary"
+    }
+  ],
+  "faq": [
+    {
+      "question": "Do I need to know the exact scope before reaching out?",
+      "answer": "No. A short description of the problem, timing, or outcome you need is usually enough for a first reply."
+    },
+    {
+      "question": "Can this page stay email-only?",
+      "answer": "Yes. Keep booking.mode on contact-only if you want direct contact without an external booking step."
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "title": "Use Cases | Your Product",
+  "description": "A platform-site starter page for use cases, onboarding, or implementation fit.",
+  "heroTitle": "Explain where the product works best",
+  "heroText": "Use this route to show the use cases, teams, or implementation contexts where the platform is most useful.",
+  "cards": [
+    {
+      "title": "Who this is for",
+      "text": "Describe the teams, roles, or organisations that benefit most from the platform.",
+      "layout": "half"
+    },
+    {
+      "title": "Typical implementation context",
+      "text": "Explain whether the platform fits early-stage teams, larger operations, internal tools, external workflows, or mixed environments.",
+      "layout": "half"
+    },
+    {
+      "title": "What adoption looks like",
+      "text": "Set expectations around onboarding, setup, support, or how people usually start using the platform.",
+      "layout": "half"
+    },
+    {
+      "title": "What is not a fit",
+      "text": "Use this space for honest boundaries so the page reads like a real product page instead of a generic claim set.",
+      "layout": "half"
+    }
+  ],
+  "ctas": [
+    {
+      "label": "See product",
+      "href": "/services/",
+      "variant": "primary"
+    },
+    {
+      "label": "Contact the team",
+      "href": "/book/",
+      "variant": "secondary"
+    }
+  ]
+}

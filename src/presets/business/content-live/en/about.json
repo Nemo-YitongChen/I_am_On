@@ -1,0 +1,32 @@
+{
+  "title": "About | Your Business",
+  "description": "A business-site starter About page focused on company context, values, and approach.",
+  "heroTitle": "Explain the business without making people decode it",
+  "heroText": "Use this page to explain who is behind the work, why the business exists, and how it approaches clients, delivery, and quality.",
+  "cards": [
+    {
+      "title": "What the business is",
+      "text": "Summarise the business model, team shape, or founder story clearly and without filler."
+    },
+    {
+      "title": "How work is done",
+      "text": "Use this space to explain the delivery style, communication standards, or practical way the business works."
+    },
+    {
+      "title": "What matters most",
+      "text": "State the values or operating principles that actually shape the service, not generic slogans."
+    }
+  ],
+  "ctas": [
+    {
+      "label": "See services",
+      "href": "/services/",
+      "variant": "primary"
+    },
+    {
+      "label": "Contact the business",
+      "href": "/book/",
+      "variant": "secondary"
+    }
+  ]
+}

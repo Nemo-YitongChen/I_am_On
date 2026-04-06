@@ -17,6 +17,7 @@ Status:
   - 2026-04-05: business/platform schema coverage expanded onto current core pages such as `services`, `consult`, and `book`
   - 2026-04-06: preset-aware primary navigation and booking modes started affecting the rendered shell and book page behavior
   - 2026-04-06: preset-aware starter copy started affecting home sections and hero support copy
+  - 2026-04-06: business/platform starter content seeds and preset apply script were added for the core public pages
 
 ## Goal
 

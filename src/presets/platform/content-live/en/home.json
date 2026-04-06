@@ -1,0 +1,35 @@
+{
+  "title": "Home | Your Product",
+  "description": "A platform-site starter homepage focused on product explanation, use cases, and trust.",
+  "heroTitle": "Explain the product before anything else",
+  "heroText": "Use this homepage to say what the product is, who it is for, and why the platform matters before visitors disappear into navigation or marketing copy.",
+  "cards": [
+    {
+      "title": "Core workflows",
+      "text": "Use short cards to explain the main workflows or jobs the product supports.",
+      "layout": "third"
+    },
+    {
+      "title": "Use cases and roles",
+      "text": "Show which teams or user types get the most value from the platform.",
+      "layout": "third"
+    },
+    {
+      "title": "Trust and adoption",
+      "text": "Use this space for product reliability, implementation confidence, or support signals.",
+      "layout": "third"
+    }
+  ],
+  "ctas": [
+    {
+      "label": "See product",
+      "href": "/services/",
+      "variant": "primary"
+    },
+    {
+      "label": "Read updates",
+      "href": "/posts/",
+      "variant": "secondary"
+    }
+  ]
+}

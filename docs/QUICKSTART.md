@@ -26,6 +26,18 @@ Recommended preset choices:
 - `business`: service business, consulting site, agency-style site
 - `platform`: product or platform marketing site
 
+If you want the starter content to match the preset immediately:
+
+```bash
+npm run preset:apply -- --type business
+```
+
+or:
+
+```bash
+npm run preset:apply -- --type platform
+```
+
 ## 3. Rewrite starter content
 
 Start with:
