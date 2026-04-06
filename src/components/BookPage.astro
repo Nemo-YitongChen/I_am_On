@@ -1,6 +1,7 @@
 ---
 import SectionRenderer from "./SectionRenderer.astro";
 import { buildBookingSections, buildLinkCardSection, buildStructuredSections } from "../lib/sections.js";
+import { getBookingConfig } from "../lib/template.js";
 
 const { page, options, locale = "en", profile } = Astro.props;
 
@@ -36,8 +37,9 @@ const copy = locale === "zh"
       contactLabels: { email: "Email", phone: "Phone", linkedin: "LinkedIn" },
     };
 
-const showCalendly = page.showCalendly !== false;
-const visibleOptions = showCalendly ? options : [];
+const legacyMode = page.showCalendly === true ? "calendly" : "contact-only";
+const bookingConfig = getBookingConfig(locale, legacyMode);
+const visibleOptions = bookingConfig.mode === "calendly" ? options : [];
 const contactDetails = [
   {
     label: copy.contactLabels.email,
@@ -94,6 +96,25 @@ const bookingSection = visibleOptions.length > 0
     }
   : null;
 
+const [externalBookingSection] = bookingConfig.mode === "external-link" && bookingConfig.externalUrl
+  ? buildLinkCardSection({
+      eyebrow: copy.bookingEyebrow,
+      heading: copy.optionsHeading,
+      intro: copy.optionsIntro,
+      items: [{
+        label: copy.durationLabel,
+        title: bookingConfig.externalLabel ?? copy.bookLabel,
+        summary: locale === "zh"
+          ? "把这里换成你自己的外部预约或联系入口。只保留一个清楚动作，通常比给出很多弱入口更有效。"
+          : "Replace this with your real external booking or contact URL. One clear next step usually works better than several weak ones.",
+        href: bookingConfig.externalUrl,
+        external: true,
+        layout: "half",
+        actionLabel: locale === "zh" ? "打开" : "Open",
+      }],
+    })
+  : [];
+
 const faqSection = page.faq?.length > 0
   ? {
       type: "faq",
@@ -108,7 +129,7 @@ const faqSection = page.faq?.length > 0
 const sections = buildBookingSections({
   contactSection,
   detailSection,
-  bookingSection,
+  bookingSection: bookingSection ?? externalBookingSection,
   faqSection,
 });
 ---

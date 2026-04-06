@@ -2,7 +2,7 @@
   "title": "预约 | Your Name",
   "description": "模板中的预约与联系页面示例。",
   "heroTitle": "给访问者一个清楚的下一步",
-  "heroText": "这个页面既可以只放直接联系，也可以加上一个预约链接。等你准备好再打开 Calendly；如果还没准备好，先只用邮箱也完全可以。",
+  "heroText": "默认先把这个页面做得简单直接：先保留直接联系，只有当预约入口真的是明确下一步时，再打开它。",
   "showCalendly": false,
   "cards": [
     {
@@ -33,8 +33,8 @@
       "variant": "primary"
     },
     {
-      "label": "注册 Calendly",
-      "href": "https://calendly.com/signup",
+      "label": "查看服务",
+      "href": "/services/",
       "variant": "secondary"
     }
   ],
@@ -57,7 +57,7 @@
     },
     {
       "question": "如果我只想用邮箱联系怎么办？",
-      "answer": "把 showCalendly 设为 false，就能只保留直接联系信息和一个清楚的邮箱按钮。"
+      "answer": "把 booking.mode 保持为 contact-only，就能只保留直接联系信息和一个清楚的邮箱按钮。"
     }
   ]
 }

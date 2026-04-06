@@ -13,6 +13,13 @@ Edit:
 - `site.config.mjs`
 - `src/content/site/profile.json`
 
+At minimum, set:
+
+- `site`
+- `siteType`
+- `i18n.locales`
+- `booking.mode`
+
 ## 3. Rewrite starter content
 
 Start with:
@@ -40,14 +47,29 @@ To enable Chinese too:
 
 ## 5. Choose your booking mode
 
-Without Calendly:
+Available modes in `site.config.mjs`:
 
-- keep `showCalendly: false`
+- `contact-only`
+- `calendly`
+- `external-link`
+- `hidden`
 
-With Calendly:
+Recommended defaults:
 
-1. set `showCalendly: true`
+- personal: `contact-only`
+- business: `external-link`
+- platform: `hidden`
+
+If you use `calendly`:
+
+1. set `booking.mode` to `calendly`
 2. replace the placeholder URL in `src/content/site/booking-options.json`
+
+If you use `external-link`:
+
+1. set `booking.mode` to `external-link`
+2. replace `booking.externalUrl`
+3. optionally replace `booking.externalLabel`
 
 ## 6. Validate
 

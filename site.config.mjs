@@ -1,6 +1,14 @@
 export const siteConfig = {
   site: "https://example.com",
   siteType: "personal",
+  booking: {
+    mode: "contact-only",
+    externalUrl: "https://calendly.com/signup",
+    externalLabel: {
+      en: "Open booking link",
+      zh: "打开预约入口",
+    },
+  },
   search: {
     enabled: false,
     path: "/search/?q={search_term_string}",

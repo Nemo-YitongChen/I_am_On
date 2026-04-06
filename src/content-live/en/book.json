@@ -2,7 +2,7 @@
   "title": "Book | Your Name",
   "description": "A booking and contact page for the starter template.",
   "heroTitle": "Offer a clear next step",
-  "heroText": "This page can support direct contact, one booking link, or both. Turn Calendly on when you are ready, or keep it hidden and use email first.",
+  "heroText": "Keep this page simple by default. Start with direct contact, and only turn on a booking link when it is a real next step for your site.",
   "showCalendly": false,
   "cards": [
     {
@@ -33,8 +33,8 @@
       "variant": "primary"
     },
     {
-      "label": "Create a Calendly account",
-      "href": "https://calendly.com/signup",
+      "label": "See services",
+      "href": "/services/",
       "variant": "secondary"
     }
   ],
@@ -57,7 +57,7 @@
     },
     {
       "question": "What if I only want email contact?",
-      "answer": "Set showCalendly to false and keep the direct contact details plus one clear email CTA."
+      "answer": "Keep booking.mode on contact-only and use the direct contact details plus one clear email CTA."
     }
   ]
 }

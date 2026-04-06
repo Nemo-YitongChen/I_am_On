@@ -10,7 +10,7 @@ import {
 import { getProfile } from "../lib/content";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import SkipLink from "../components/SkipLink.astro";
-import { getShellConfig } from "../lib/template.js";
+import { getBookingConfig, getFooterNavKeys, getPrimaryNavKeys, getShellConfig, getSiteType } from "../lib/template.js";
 import { siteConfig } from "../../site.config.mjs";
 
 const {
@@ -26,6 +26,7 @@ const defaultLocale = getDefaultLocale();
 const availableLocales = getAvailableLocales();
 const site = Astro.site ?? new URL(siteConfig.site);
 const shell = getShellConfig();
+const siteType = getSiteType();
 
 function detectLocale(pathnameValue) {
   if (localeProp) return localeProp;
@@ -94,8 +95,9 @@ const breadcrumbItems = !isAdmin && !isEditor && shell.breadcrumbs && pathSegmen
     })()
   : [];
 
-const nav = locale === "zh"
-  ? {
+const nav = (() => {
+  if (locale === "zh") {
+    const base = {
       about: "关于",
       work: "案例",
       consult: "咨询",
@@ -104,17 +106,58 @@ const nav = locale === "zh"
       services: "服务",
       book: "预约",
       privacy: "隐私",
-    }
-  : {
-      about: "About",
-      work: "Work",
-      consult: "Consult",
-      recruiters: "For Recruiters",
-      posts: "Writing",
-      services: "Services",
-      book: "Book",
-      privacy: "Privacy",
     };
+
+    if (siteType === "business") {
+      return {
+        ...base,
+        posts: "洞察",
+        book: "联系",
+      };
+    }
+
+    if (siteType === "platform") {
+      return {
+        ...base,
+        services: "产品",
+        posts: "更新",
+        book: "联系",
+      };
+    }
+
+    return base;
+  }
+
+  const base = {
+    about: "About",
+    work: "Work",
+    consult: "Consult",
+    recruiters: "For Recruiters",
+    posts: "Writing",
+    services: "Services",
+    book: "Book",
+    privacy: "Privacy",
+  };
+
+  if (siteType === "business") {
+    return {
+      ...base,
+      posts: "Insights",
+      book: "Contact",
+    };
+  }
+
+  if (siteType === "platform") {
+    return {
+      ...base,
+      services: "Product",
+      posts: "Updates",
+      book: "Contact",
+    };
+  }
+
+  return base;
+})();
 
 const urls = {
   home: getPublicPath(locale, "home"),
@@ -128,6 +171,21 @@ const urls = {
   privacy: getPublicPath(locale, "privacy"),
   admin: "/admin/",
 };
+
+const bookingConfig = getBookingConfig(locale);
+const showBookCta = bookingConfig.mode !== "hidden";
+const primaryNavKeys = getPrimaryNavKeys(siteType);
+const footerNavKeys = getFooterNavKeys(siteType).filter((key) => key !== "book" || showBookCta);
+const primaryNavItems = primaryNavKeys.map((key) => ({
+  key,
+  label: nav[key],
+  href: urls[key],
+}));
+const footerNavItems = footerNavKeys.map((key) => ({
+  key,
+  label: nav[key],
+  href: urls[key],
+}));
 
 function isCurrent(path) {
   const normalized = path.endsWith("/") ? path : `${path}/`;
@@ -178,13 +236,14 @@ if (breadcrumbItems.length > 0) {
       <a class="brand" href={homeUrl}>{profile.brand}</a>
       <div class="header-controls">
         <nav class="nav nav-primary" aria-label={locale === "zh" ? "主导航" : "Primary navigation"}>
-          <a href={urls.about} aria-current={isCurrent(urls.about) ? "page" : undefined}>{nav.about}</a>
-          <a href={urls.work} aria-current={isCurrent(urls.work) ? "page" : undefined}>{nav.work}</a>
-          <a href={urls.consult} aria-current={isCurrent(urls.consult) ? "page" : undefined}>{nav.consult}</a>
-          <a href={urls.recruiters} aria-current={isCurrent(urls.recruiters) ? "page" : undefined}>{nav.recruiters}</a>
+          {primaryNavItems.map((item) => (
+            <a href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>{item.label}</a>
+          ))}
         </nav>
         <div class="nav nav-actions">
-          <a class="cta" href={urls.book} aria-current={isCurrent(urls.book) ? "page" : undefined}>{nav.book}</a>
+          {showBookCta && (
+            <a class="cta" href={urls.book} aria-current={isCurrent(urls.book) ? "page" : undefined}>{nav.book}</a>
+          )}
           {localeLinks.map((link) => (
             <a href={link.href} aria-current={link.code === locale ? "page" : undefined}>
               {link.label}
@@ -207,12 +266,9 @@ if (breadcrumbItems.length > 0) {
         {profile.phone && <a href={`tel:${profile.phone.replace(/\s+/g, "")}`}>{profile.phone}</a>}
       </div>
       <div class="footer-links">
-        <a href={urls.work}>{nav.work}</a>
-        <a href={urls.posts}>{nav.posts}</a>
-        <a href={urls.services}>{nav.services}</a>
-        <a href={urls.recruiters}>{nav.recruiters}</a>
-        <a href={urls.book}>{nav.book}</a>
-        <a href={urls.privacy}>{nav.privacy}</a>
+        {footerNavItems.map((item) => (
+          <a href={item.href}>{item.label}</a>
+        ))}
         <a href={profile.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
         {profile.github && <a href={profile.github} target="_blank" rel="noreferrer">GitHub</a>}
       </div>

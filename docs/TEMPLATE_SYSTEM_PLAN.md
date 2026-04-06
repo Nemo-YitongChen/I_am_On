@@ -15,6 +15,7 @@ Status:
   - 2026-04-04: structured data rules were split into a dedicated rules document for future renderer work
   - 2026-04-05: preset-aware structured-data rendering started in the layout and key page routes
   - 2026-04-05: business/platform schema coverage expanded onto current core pages such as `services`, `consult`, and `book`
+  - 2026-04-06: preset-aware primary navigation and booking modes started affecting the rendered shell and book page behavior
 
 ## Goal
 
@@ -65,11 +66,10 @@ The repo already has:
 
 But it still lacks:
 
-- explicit `siteType`
 - formal section registry
 - optional shell modules
 - documented token contract
-- preset-aware structured data strategy
+- preset-complete navigation and content presets beyond the current starter routes
 
 ## Implementation phases
 
