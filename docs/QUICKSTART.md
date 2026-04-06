@@ -20,6 +20,12 @@ At minimum, set:
 - `i18n.locales`
 - `booking.mode`
 
+Recommended preset choices:
+
+- `personal`: portfolio, personal site, recruiter-facing profile
+- `business`: service business, consulting site, agency-style site
+- `platform`: product or platform marketing site
+
 ## 3. Rewrite starter content
 
 Start with:
@@ -71,12 +77,22 @@ If you use `external-link`:
 2. replace `booking.externalUrl`
 3. optionally replace `booking.externalLabel`
 
-## 6. Validate
+## 6. Check preset defaults before rewriting content
+
+Run:
+
+```bash
+npm run preset:check
+```
+
+This verifies that preset navigation, booking defaults, and starter copy remain internally consistent.
+
+## 7. Validate
 
 ```bash
 npm run validate
 ```
 
-## 7. Deploy
+## 8. Deploy
 
 Create a Cloudflare Worker deployment from this repo and add the runtime variables and secrets described in `README.md` and `docs/OPERATIONS.md`.

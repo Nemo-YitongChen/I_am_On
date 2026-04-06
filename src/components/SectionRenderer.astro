@@ -1,63 +1,14 @@
 ---
+import { getSectionPresetCopy } from "../lib/presetCopy.js";
+import { getSiteType } from "../lib/template.js";
+
 const { section, locale = "en" } = Astro.props;
 
 const isZh = locale === "zh";
 const actionLabel = isZh ? "查看" : "Open";
 const bookingCtaLabel = isZh ? "预约一次交流" : "Book a chat";
 const bookingOpensLabel = isZh ? "将打开 Calendly" : "Opens Calendly";
-
-const sectionCopy = {
-  pathways: isZh
-    ? {
-        eyebrow: "从这里开始",
-        heading: "先选最适合你的入口",
-        intro: "如果访问者带着明确目标进入网站，这几条入口通常会比从首页慢慢找更高效。",
-        openLabel: "查看",
-      }
-    : {
-        eyebrow: "Start here",
-        heading: "Choose the shortest route into the site",
-        intro: "If a visitor arrives with a specific goal, these entry points usually work better than making them browse from the top.",
-        openLabel: "Open",
-      },
-  proof: isZh
-    ? {
-        eyebrow: "重点证明",
-        heading: "先看证据，再看主张",
-        intro: "这几个入口最适合快速判断你的工作背景、表达方式和可信度。",
-        openLabel: "查看",
-      }
-    : {
-        eyebrow: "Selected proof",
-        heading: "See the work before the claims",
-        intro: "These are the fastest routes into the background, working style, and likely contribution.",
-        openLabel: "Open",
-      },
-  writing: isZh
-    ? {
-        eyebrow: "最新文章",
-        heading: "用文章补充工作方式",
-        intro: "这部分适合放更完整的文章、说明和思考，让别人理解你如何判断、表达和组织复杂信息。",
-        openLabel: "查看",
-      }
-    : {
-        eyebrow: "Recent writing",
-        heading: "Use the writing to understand the thinking",
-        intro: "This is where longer posts, notes, and explanations help people understand how you work, explain, and make decisions.",
-        openLabel: "Open",
-      },
-  topics: isZh
-    ? {
-        eyebrow: "工作主题",
-        heading: "我持续在做的几类事情",
-        intro: "这些主题贯穿了我的工作、项目和长期兴趣，也是我最希望继续深化的方向。",
-      }
-    : {
-        eyebrow: "Focus areas",
-        heading: "What I work across",
-        intro: "These themes show up repeatedly across roles, projects, and the conversations where this site is most useful.",
-      },
-};
+const sectionCopy = getSectionPresetCopy(getSiteType(), locale);
 
 const copy = {
   ...(sectionCopy[section.type] ?? {}),

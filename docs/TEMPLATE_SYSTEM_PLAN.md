@@ -16,6 +16,7 @@ Status:
   - 2026-04-05: preset-aware structured-data rendering started in the layout and key page routes
   - 2026-04-05: business/platform schema coverage expanded onto current core pages such as `services`, `consult`, and `book`
   - 2026-04-06: preset-aware primary navigation and booking modes started affecting the rendered shell and book page behavior
+  - 2026-04-06: preset-aware starter copy started affecting home sections and hero support copy
 
 ## Goal
 
@@ -69,7 +70,7 @@ But it still lacks:
 - formal section registry
 - optional shell modules
 - documented token contract
-- preset-complete navigation and content presets beyond the current starter routes
+- preset-complete starter content beyond the current home and book surfaces
 
 ## Implementation phases
 
