@@ -41,6 +41,8 @@ npm run preset:apply -- --type platform
 
 If you only want selected locales, pass `--locales en` or another comma-separated list that exists in `src/presets/<type>/content-live/`.
 
+The preset apply command also replaces starter `posts` and `work` content for the same locales, so the site starts from a coherent business or platform tone.
+
 ## 3. Rewrite starter content
 
 Start with:

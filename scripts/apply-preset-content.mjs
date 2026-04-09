@@ -24,6 +24,7 @@ const presetDir = join(rootDir, "src", "presets", type);
 const sourceContentRoot = join(presetDir, "content-live");
 const sourceBookingFile = join(presetDir, "content", "site", "booking-options.json");
 const targetBookingFile = join(rootDir, "src", "content", "site", "booking-options.json");
+const longformCollections = ["posts", "work"];
 
 if (!existsSync(sourceContentRoot) || !existsSync(sourceBookingFile)) {
   console.error(`Missing preset source files for ${type}.`);
@@ -60,17 +61,31 @@ for (const locale of selectedLocales) {
   }
 }
 
+function copyLocaleFiles(sourceDir, targetDir) {
+  if (!existsSync(sourceDir)) {
+    return;
+  }
+
+  mkdirSync(targetDir, { recursive: true });
+
+  for (const file of readdirSync(sourceDir)) {
+    copyFileSync(join(sourceDir, file), join(targetDir, file));
+  }
+}
+
 for (const locale of selectedLocales) {
   const sourceContentDir = join(sourceContentRoot, locale);
   const targetContentDir = join(rootDir, "src", "content-live", locale);
 
-  mkdirSync(targetContentDir, { recursive: true });
+  copyLocaleFiles(sourceContentDir, targetContentDir);
 
-  for (const file of readdirSync(sourceContentDir)) {
-    copyFileSync(join(sourceContentDir, file), join(targetContentDir, file));
+  for (const collection of longformCollections) {
+    const sourceLongformDir = join(presetDir, "content", collection, locale);
+    const targetLongformDir = join(rootDir, "src", "content", collection, locale);
+    copyLocaleFiles(sourceLongformDir, targetLongformDir);
   }
 }
 
 copyFileSync(sourceBookingFile, targetBookingFile);
 
-console.log(`Applied ${type} preset content for locales [${selectedLocales.join(", ")}] and updated src/content/site/booking-options.json`);
+console.log(`Applied ${type} preset content for locales [${selectedLocales.join(", ")}], including longform starter content and booking options.`);

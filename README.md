@@ -86,6 +86,13 @@ Starter preset content:
 - `npm run preset:apply -- --type platform`
 - `npm run preset:apply -- --type business --locales en,zh`
 
+These preset seeds include:
+
+- public page JSON
+- booking options
+- starter posts
+- starter work entries
+
 ## Local development
 
 ```bash

@@ -68,6 +68,18 @@ for (const presetType of ["business", "platform"]) {
         `${presetType} preset should provide ${locale} starter content for ${page}`,
       );
     }
+
+    assert.equal(
+      existsSync(join(rootDir, "src", "presets", presetType, "content", "posts", locale)),
+      true,
+      `${presetType} preset should provide ${locale} starter posts`,
+    );
+
+    assert.equal(
+      existsSync(join(rootDir, "src", "presets", presetType, "content", "work", locale)),
+      true,
+      `${presetType} preset should provide ${locale} starter work entries`,
+    );
   }
 
   assert.equal(
