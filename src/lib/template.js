@@ -121,6 +121,95 @@ const defaultNavLabels = {
   },
 };
 
+const defaultAnnouncementBars = {
+  personal: {
+    en: {
+      label: "Start with work, writing, or the recruiter summary.",
+      key: "work",
+    },
+    zh: {
+      label: "先看案例、文章，或招聘摘要。",
+      key: "work",
+    },
+  },
+  business: {
+    en: {
+      label: "Start with services or case studies.",
+      key: "services",
+    },
+    zh: {
+      label: "先看服务页或案例页。",
+      key: "services",
+    },
+  },
+  platform: {
+    en: {
+      label: "Start with product pages, use cases, or updates.",
+      key: "services",
+    },
+    zh: {
+      label: "先看产品页、使用案例或更新。",
+      key: "services",
+    },
+  },
+};
+
+const defaultUtilityNav = {
+  personal: ["posts", "privacy"],
+  business: ["posts", "about", "privacy"],
+  platform: ["posts", "about", "privacy"],
+};
+
+const defaultServiceNav = {
+  personal: {
+    about: ["about", "work", "posts"],
+    services: ["services", "consult", "book"],
+    consult: ["consult", "work", "book"],
+    recruiters: ["recruiters", "work", "book"],
+    book: ["book", "recruiters", "about"],
+    posts: ["posts", "work", "book"],
+    work: ["work", "recruiters", "book"],
+  },
+  business: {
+    about: ["about", "services", "work"],
+    services: ["services", "work", "consult", "book"],
+    consult: ["consult", "services", "book"],
+    recruiters: ["recruiters", "work", "book"],
+    book: ["book", "services", "work"],
+    posts: ["posts", "work", "services"],
+    work: ["work", "services", "book"],
+  },
+  platform: {
+    about: ["about", "services", "posts"],
+    services: ["services", "work", "posts"],
+    consult: ["consult", "services", "about"],
+    recruiters: ["recruiters", "services", "about"],
+    book: ["book", "services", "about"],
+    posts: ["posts", "services", "work"],
+    work: ["work", "services", "posts"],
+  },
+};
+
+function getLocalizedConfigValue(value, locale = "en") {
+  if (!value) {
+    return null;
+  }
+
+  if (Array.isArray(value)) {
+    return value;
+  }
+
+  if (typeof value === "object" && "label" in value && ("href" in value || "key" in value)) {
+    return value;
+  }
+
+  if (typeof value === "object") {
+    return value[locale] ?? value.en ?? value.default ?? null;
+  }
+
+  return value;
+}
+
 export function getSiteType() {
   return siteConfig.siteType ?? "personal";
 }
@@ -171,4 +260,31 @@ export function getShellConfig() {
     ...defaultShell,
     ...(siteConfig.shell ?? {}),
   };
+}
+
+export function getAnnouncementBar(locale = "en", siteType = getSiteType()) {
+  const configured = getLocalizedConfigValue(siteConfig.announcementBar, locale);
+  const preset = defaultAnnouncementBars[siteType] ?? defaultAnnouncementBars.personal;
+  return configured ?? preset[locale] ?? preset.en ?? null;
+}
+
+export function getUtilityNavItems(locale = "en", siteType = getSiteType()) {
+  const configured = getLocalizedConfigValue(siteConfig.utilityNavigation, locale);
+  return configured ?? defaultUtilityNav[siteType] ?? defaultUtilityNav.personal;
+}
+
+export function getServiceNavItems(sectionKey, locale = "en", siteType = getSiteType()) {
+  if (!sectionKey) {
+    return [];
+  }
+
+  const configured = siteConfig.serviceNavigation?.[sectionKey] ?? siteConfig.serviceNavigation?.default ?? null;
+  const configuredItems = getLocalizedConfigValue(configured, locale);
+
+  if (configuredItems) {
+    return configuredItems;
+  }
+
+  const preset = defaultServiceNav[siteType] ?? defaultServiceNav.personal;
+  return preset[sectionKey] ?? [];
 }

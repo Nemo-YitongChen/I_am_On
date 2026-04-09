@@ -23,6 +23,8 @@ At minimum, set:
 Optional:
 
 - `navigationLabels` if you want to override the preset defaults without editing layout code
+- `shell` if you want to enable preset-aware shell modules such as `announcementBar`, `utilityNav`, or `serviceNav`
+- `announcementBar`, `utilityNavigation`, and `serviceNavigation` if you want to override the preset defaults instead of using the built-in starter shell content
 
 Recommended preset choices:
 

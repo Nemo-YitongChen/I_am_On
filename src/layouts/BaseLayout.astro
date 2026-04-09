@@ -10,7 +10,17 @@ import {
 import { getProfile } from "../lib/content";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import SkipLink from "../components/SkipLink.astro";
-import { getBookingConfig, getFooterNavKeys, getNavLabels, getPrimaryNavKeys, getShellConfig, getSiteType } from "../lib/template.js";
+import {
+  getAnnouncementBar,
+  getBookingConfig,
+  getFooterNavKeys,
+  getNavLabels,
+  getPrimaryNavKeys,
+  getServiceNavItems,
+  getShellConfig,
+  getSiteType,
+  getUtilityNavItems,
+} from "../lib/template.js";
 import { siteConfig } from "../../site.config.mjs";
 
 const {
@@ -125,6 +135,40 @@ const footerNavItems = footerNavKeys.map((key) => ({
   href: urls[key],
 }));
 
+function resolveShellItem(item) {
+  if (!item) {
+    return null;
+  }
+
+  if (typeof item === "string") {
+    return urls[item]
+      ? { key: item, label: nav[item] ?? item, href: urls[item] }
+      : { label: item, href: item };
+  }
+
+  if (item.key && urls[item.key]) {
+    return {
+      ...item,
+      label: item.label ?? nav[item.key] ?? item.key,
+      href: item.href ?? urls[item.key],
+    };
+  }
+
+  if (item.label && item.href) {
+    return item;
+  }
+
+  return null;
+}
+
+const announcementBar = shell.announcementBar ? resolveShellItem(getAnnouncementBar(locale, siteType)) : null;
+const utilityNavItems = shell.utilityNav
+  ? getUtilityNavItems(locale, siteType).map(resolveShellItem).filter(Boolean)
+  : [];
+const serviceNavItems = !isAdmin && !isEditor && shell.serviceNav
+  ? getServiceNavItems(pathSegments[0], locale, siteType).map(resolveShellItem).filter(Boolean)
+  : [];
+
 function isCurrent(path) {
   const normalized = path.endsWith("/") ? path : `${path}/`;
   return pathname === normalized || pathname.startsWith(normalized);
@@ -170,26 +214,51 @@ if (breadcrumbItems.length > 0) {
   </head>
   <body>
     {shell.skipLink && <SkipLink label={locale === "zh" ? "跳到正文" : "Skip to content"} />}
+    {announcementBar && (
+      <div class="announcement-bar">
+        <div class="announcement-inner">
+          <a href={announcementBar.href}>{announcementBar.label}</a>
+        </div>
+      </div>
+    )}
     <header class="header">
       <a class="brand" href={homeUrl}>{profile.brand}</a>
       <div class="header-controls">
-        <nav class="nav nav-primary" aria-label={locale === "zh" ? "主导航" : "Primary navigation"}>
-          {primaryNavItems.map((item) => (
-            <a href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>{item.label}</a>
-          ))}
-        </nav>
-        <div class="nav nav-actions">
-          {showBookCta && (
-            <a class="cta" href={urls.book} aria-current={isCurrent(urls.book) ? "page" : undefined}>{nav.book}</a>
-          )}
-          {localeLinks.map((link) => (
-            <a href={link.href} aria-current={link.code === locale ? "page" : undefined}>
-              {link.label}
-            </a>
-          ))}
+        {utilityNavItems.length > 0 && (
+          <nav class="nav nav-utility" aria-label={locale === "zh" ? "辅助导航" : "Utility navigation"}>
+            {utilityNavItems.map((item) => (
+              <a href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>{item.label}</a>
+            ))}
+          </nav>
+        )}
+        <div class="header-main-controls">
+          <nav class="nav nav-primary" aria-label={locale === "zh" ? "主导航" : "Primary navigation"}>
+            {primaryNavItems.map((item) => (
+              <a href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>{item.label}</a>
+            ))}
+          </nav>
+          <div class="nav nav-actions">
+            {showBookCta && (
+              <a class="cta" href={urls.book} aria-current={isCurrent(urls.book) ? "page" : undefined}>{nav.book}</a>
+            )}
+            {localeLinks.map((link) => (
+              <a href={link.href} aria-current={link.code === locale ? "page" : undefined}>
+                {link.label}
+              </a>
+            ))}
+          </div>
         </div>
       </div>
     </header>
+    {serviceNavItems.length > 0 && (
+      <nav class="service-nav" aria-label={locale === "zh" ? "分区导航" : "Section navigation"}>
+        <div class="service-nav-inner">
+          {serviceNavItems.map((item) => (
+            <a href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>{item.label}</a>
+          ))}
+        </div>
+      </nav>
+    )}
 
     <main id="main-content" tabindex="-1" class="container">
       <Breadcrumbs items={breadcrumbItems} label={locale === "zh" ? "面包屑导航" : "Breadcrumb"} />

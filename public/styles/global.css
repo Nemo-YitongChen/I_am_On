@@ -85,6 +85,30 @@ select{
   padding:42px 24px 96px;
 }
 
+.announcement-bar{
+  border-bottom:1px solid var(--line);
+  background:rgba(124,92,255,0.08);
+}
+
+.announcement-inner{
+  max-width:var(--max-width);
+  margin:0 auto;
+  padding:10px 24px;
+}
+
+.announcement-inner a{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  color:var(--text);
+  font-size:0.94rem;
+  font-weight:600;
+}
+
+.announcement-inner a:hover{
+  color:#fff;
+}
+
 .header{
   position:sticky;
   top:0;
@@ -109,6 +133,15 @@ select{
 .header-controls{
   min-width:0;
   display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-end;
+  gap:10px;
+}
+
+.header-main-controls{
+  min-width:0;
+  display:flex;
   align-items:center;
   justify-content:flex-end;
   gap:18px;
@@ -124,6 +157,20 @@ select{
 
 .nav-primary{
   justify-content:flex-end;
+}
+
+.nav-utility{
+  width:100%;
+  justify-content:flex-end;
+  gap:12px;
+}
+
+.nav-utility a{
+  color:var(--muted);
+  font-size:0.79rem;
+  font-weight:700;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
 }
 
 .nav-actions{
@@ -152,6 +199,38 @@ select{
 
 .nav .cta{
   padding:11px 16px;
+}
+
+.service-nav{
+  border-bottom:1px solid var(--line);
+  background:rgba(9,11,16,0.72);
+  backdrop-filter:blur(18px);
+}
+
+.service-nav-inner{
+  max-width:var(--max-width);
+  margin:0 auto;
+  padding:12px 24px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.service-nav a{
+  color:var(--text-soft);
+  font-size:0.92rem;
+}
+
+.service-nav a:hover{
+  color:var(--text);
+}
+
+.service-nav a[aria-current="page"]{
+  color:var(--text);
+  text-decoration:underline;
+  text-decoration-thickness:1.5px;
+  text-underline-offset:6px;
 }
 
 .cta,
@@ -517,6 +596,17 @@ a.card:hover{
     flex-direction:column;
     align-items:flex-start;
     gap:12px;
+  }
+
+  .header-main-controls{
+    width:100%;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:12px;
+  }
+
+  .nav-utility{
+    justify-content:flex-start;
   }
 
   .nav{

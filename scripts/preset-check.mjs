@@ -4,7 +4,14 @@ import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 
 import { getHomePresetCopy, getSectionPresetCopy } from "../src/lib/presetCopy.js";
-import { getNavLabels, getPrimaryNavKeys, getTemplatePreset } from "../src/lib/template.js";
+import {
+  getAnnouncementBar,
+  getNavLabels,
+  getPrimaryNavKeys,
+  getServiceNavItems,
+  getTemplatePreset,
+  getUtilityNavItems,
+} from "../src/lib/template.js";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const rootDir = dirname(scriptDir);
@@ -69,6 +76,24 @@ assert.equal(
   getNavLabels("zh", "platform").services,
   "产品",
   "platform preset should rename services to product in zh navigation by default",
+);
+
+assert.equal(
+  getAnnouncementBar("en", "business").key,
+  "services",
+  "business preset should point the default announcement bar to services",
+);
+
+assert.deepEqual(
+  getUtilityNavItems("en", "platform"),
+  ["posts", "about", "privacy"],
+  "platform preset should expose a deeper utility nav by default",
+);
+
+assert.deepEqual(
+  getServiceNavItems("services", "en", "business"),
+  ["services", "work", "consult", "book"],
+  "business preset should expose section navigation around services pages",
 );
 
 for (const presetType of ["business", "platform"]) {
