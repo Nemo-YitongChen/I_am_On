@@ -20,6 +20,10 @@ At minimum, set:
 - `i18n.locales`
 - `booking.mode`
 
+Optional:
+
+- `navigationLabels` if you want to override the preset defaults without editing layout code
+
 Recommended preset choices:
 
 - `personal`: portfolio, personal site, recruiter-facing profile

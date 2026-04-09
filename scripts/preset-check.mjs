@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 
 import { getHomePresetCopy, getSectionPresetCopy } from "../src/lib/presetCopy.js";
-import { getPrimaryNavKeys, getTemplatePreset } from "../src/lib/template.js";
+import { getNavLabels, getPrimaryNavKeys, getTemplatePreset } from "../src/lib/template.js";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const rootDir = dirname(scriptDir);
@@ -57,6 +57,18 @@ assert.equal(
   getSectionPresetCopy("platform", "en").topics.heading,
   "What the platform covers",
   "platform preset should use product-scope copy for topics",
+);
+
+assert.equal(
+  getNavLabels("en", "business").posts,
+  "Insights",
+  "business preset should rename posts in navigation by default",
+);
+
+assert.equal(
+  getNavLabels("zh", "platform").services,
+  "产品",
+  "platform preset should rename services to product in zh navigation by default",
 );
 
 for (const presetType of ["business", "platform"]) {

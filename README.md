@@ -78,6 +78,7 @@ Main toggles:
 
 - locales: `site.config.mjs`
 - booking mode: `site.config.mjs`
+- navigation labels: `site.config.mjs`
 - real booking link: `src/content/site/booking-options.json`
 
 Starter preset content:

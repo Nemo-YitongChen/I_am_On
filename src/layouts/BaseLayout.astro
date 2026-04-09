@@ -10,7 +10,7 @@ import {
 import { getProfile } from "../lib/content";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import SkipLink from "../components/SkipLink.astro";
-import { getBookingConfig, getFooterNavKeys, getPrimaryNavKeys, getShellConfig, getSiteType } from "../lib/template.js";
+import { getBookingConfig, getFooterNavKeys, getNavLabels, getPrimaryNavKeys, getShellConfig, getSiteType } from "../lib/template.js";
 import { siteConfig } from "../../site.config.mjs";
 
 const {
@@ -95,69 +95,7 @@ const breadcrumbItems = !isAdmin && !isEditor && shell.breadcrumbs && pathSegmen
     })()
   : [];
 
-const nav = (() => {
-  if (locale === "zh") {
-    const base = {
-      about: "关于",
-      work: "案例",
-      consult: "咨询",
-      recruiters: "招聘摘要",
-      posts: "文章",
-      services: "服务",
-      book: "预约",
-      privacy: "隐私",
-    };
-
-    if (siteType === "business") {
-      return {
-        ...base,
-        posts: "洞察",
-        book: "联系",
-      };
-    }
-
-    if (siteType === "platform") {
-      return {
-        ...base,
-        services: "产品",
-        posts: "更新",
-        book: "联系",
-      };
-    }
-
-    return base;
-  }
-
-  const base = {
-    about: "About",
-    work: "Work",
-    consult: "Consult",
-    recruiters: "For Recruiters",
-    posts: "Writing",
-    services: "Services",
-    book: "Book",
-    privacy: "Privacy",
-  };
-
-  if (siteType === "business") {
-    return {
-      ...base,
-      posts: "Insights",
-      book: "Contact",
-    };
-  }
-
-  if (siteType === "platform") {
-    return {
-      ...base,
-      services: "Product",
-      posts: "Updates",
-      book: "Contact",
-    };
-  }
-
-  return base;
-})();
+const nav = getNavLabels(locale, siteType);
 
 const urls = {
   home: getPublicPath(locale, "home"),

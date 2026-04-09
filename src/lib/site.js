@@ -1,4 +1,5 @@
 import { siteConfig } from "../../site.config.mjs";
+import { getNavLabels, getSiteType } from "./template.js";
 
 const pageModules = import.meta.glob("../content-live/*/*.json", { eager: true });
 
@@ -16,27 +17,6 @@ for (const [modulePath, module] of Object.entries(pageModules)) {
 
 export const editablePageKeys = ["home", "about", "services", "consult", "recruiters", "book"];
 export const publicPageKeys = [...editablePageKeys, "privacy"];
-
-const pageLabels = {
-  en: {
-    home: "Home",
-    about: "About",
-    services: "Services",
-    consult: "Consult",
-    recruiters: "For Recruiters",
-    book: "Book",
-    privacy: "Privacy",
-  },
-  zh: {
-    home: "首页",
-    about: "关于",
-    services: "服务",
-    consult: "咨询",
-    recruiters: "招聘摘要",
-    book: "预约",
-    privacy: "隐私",
-  },
-};
 
 export function getDefaultLocale() {
   return siteConfig.i18n.defaultLocale;
@@ -105,7 +85,11 @@ export function getEditorPath(locale = getDefaultLocale(), pageKey = "home") {
 }
 
 export function getPageLabel(locale = getDefaultLocale(), pageKey = "home") {
-  const labels = pageLabels[locale] ?? pageLabels.en;
+  if (pageKey === "home") {
+    return getLocaleMeta(locale).homeLabel;
+  }
+
+  const labels = getNavLabels(locale, getSiteType());
   return labels[pageKey] ?? pageKey;
 }
 
