@@ -35,8 +35,8 @@ const pathname = Astro.url.pathname ?? "/";
 const defaultLocale = getDefaultLocale();
 const availableLocales = getAvailableLocales();
 const site = Astro.site ?? new URL(siteConfig.site);
-const shell = getShellConfig();
 const siteType = getSiteType();
+const shell = getShellConfig(siteType);
 
 function detectLocale(pathnameValue) {
   if (localeProp) return localeProp;

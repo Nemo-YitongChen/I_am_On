@@ -44,6 +44,9 @@ const contentChecks = [
       { pattern: 'application/ld+json', label: "JSON-LD renderer" },
       { pattern: 'BreadcrumbList', label: "breadcrumb structured data" },
       { pattern: 'Primary navigation', label: "labelled primary navigation" },
+      { pattern: 'announcement-bar', label: "announcement bar shell styles" },
+      { pattern: 'Utility navigation', label: "utility nav shell markup" },
+      { pattern: 'Section navigation', label: "service nav shell markup" },
     ],
   },
   {

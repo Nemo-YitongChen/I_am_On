@@ -15,12 +15,6 @@ export const siteConfig = {
   },
   shell: {
     skipLink: true,
-    announcementBar: false,
-    utilityNav: false,
-    serviceNav: false,
-    breadcrumbs: true,
-    searchModal: false,
-    consentBanner: false,
   },
   i18n: {
     defaultLocale: "en",

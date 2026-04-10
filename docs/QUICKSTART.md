@@ -26,6 +26,12 @@ Optional:
 - `shell` if you want to enable preset-aware shell modules such as `announcementBar`, `utilityNav`, or `serviceNav`
 - `announcementBar`, `utilityNavigation`, and `serviceNavigation` if you want to override the preset defaults instead of using the built-in starter shell content
 
+Preset shell defaults:
+
+- `personal`: breadcrumb on
+- `business`: announcement bar, utility nav, service nav, breadcrumb on
+- `platform`: announcement bar, utility nav, service nav, breadcrumb on
+
 Recommended preset choices:
 
 - `personal`: portfolio, personal site, recruiter-facing profile

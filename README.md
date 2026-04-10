@@ -88,6 +88,12 @@ Optional shell modules now render with preset-aware defaults when enabled:
 - `shell.utilityNav`
 - `shell.serviceNav`
 
+Preset defaults now include:
+
+- `personal`: breadcrumb on, other optional shell modules off
+- `business`: announcement bar, utility nav, service nav, and breadcrumb on
+- `platform`: announcement bar, utility nav, service nav, and breadcrumb on
+
 You can override the default shell content with:
 
 - `announcementBar`

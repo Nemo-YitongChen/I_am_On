@@ -21,6 +21,7 @@ Status:
   - 2026-04-07: business/platform preset content was expanded to bilingual `en/zh` seeds with locale-aware preset application
   - 2026-04-09: preset application was extended to starter `posts/work`, so business and platform presets now ship with matching longform examples
   - 2026-04-09: announcement bar, utility nav, and service nav became real preset-aware shell modules instead of config-only flags
+  - 2026-04-10: business and platform presets started enabling those shell modules by default, so preset behavior now affects the rendered shell as well as content and schema
 
 ## Goal
 

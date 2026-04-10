@@ -8,6 +8,7 @@ import {
   getAnnouncementBar,
   getNavLabels,
   getPrimaryNavKeys,
+  getShellConfig,
   getServiceNavItems,
   getTemplatePreset,
   getUtilityNavItems,
@@ -94,6 +95,24 @@ assert.deepEqual(
   getServiceNavItems("services", "en", "business"),
   ["services", "work", "consult", "book"],
   "business preset should expose section navigation around services pages",
+);
+
+assert.equal(
+  getShellConfig("personal").announcementBar,
+  false,
+  "personal preset should keep the announcement bar off by default",
+);
+
+assert.equal(
+  getShellConfig("business").serviceNav,
+  true,
+  "business preset should enable service navigation by default",
+);
+
+assert.equal(
+  getShellConfig("platform").utilityNav,
+  true,
+  "platform preset should enable utility navigation by default",
 );
 
 for (const presetType of ["business", "platform"]) {

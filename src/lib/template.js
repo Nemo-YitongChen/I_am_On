@@ -10,6 +10,24 @@ const defaultShell = {
   consentBanner: false,
 };
 
+const defaultShellByPreset = {
+  personal: {
+    breadcrumbs: true,
+  },
+  business: {
+    announcementBar: true,
+    utilityNav: true,
+    serviceNav: true,
+    breadcrumbs: true,
+  },
+  platform: {
+    announcementBar: true,
+    utilityNav: true,
+    serviceNav: true,
+    breadcrumbs: true,
+  },
+};
+
 const templatePresets = {
   personal: {
     homeSectionOrder: ["pathways", "proof", "writing", "topics"],
@@ -255,9 +273,10 @@ export function getBookingConfig(locale = "en", legacyMode = "contact-only", sit
   };
 }
 
-export function getShellConfig() {
+export function getShellConfig(siteType = getSiteType()) {
   return {
     ...defaultShell,
+    ...(defaultShellByPreset[siteType] ?? defaultShellByPreset.personal),
     ...(siteConfig.shell ?? {}),
   };
 }
